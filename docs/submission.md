@@ -18,6 +18,8 @@ Before opening a PR:
 5. confirm provenance fields are real and complete
 6. include checksums/signature metadata where practical
 7. include platform constraints intentionally
+8. confirm dependency declarations are intentional and resolvable
+9. if dependencies changed, include lock/verify evidence from local run
 
 ## PR expectations
 
@@ -36,6 +38,7 @@ Maintainers should verify:
 - metadata is non-placeholder and credible
 - payload behavior is minimal but real
 - trust fields are sensible for declared source type
+- dependency declarations and platform rules are coherent
 - package does not misrepresent capability or support matrix
 
 ## Acceptance boundaries

@@ -28,7 +28,7 @@ fn install_creates_receipt_binary_and_list_output() {
         .args(["install", "vineyard-core"])
         .assert()
         .success()
-        .stdout(contains("from registry 'vineyard-core'"));
+        .stdout(contains("Install complete (profile: default)"));
 
     assert!(home.path().join("receipts/vineyard-core.json").exists());
     assert!(home.path().join("bin/vineyard-core").exists());
@@ -52,6 +52,6 @@ fn install_creates_receipt_binary_and_list_output() {
         .arg(&registry_root)
         .args(["install", "vineyard-core"])
         .assert()
-        .failure()
-        .stderr(contains("already installed"));
+        .success()
+        .stdout(contains("Skipping already installed dependency: vineyard-core"));
 }

@@ -12,6 +12,8 @@ pub struct TrellisPaths {
     pub registry_cache: PathBuf,
     pub registry_sources: PathBuf,
     pub registry_index: PathBuf,
+    pub locks: PathBuf,
+    pub profiles: PathBuf,
     pub bin: PathBuf,
     pub default_registry_root: PathBuf,
 }
@@ -30,6 +32,8 @@ impl TrellisPaths {
             registry_cache: registry.join("cache"),
             registry_sources: registry.join("sources.json"),
             registry_index: registry.join("index.json"),
+            locks: home.join("locks"),
+            profiles: home.join("profiles.json"),
             bin: home.join("bin"),
             default_registry_root: std::env::current_dir()
                 .unwrap_or_else(|_| PathBuf::from("."))
@@ -47,6 +51,7 @@ impl TrellisPaths {
             &self.receipts,
             &self.registry,
             &self.registry_cache,
+            &self.locks,
             &self.bin,
         ]
     }

@@ -113,7 +113,7 @@ fn install_list_remove_flow_works_for_all_native_packages_and_binaries_run() {
             .args(["install", pkg])
             .assert()
             .success()
-            .stdout(contains("Resolution summary"));
+            .stdout(contains("Resolution order"));
     }
 
     Command::cargo_bin("trellis")

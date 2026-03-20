@@ -1,17 +1,18 @@
 # Trellis Roadmap
 
-## v0.8 (current) — Ecosystem Authoring
+## v0.9 (current) — Advanced Resolution and Ecosystem Growth
 
-- contributor-first package author workflow (`scaffold`, `validate`, `inspect`, `install --from`, `readiness`)
-- stronger authoring and submission docs for PR-based registry contributions
-- local-first package testing and readiness checks for external developers
+- direct dependency resolution with deterministic install order
+- profile-scoped lock state artifacts
+- verify/repair command surface for installed-state drift
+- stronger docs around trust policy, profiles, lock state, and dependency behavior
 
-## v0.9 (planned)
+## v1.0+ (planned)
 
-- dependency resolution strategy and install planning model
-- lock state model for reproducible install plans
-- transactional rollback/repair execution foundations
-- stronger package lifecycle tooling for expanding native catalogs
+- broader dependency solving strategy and policy model
+- robust lock reproducibility workflows across teams
+- transactional rollback/repair execution maturity
+- stronger registry trust policy enforcement and ecosystem operations
 
 ## Later
 

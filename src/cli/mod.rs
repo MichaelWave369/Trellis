@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
     name = "trellis",
     version,
     about = "Registry-driven local-first package manager",
-    long_about = "Trellis v0.7 adds a first-run seed/bootstrap experience that initializes state, refreshes registry metadata, validates health, and guides users to a first successful package install."
+    long_about = "Trellis v0.9 adds dependency-aware installs, profile lock state, verify/repair commands, and durable ecosystem author workflows."
 )]
 pub struct Cli {
     #[arg(
@@ -23,6 +23,15 @@ pub struct Cli {
         help = "Override registry root to scan for *.trellis.yaml specs (default: ./packages)"
     )]
     pub registry_root: Option<std::path::PathBuf>,
+
+    #[arg(
+        long,
+        global = true,
+        default_value = "default",
+        value_name = "NAME",
+        help = "Environment profile (default, dev, minimal, diagnostics)"
+    )]
+    pub profile: String,
 
     #[command(subcommand)]
     pub command: Command,
@@ -68,6 +77,10 @@ pub enum Command {
     Seed,
     /// Alias for `seed`
     Bootstrap,
+    /// Verify installed state against receipts and lock state
+    Verify,
+    /// Attempt to repair exposed binaries from receipt state
+    Repair,
     /// Run environment and state integrity checks
     Doctor,
 }

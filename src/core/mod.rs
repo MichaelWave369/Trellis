@@ -1,4 +1,5 @@
 pub mod install;
+pub mod lock;
 pub mod paths;
 pub mod receipts;
 pub mod remove;

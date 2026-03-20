@@ -4,30 +4,33 @@ Trellis is a local-first, infrastructure-grade package manager focused on determ
 
 ## Status
 
-**v0.8 — Ecosystem Authoring**
+**v0.9 — Advanced Resolution and Ecosystem Growth**
 
-Trellis now includes a contributor-ready author workflow so external developers can scaffold, validate, inspect, test-install, and prepare package submissions with low friction.
+Trellis now adds a disciplined first dependency resolver, profile-scoped lock state, and usable verify/repair commands to move toward durable ecosystem infrastructure.
 
-## Fastest author workflow
+## Quick infrastructure demo
 
 ```bash
 cargo build
 export TRELLIS_HOME="$(mktemp -d)"
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" seed
-./target/debug/trellis scaffold my-tool
-./target/debug/trellis validate packages/my-tool/my-tool.trellis.yaml
-./target/debug/trellis inspect packages/my-tool/my-tool.trellis.yaml
-./target/debug/trellis --home "$TRELLIS_HOME" install --from packages/my-tool/my-tool.trellis.yaml
-./target/debug/trellis readiness packages/my-tool/my-tool.trellis.yaml
+
+# dependency-aware install + lock write
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" --profile default install overstrings-cli
+cat "$TRELLIS_HOME/locks/default.lock.json"
+
+# verify / repair surface
+./target/debug/trellis --home "$TRELLIS_HOME" verify
+./target/debug/trellis --home "$TRELLIS_HOME" repair
 ```
 
-## What changed in v0.8
+## v0.9 highlights
 
-- new package scaffolding command (`trellis scaffold <name>`)
-- source/binary scaffold kind support (`--kind source|binary`)
-- submission readiness helper (`trellis readiness <spec-or-package>`)
-- expanded author and submission documentation
-- maintained local-first install/validate/inspect/test loop
+- deterministic direct-dependency resolution with cycle/missing-dependency failure modes
+- profile-scoped lock state (`locks/<profile>.lock.json`)
+- simple environment profile model (`--profile`)
+- verify/repair commands for receipt/install/bin drift handling
+- explicit trust-policy documentation for recorded vs enforced behavior
 
 ## Native package catalog
 
@@ -37,12 +40,12 @@ export TRELLIS_HOME="$(mktemp -d)"
 | `vineyard-core` | Ecosystem substrate | platform/path/operator baseline commands |
 | `tiekat-pulse` | Diagnostics tool | runtime snapshots and process pulse checks |
 
-## Explicitly deferred beyond v0.8
+## Explicitly deferred beyond v0.9
 
-- full dependency resolver
-- lockfiles
-- transactional rollback execution
-- remote publishing service and mirror runtime transport
+- full global dependency solving
+- lockfile policy orchestration beyond current deterministic lock artifacts
+- full transactional rollback execution
+- remote publishing service and mirror transport runtime
 - GUI/dashboard, package marketplace/community features, blockchain/token mechanics
 
 ## Commands
@@ -59,6 +62,8 @@ export TRELLIS_HOME="$(mktemp -d)"
 - `trellis inspect <pkg-or-spec-path>`
 - `trellis install <pkg>`
 - `trellis install --from <spec-path>`
+- `trellis verify`
+- `trellis repair`
 - `trellis receipt <installed-pkg>`
 - `trellis list`
 - `trellis remove <pkg>`
@@ -66,6 +71,11 @@ export TRELLIS_HOME="$(mktemp -d)"
 
 ## Docs
 
+- `docs/dependencies.md`
+- `docs/lock-state.md`
+- `docs/profiles.md`
+- `docs/repair.md`
+- `docs/trust-policy.md`
 - `docs/authoring.md`
 - `docs/submission.md`
 - `docs/onboarding.md`

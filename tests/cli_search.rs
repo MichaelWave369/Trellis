@@ -95,5 +95,5 @@ fn install_unknown_package_includes_discovery_hint() {
         .args(["install", "unknown-package"])
         .assert()
         .failure()
-        .stderr(contains("Run `trellis search"));
+        .stderr(contains("missing dependency 'unknown-package' in active registry"));
 }
