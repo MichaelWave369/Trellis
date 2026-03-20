@@ -39,6 +39,10 @@ fn ensure_profiles(paths: &TrellisPaths) -> Result<()> {
         ],
     };
 
-    fs::write(&paths.profiles, serde_json::to_string_pretty(&cfg)?)
-        .with_context(|| format!("failed to write profiles config {}", paths.profiles.display()))
+    fs::write(&paths.profiles, serde_json::to_string_pretty(&cfg)?).with_context(|| {
+        format!(
+            "failed to write profiles config {}",
+            paths.profiles.display()
+        )
+    })
 }

@@ -1,4 +1,4 @@
-# Official Registry Submission Workflow (v0.8)
+# Official Registry Submission Workflow (v1.0.0-rc1)
 
 Trellis official package submission is repo-native and PR-based.
 

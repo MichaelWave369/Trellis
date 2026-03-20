@@ -1,17 +1,17 @@
-# Dependency Resolution (v0.9)
+# Dependency Resolution (v1.0.0-rc1)
 
-Trellis now resolves declared dependencies during `trellis install <pkg>`.
+`trellis install <pkg>` resolves dependency order from the active registry index.
 
-## Current model
+## Behavior
 
-- dependency graph is resolved from indexed package metadata
-- deterministic traversal order (sorted dependencies)
+- dependency traversal is deterministic (sorted)
 - install order is printed before execution
 - missing dependencies fail fast
-- simple cycle detection is enforced
+- cycles fail with a clear error
+- already-installed dependencies are skipped explicitly
 
-## Explicit limitations
+## Scope boundaries
 
 - this is not a full SAT/global solver
-- version conflict handling is intentionally limited
-- advanced alternative resolution strategies are deferred
+- advanced conflict policy remains post-1.0 work
+- `install --from <spec>` does not perform index-driven dependency expansion

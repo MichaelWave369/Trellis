@@ -1,42 +1,36 @@
-# Native Package Catalog (v0.6)
+# Native Package Catalog (v1.0.0-rc1)
 
-Trellis v0.6 ships a deliberately small first-class native catalog in the official `vineyard-core` registry.
+The catalog is intentionally small and demo-oriented, but each package is runnable and maintained.
 
-## Featured native packages
+## overstrings-cli
 
-### 1) `overstrings-cli`
+Role: text normalization utility.
 
-**Role:** Flagship text utility package.
-
-**Why it exists:** proves Trellis can distribute a practical command-line tool with repeatable behavior.
-
-**Key commands:**
+Sample commands:
 - `overstrings normalize "Hello World"`
 - `overstrings title "hello world"`
 - `overstrings stats "hello world"`
 
-### 2) `vineyard-core`
+## vineyard-core
 
-**Role:** Ecosystem substrate package.
+Role: operator baseline utilities.
 
-**Why it exists:** anchors environment/path/platform identity for operators using Trellis.
-
-**Key commands:**
+Sample commands:
 - `vineyard-core status`
 - `vineyard-core paths`
 - `vineyard-core doctor-hint`
 
-### 3) `tiekat-pulse`
+## tiekat-pulse
 
-**Role:** Diagnostic and introspection package.
+Role: diagnostics and pulse snapshots.
 
-**Why it exists:** demonstrates shipping lightweight health snapshot tooling through Trellis.
-
-**Key commands:**
+Sample commands:
 - `tiekat-pulse snapshot`
 - `tiekat-pulse process --name trellis`
 - `tiekat-pulse version`
 
-## Why this matters
+## Catalog credibility goals
 
-This catalog proves Trellis is no longer just package infrastructure. It now ships distinct, installable native tools while remaining local-first and trust-conscious.
+- metadata is concise and consistent
+- binaries are installable and executable
+- search/info/list/receipt surfaces are coherent for operator evaluation

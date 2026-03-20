@@ -53,5 +53,7 @@ fn install_creates_receipt_binary_and_list_output() {
         .args(["install", "vineyard-core"])
         .assert()
         .success()
-        .stdout(contains("Skipping already installed dependency: vineyard-core"));
+        .stdout(contains(
+            "Skipping already installed dependency: vineyard-core",
+        ));
 }

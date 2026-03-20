@@ -95,3 +95,57 @@ fn verify_detects_drift_and_repair_restores_binaries() {
         .assert()
         .success();
 }
+
+#[test]
+fn verify_uses_selected_profile_lock_state() {
+    let home = tempdir().unwrap();
+    let registry_root = format!("{}/packages", env!("CARGO_MANIFEST_DIR"));
+
+    for args in [
+        &["seed"][..],
+        &["--profile", "dev", "install", "vineyard-core"][..],
+    ] {
+        Command::cargo_bin("trellis")
+            .unwrap()
+            .arg("--home")
+            .arg(home.path())
+            .arg("--registry-root")
+            .arg(&registry_root)
+            .args(args)
+            .assert()
+            .success();
+    }
+
+    let default_lock = home.path().join("locks/default.lock.json");
+    fs::write(
+        &default_lock,
+        r#"{
+  "schema_version":"0.9",
+  "profile":"default",
+  "generated_at":"2026-03-20T00:00:00Z",
+  "packages":[{"name":"ghost-pkg","version":"0.0.1","registry":"vineyard-core"}]
+}"#,
+    )
+    .unwrap();
+
+    Command::cargo_bin("trellis")
+        .unwrap()
+        .arg("--home")
+        .arg(home.path())
+        .arg("--profile")
+        .arg("dev")
+        .args(["verify"])
+        .assert()
+        .success();
+
+    Command::cargo_bin("trellis")
+        .unwrap()
+        .arg("--home")
+        .arg(home.path())
+        .arg("--profile")
+        .arg("default")
+        .args(["verify"])
+        .assert()
+        .failure()
+        .stdout(contains("lock references ghost-pkg but receipt is missing"));
+}

@@ -1,15 +1,16 @@
-# Environment Profiles (v0.9)
+# Environment Profiles (v1.0.0-rc1)
 
-Trellis now supports a simple profile concept via `--profile`.
+Profiles are lightweight execution namespaces selected with `--profile`.
 
-Default profiles:
+Default profiles created by `trellis init`:
 - `default`
 - `dev`
 - `minimal`
 - `diagnostics`
 
-Current usage in v0.9:
-- lock state is written per profile (`<profile>.lock.json`)
-- install/verify flows can be segmented by profile identity
+## Current effect
 
-This is intentionally lightweight and not a full config-management system.
+- install writes lock state to `locks/<profile>.lock.json`
+- verify/repair read lock state for the selected profile when available
+
+Profiles do not currently represent a full policy/config system.

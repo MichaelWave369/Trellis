@@ -1,67 +1,27 @@
-# Trust, Shield, and Provenance (v0.4)
+# Trust and Provenance Model (v1.0.0-rc1)
 
-Trellis v0.4 deepens trust without pretending to provide guarantees it does not yet implement.
+Trellis reports trust/provenance state explicitly and avoids overclaiming.
 
-## What Trellis verifies today
+## Verified now
 
-- **Checksum verification**
-  - `local_file` and `local_archive`: SHA-256 over file bytes.
-  - `local_dir`: deterministic directory SHA-256 over sorted relative path + file content stream.
-- **Platform constraints** are evaluated before install.
-- **Conflict checks** block trust-critical overwrites:
-  - existing package receipt collisions
-  - exposed binary collisions
-  - conflicting install target paths
+- checksum verification when `checksum_sha256` is declared
+- platform constraint matching before install
+- collision checks for receipts, install targets, and exposed binaries
 
-## Trust states
+## Recorded now
 
-Checksum state:
-- `verified`
-- `unverified`
-- `unavailable`
-- `mismatched`
+- signature metadata state (`present`, `missing`, `malformed`, `unsupported`)
+- provenance metadata (`publisher`, `license`, declared registry)
+- receipt ledger details for installed files/binaries and trust summary
 
-Signature state:
-- `present`
-- `missing`
-- `malformed`
-- `unsupported`
+## Deferred / unsupported in rc1
 
-Notes:
-- `present` means metadata exists and is structurally parseable.
-- Trellis does **not** cryptographically validate distributed signatures yet.
-
-## Receipts as install ledger
-
-Receipts record:
-- package identity + kind + install time
-- registry source and source metadata
-- expected/actual checksum
-- signature/provenance metadata and status
-- platform evaluation
-- declared dependencies
-- installed files and exposed binaries
-- post-install action declarations
-- trust summary and warnings
-- transaction identifier (groundwork for future rollback)
-
-## `trellis doctor` trust model
-
-Doctor reports pass/warn/fail with remediation hints for:
-- registry config/index freshness and consistency
-- malformed/duplicate registry data
-- receipt parseability and conflict state
-- trust state visibility and malformed signature metadata
-- exposed binary integrity
-
-## Deferred beyond v0.4
-
-- distributed signature trust network
+- distributed cryptographic signature trust network
 - key management and signature policy enforcement
-- full transactional rollback engine
-- remote publishing/mirror transport behavior
+- transactional rollback guarantees
 
+## Operational commands
 
-## Human-readable receipts (v0.5)
-
-Use `trellis receipt <pkg>` to render the machine receipt into an operator-friendly summary for quick incident/debug review.
+- `trellis receipt <pkg>` renders trust/provenance and install ledger details
+- `trellis verify` checks receipt/install/bin consistency (+ lock consistency when lock exists)
+- `trellis doctor` reports pass/warn/fail health status with remediation hints

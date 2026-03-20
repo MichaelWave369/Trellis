@@ -4,33 +4,79 @@ Trellis is a local-first, infrastructure-grade package manager focused on determ
 
 ## Status
 
-**v0.9 — Advanced Resolution and Ecosystem Growth**
+**v1.0.0-rc1 — Release Candidate Hardening**
 
-Trellis now adds a disciplined first dependency resolver, profile-scoped lock state, and usable verify/repair commands to move toward durable ecosystem infrastructure.
+Trellis has completed its original feature map and is now focused on coherence, reliability, and honest trust language for serious evaluation.
 
-## Quick infrastructure demo
+## What Trellis is
+
+- a CLI-first package manager with a human-readable local state model
+- deterministic registry indexing and dependency ordering for practical workflows
+- explicit trust/provenance recording with clear boundaries on what is enforced
+- a small but real native package catalog for end-to-end evaluation
+
+## What Trellis is not
+
+- not a GUI/dashboard product
+- not a marketplace/community layer
+- not a blockchain/token system
+- not a mythology-first runtime experience
+
+## What v1.0.0-rc1 includes
+
+- coherent command surface for onboarding, authoring, maintenance, and repair workflows
+- profile-scoped lock artifacts (`locks/<profile>.lock.json`)
+- deterministic dependency traversal during indexed installs
+- verify/repair flows for receipt/bin drift detection and remediation
+- consistent docs for trust policy, registry behavior, and release boundaries
+
+## What is explicitly not in 1.0
+
+- full SAT/global dependency solving
+- transactional rollback guarantees
+- hosted publish service or remote execution model
+- mirror-transport failover runtime
+
+## Quickstart (new user path)
 
 ```bash
 cargo build
 export TRELLIS_HOME="$(mktemp -d)"
+
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" seed
-
-# dependency-aware install + lock write
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" --profile default install overstrings-cli
-cat "$TRELLIS_HOME/locks/default.lock.json"
-
-# verify / repair surface
-./target/debug/trellis --home "$TRELLIS_HOME" verify
-./target/debug/trellis --home "$TRELLIS_HOME" repair
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" search cli
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install overstrings-cli
+"$TRELLIS_HOME/bin/overstrings" normalize "Hello Trellis"
+./target/debug/trellis --home "$TRELLIS_HOME" receipt overstrings-cli
+./target/debug/trellis --home "$TRELLIS_HOME" doctor
 ```
 
-## v0.9 highlights
+## Author workflow demo
 
-- deterministic direct-dependency resolution with cycle/missing-dependency failure modes
-- profile-scoped lock state (`locks/<profile>.lock.json`)
-- simple environment profile model (`--profile`)
-- verify/repair commands for receipt/install/bin drift handling
-- explicit trust-policy documentation for recorded vs enforced behavior
+```bash
+export TRELLIS_HOME="$(mktemp -d)"
+./target/debug/trellis --home "$TRELLIS_HOME" init
+
+./target/debug/trellis scaffold demo-tool --kind binary --out /tmp
+./target/debug/trellis validate /tmp/demo-tool/demo-tool.trellis.yaml
+./target/debug/trellis inspect /tmp/demo-tool/demo-tool.trellis.yaml
+./target/debug/trellis --home "$TRELLIS_HOME" install --from /tmp/demo-tool/demo-tool.trellis.yaml
+./target/debug/trellis readiness /tmp/demo-tool/demo-tool.trellis.yaml
+```
+
+## Verify / repair workflow demo
+
+```bash
+export TRELLIS_HOME="$(mktemp -d)"
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" seed
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" --profile default install overstrings-cli
+
+./target/debug/trellis --home "$TRELLIS_HOME" --profile default verify
+rm "$TRELLIS_HOME/bin/overstrings"
+./target/debug/trellis --home "$TRELLIS_HOME" --profile default verify
+./target/debug/trellis --home "$TRELLIS_HOME" --profile default repair
+./target/debug/trellis --home "$TRELLIS_HOME" --profile default verify
+```
 
 ## Native package catalog
 
@@ -40,15 +86,7 @@ cat "$TRELLIS_HOME/locks/default.lock.json"
 | `vineyard-core` | Ecosystem substrate | platform/path/operator baseline commands |
 | `tiekat-pulse` | Diagnostics tool | runtime snapshots and process pulse checks |
 
-## Explicitly deferred beyond v0.9
-
-- full global dependency solving
-- lockfile policy orchestration beyond current deterministic lock artifacts
-- full transactional rollback execution
-- remote publishing service and mirror transport runtime
-- GUI/dashboard, package marketplace/community features, blockchain/token mechanics
-
-## Commands
+## Command surface
 
 - `trellis init`
 - `trellis seed`
@@ -69,21 +107,28 @@ cat "$TRELLIS_HOME/locks/default.lock.json"
 - `trellis remove <pkg>`
 - `trellis doctor`
 
+Global flags:
+- `--home <path>`
+- `--registry-root <path>`
+- `--profile <name>`
+
 ## Docs
 
+- `docs/onboarding.md`
+- `docs/authoring.md`
+- `docs/registry.md`
+- `docs/trust.md`
+- `docs/trust-policy.md`
 - `docs/dependencies.md`
 - `docs/lock-state.md`
 - `docs/profiles.md`
 - `docs/repair.md`
-- `docs/trust-policy.md`
-- `docs/authoring.md`
-- `docs/submission.md`
-- `docs/onboarding.md`
 - `docs/packages.md`
-- `docs/registry.md`
-- `docs/trust.md`
+- `docs/submission.md`
 - `docs/package-spec.md`
 - `docs/roadmap.md`
+- `CHANGELOG.md`
+- `RELEASE_NOTES.md`
 
 ## License
 

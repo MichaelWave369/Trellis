@@ -1,17 +1,26 @@
-# Verify and Repair (v0.9)
+# Verify and Repair (v1.0.0-rc1)
 
-Trellis exposes first usable integrity maintenance commands:
+Trellis provides two maintenance commands:
 
 - `trellis verify`
 - `trellis repair`
 
 ## verify
 
-Checks receipt/install/bin consistency and lock-vs-receipt alignment.
+Checks:
+- receipt file readability
+- install-root existence
+- exposed binary existence and target existence
+- lock vs receipt consistency for the selected profile (if lock exists)
 
 ## repair
 
-Attempts practical local repair:
-- recreates missing exposed binaries when targets still exist
+Attempts focused local remediation:
+- recreates missing exposed binaries when recorded targets still exist
 
-`repair` is intentionally scoped and does not claim full transactional rollback.
+Then reruns verify checks and reports whether state is consistent.
+
+## Scope boundaries
+
+- no transactional rollback guarantees
+- no automatic payload re-fetch/reinstall in repair

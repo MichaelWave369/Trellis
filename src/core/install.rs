@@ -82,7 +82,7 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
 
     if !spec.dependencies.is_empty() {
         println!(
-            "Dependency declarations: {} (auto-resolution remains deferred)",
+            "Dependency declarations: {} (resolved when installed from indexed package names)",
             spec.dependencies.len()
         );
     }

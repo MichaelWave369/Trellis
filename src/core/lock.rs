@@ -24,9 +24,14 @@ pub fn lock_path(paths: &TrellisPaths, profile: &str) -> std::path::PathBuf {
     paths.locks.join(format!("{}.lock.json", profile))
 }
 
-pub fn write_lock(paths: &TrellisPaths, profile: &str, mut packages: Vec<LockedPackage>) -> Result<()> {
+pub fn write_lock(
+    paths: &TrellisPaths,
+    profile: &str,
+    mut packages: Vec<LockedPackage>,
+) -> Result<()> {
     packages.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.version.cmp(&b.version)));
-    packages.dedup_by(|a, b| a.name == b.name && a.version == b.version && a.registry == b.registry);
+    packages
+        .dedup_by(|a, b| a.name == b.name && a.version == b.version && a.registry == b.registry);
 
     let lock = LockState {
         schema_version: "0.9".to_string(),
@@ -35,8 +40,11 @@ pub fn write_lock(paths: &TrellisPaths, profile: &str, mut packages: Vec<LockedP
         packages,
     };
 
-    fs::write(lock_path(paths, profile), serde_json::to_string_pretty(&lock)?)
-        .with_context(|| "failed to write lock state".to_string())
+    fs::write(
+        lock_path(paths, profile),
+        serde_json::to_string_pretty(&lock)?,
+    )
+    .with_context(|| "failed to write lock state".to_string())
 }
 
 pub fn read_lock(paths: &TrellisPaths, profile: &str) -> Result<LockState> {

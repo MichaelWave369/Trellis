@@ -95,5 +95,7 @@ fn install_unknown_package_includes_discovery_hint() {
         .args(["install", "unknown-package"])
         .assert()
         .failure()
-        .stderr(contains("missing dependency 'unknown-package' in active registry"));
+        .stderr(contains(
+            "missing dependency 'unknown-package' in active registry",
+        ));
 }

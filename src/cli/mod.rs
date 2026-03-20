@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
     name = "trellis",
     version,
     about = "Registry-driven local-first package manager",
-    long_about = "Trellis v0.9 adds dependency-aware installs, profile lock state, verify/repair commands, and durable ecosystem author workflows."
+    long_about = "Trellis v1.0.0-rc1 hardens the existing command surface with coherent local-first workflows, deterministic installs, and honest trust/provenance reporting."
 )]
 pub struct Cli {
     #[arg(
@@ -43,8 +43,13 @@ pub enum Command {
     Init,
     /// Install a package by name or directly from a spec path
     Install {
+        /// Package name present in active registry index
         pkg: Option<String>,
-        #[arg(long, value_name = "PATH")]
+        #[arg(
+            long,
+            value_name = "PATH",
+            help = "Install directly from a .trellis.yaml path"
+        )]
         from: Option<std::path::PathBuf>,
     },
     /// Remove an installed package

@@ -1,17 +1,18 @@
-# Trust Policy and Signing Metadata (v0.9)
+# Trust Policy Boundaries (v1.0.0-rc1)
 
-Trellis distinguishes:
+Trellis separates three concepts and labels them explicitly:
 
-1. **Recorded metadata**
-   - registry trust policy fields
-   - package signature/checksum metadata
+1. **Verified now**
+   - checksum verification when expected checksum is provided
+   - platform compatibility check during install
 
-2. **Enforced checks**
-   - checksum verification when declared
-   - structural signature metadata assessment
+2. **Recorded now**
+   - signature metadata state and note
+   - provenance metadata in specs/receipts
 
-3. **Deferred guarantees**
-   - distributed cryptographic signature enforcement network
-   - advanced policy engines
+3. **Deferred / unsupported**
+   - distributed signature trust network
+   - keyring/policy enforcement framework
+   - transactional rollback guarantees
 
-This keeps trust behavior explicit, local-first, and inspectable.
+Use `info`, `receipt`, `doctor`, and `verify` together for a full trust-state picture.

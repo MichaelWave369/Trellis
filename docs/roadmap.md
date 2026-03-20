@@ -1,21 +1,21 @@
 # Trellis Roadmap
 
-## v0.9 (current) — Advanced Resolution and Ecosystem Growth
+## v1.0.0-rc1 (current)
 
-- direct dependency resolution with deterministic install order
-- profile-scoped lock state artifacts
-- verify/repair command surface for installed-state drift
-- stronger docs around trust policy, profiles, lock state, and dependency behavior
+Hardening and coherence release candidate:
+- stable CLI contract across onboarding/authoring/maintenance paths
+- deterministic indexed dependency ordering + profile-scoped lock state
+- verify/repair operational integrity flow
+- trust/provenance language aligned with real guarantees
 
-## v1.0+ (planned)
+## 1.0 GA focus
 
-- broader dependency solving strategy and policy model
-- robust lock reproducibility workflows across teams
-- transactional rollback/repair execution maturity
-- stronger registry trust policy enforcement and ecosystem operations
+- finalize release feedback from rc evaluations
+- tighten regression coverage and CI release quality gates
 
-## Later
+## Post-1.0 candidates
 
-- scoped remote sync/publish workflows
-- mirror/fallback transport behavior
-- broader ecosystem interoperability tooling
+- richer dependency conflict policy (still deterministic/local-first)
+- stronger lock reproducibility workflows for team environments
+- transactional repair/rollback maturity
+- scoped remote registry transport/publish enhancements

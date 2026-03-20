@@ -98,13 +98,17 @@ pub fn run(cli: Cli) -> Result<()> {
             }
         }
         Command::Info { pkg } => {
-            ensure_initialized(&paths)?;
+            if !Path::new(&pkg).exists() {
+                ensure_initialized(&paths)?;
+            }
             ui::header("Package Info");
             let entry = resolve_target(&paths, &registry_root, &pkg)?;
             print_info(&entry.spec, Some(&entry.registry));
         }
         Command::Validate { target } => {
-            ensure_initialized(&paths)?;
+            if !Path::new(&target).exists() {
+                ensure_initialized(&paths)?;
+            }
             ui::header("Validate Package Spec");
             let entry = resolve_target(&paths, &registry_root, &target)?;
             validate::validate(&entry.spec)?;
@@ -114,7 +118,9 @@ pub fn run(cli: Cli) -> Result<()> {
             ));
         }
         Command::Inspect { target } => {
-            ensure_initialized(&paths)?;
+            if !Path::new(&target).exists() {
+                ensure_initialized(&paths)?;
+            }
             ui::header("Inspect Package Spec");
             let entry = resolve_target(&paths, &registry_root, &target)?;
             let spec = entry.spec;
@@ -130,7 +136,9 @@ pub fn run(cli: Cli) -> Result<()> {
             println!("License       : {}", spec.provenance.license);
             println!("Dependencies  : {}", spec.dependencies.len());
             if !spec.dependencies.is_empty() {
-                ui::warn("Dependencies are declared; automatic dependency resolution is deferred");
+                ui::info(
+                    "Dependencies are resolved during `trellis install <pkg>` through registry index metadata"
+                );
             }
             println!(
                 "Integrity     : checksum={} signature={}",
@@ -156,16 +164,37 @@ pub fn run(cli: Cli) -> Result<()> {
             match (pkg, from) {
                 (Some(name), None) => {
                     let order = resolve_install_order(&paths, &registry_root, &name)?;
-                    println!("Resolution order: {}", order.iter().map(|e| e.spec.name.as_str()).collect::<Vec<_>>().join(" -> "));
+                    println!(
+                        "Resolution order: {}",
+                        order
+                            .iter()
+                            .map(|e| e.spec.name.as_str())
+                            .collect::<Vec<_>>()
+                            .join(" -> ")
+                    );
                     for entry in order {
                         if is_installed(&paths, &entry.spec.name) {
-                            ui::info(format!("Skipping already installed dependency: {}", entry.spec.name));
-                            installed_for_lock.push(LockedPackage { name: entry.spec.name.clone(), version: entry.spec.version.clone(), registry: entry.registry.clone()});
+                            ui::info(format!(
+                                "Skipping already installed dependency: {}",
+                                entry.spec.name
+                            ));
+                            installed_for_lock.push(LockedPackage {
+                                name: entry.spec.name.clone(),
+                                version: entry.spec.version.clone(),
+                                registry: entry.registry.clone(),
+                            });
                             continue;
                         }
-                        ui::step(format!("Installing {} {}", entry.spec.name, entry.spec.version));
+                        ui::step(format!(
+                            "Installing {} {}",
+                            entry.spec.name, entry.spec.version
+                        ));
                         install::install(&paths, &entry, &entry.spec)?;
-                        installed_for_lock.push(LockedPackage { name: entry.spec.name.clone(), version: entry.spec.version.clone(), registry: entry.registry.clone()});
+                        installed_for_lock.push(LockedPackage {
+                            name: entry.spec.name.clone(),
+                            version: entry.spec.version.clone(),
+                            registry: entry.registry.clone(),
+                        });
                     }
                     lock::write_lock(&paths, lock_profile, installed_for_lock.clone())?;
                     ui::ok(format!("Install complete (profile: {})", lock_profile));
@@ -174,15 +203,25 @@ pub fn run(cli: Cli) -> Result<()> {
                     let entry = load_entry_from_path(&path)?;
                     ui::step("Applying install plan");
                     install::install(&paths, &entry, &entry.spec)?;
-                    installed_for_lock.push(LockedPackage { name: entry.spec.name.clone(), version: entry.spec.version.clone(), registry: entry.registry.clone()});
+                    installed_for_lock.push(LockedPackage {
+                        name: entry.spec.name.clone(),
+                        version: entry.spec.version.clone(),
+                        registry: entry.registry.clone(),
+                    });
                     lock::write_lock(&paths, lock_profile, installed_for_lock.clone())?;
-                    ui::ok(format!("Installed {} {} from local path", entry.spec.name, entry.spec.version));
+                    ui::ok(format!(
+                        "Installed {} {} from local path",
+                        entry.spec.name, entry.spec.version
+                    ));
                 }
                 _ => bail!("use exactly one install target: either <pkg> or --from <path>"),
             }
 
-            ui::info(format!("Lock state written: {}", lock::lock_path(&paths, lock_profile).display()));
-            ui::info("Current dependency model resolves direct dependencies and nested declarations deterministically; complex conflict solving is deferred.");
+            ui::info(format!(
+                "Lock state written: {}",
+                lock::lock_path(&paths, lock_profile).display()
+            ));
+            ui::info("Current dependency model resolves declared dependencies deterministically; advanced conflict solving remains intentionally out of scope.");
         }
         Command::Remove { pkg } => {
             ensure_initialized(&paths)?;
@@ -219,6 +258,117 @@ pub fn run(cli: Cli) -> Result<()> {
                 ui::info("Install a package with `trellis install <pkg>`");
             } else {
                 ui::ok(format!("{} installed package(s)", found));
+            }
+        }
+        Command::Scaffold {
+            package_name,
+            kind,
+            out,
+        } => {
+            ui::header("Scaffold Package");
+            crate::spec::validate::validate_name(&package_name)?;
+            let kind = ScaffoldKind::from_str(&kind)?;
+            let root = out.unwrap_or_else(|| PathBuf::from("packages"));
+            ui::step(format!("Creating scaffold in {}", root.display()));
+            let package_dir = scaffold::scaffold_package(&root, &package_name, kind)?;
+            ui::ok(format!("Scaffold created at {}", package_dir.display()));
+            ui::info(format!(
+                "Next: trellis validate {}",
+                package_dir
+                    .join(format!("{}.trellis.yaml", package_name))
+                    .display()
+            ));
+        }
+        Command::Readiness { target } => {
+            ui::header("Submission Readiness");
+            if !Path::new(&target).exists() {
+                ensure_initialized(&paths)?;
+            }
+            let entry = resolve_target(&paths, &registry_root, &target)?;
+            validate::validate(&entry.spec)?;
+            println!("Checklist");
+            println!("  [ok] spec validates");
+            println!(
+                "  [{}] provenance.publisher set",
+                if entry.spec.provenance.publisher.starts_with("TODO") {
+                    "warn"
+                } else {
+                    "ok"
+                }
+            );
+            println!(
+                "  [{}] provenance.license set",
+                if entry.spec.provenance.license.starts_with("TODO") {
+                    "warn"
+                } else {
+                    "ok"
+                }
+            );
+            println!(
+                "  [{}] checksum declared",
+                if entry.spec.source.checksum_sha256.is_some() {
+                    "ok"
+                } else {
+                    "warn"
+                }
+            );
+            println!(
+                "  [{}] signature metadata",
+                match crate::trust::assess_signature(entry.spec.source.signature.as_deref()).state {
+                    crate::trust::SignatureState::Present => "ok",
+                    crate::trust::SignatureState::Missing => "warn",
+                    crate::trust::SignatureState::Malformed => "warn",
+                    crate::trust::SignatureState::Unsupported => "warn",
+                }
+            );
+            println!(
+                "  [ok] install entries: {}",
+                entry.spec.install.entries.len()
+            );
+            println!("  [ok] bin mappings: {}", entry.spec.bin.len());
+            ui::info("For official registry submissions, include package folder, payload, and spec in one PR.");
+        }
+        Command::Seed | Command::Bootstrap => {
+            run_seed(&paths, &registry_root)?;
+        }
+        Command::Verify => {
+            ensure_initialized(&paths)?;
+            ui::header("Verify Installed State");
+            ui::info(format!("Profile: {}", profile));
+            if !lock::lock_path(&paths, &profile).exists() {
+                ui::info("No lock state found for this profile; running receipt/bin consistency checks only");
+            }
+            let issues = verify_state(&paths, &profile)?;
+            if issues.is_empty() {
+                ui::ok("Installed state matches receipts and lock metadata");
+            } else {
+                for issue in &issues {
+                    ui::warn(issue);
+                }
+                bail!("verify found {} issue(s)", issues.len());
+            }
+        }
+        Command::Repair => {
+            ensure_initialized(&paths)?;
+            ui::header("Repair Installed State");
+            ui::info(format!("Profile: {}", profile));
+            if !lock::lock_path(&paths, &profile).exists() {
+                ui::info(
+                    "No lock state found for this profile; repair will use receipt/bin state only",
+                );
+            }
+            let repairs = repair_state(&paths)?;
+            for line in &repairs {
+                ui::info(line);
+            }
+            let issues = verify_state(&paths, &profile)?;
+            if issues.is_empty() {
+                ui::ok("Repair completed; state is now consistent");
+            } else {
+                for issue in &issues {
+                    ui::warn(issue);
+                }
+                bail!("repair could not resolve all issues");
             }
         }
         Command::Scaffold {
@@ -420,15 +570,6 @@ pub fn run(cli: Cli) -> Result<()> {
         }
     }
 
-    println!("Post-install  :");
-    if receipt.post_install_actions.is_empty() {
-        println!("  - none");
-    } else {
-        for action in &receipt.post_install_actions {
-            println!("  - {}", action);
-        }
-    }
-
     println!("Warnings      :");
     if receipt.trust.warnings.is_empty() {
         println!("  - none");
@@ -625,7 +766,11 @@ fn is_installed(paths: &TrellisPaths, pkg: &str) -> bool {
     paths.receipts.join(format!("{}.json", pkg)).exists()
 }
 
-fn resolve_install_order(paths: &TrellisPaths, registry_root: &Path, root: &str) -> Result<Vec<RegistryEntry>> {
+fn resolve_install_order(
+    paths: &TrellisPaths,
+    registry_root: &Path,
+    root: &str,
+) -> Result<Vec<RegistryEntry>> {
     ensure_index(paths, registry_root)?;
     let index = read_index(&paths.registry_index)?;
 
@@ -645,15 +790,24 @@ fn resolve_install_order(paths: &TrellisPaths, registry_root: &Path, root: &str)
         visited: &mut std::collections::BTreeSet<String>,
         order: &mut Vec<String>,
     ) -> Result<()> {
-        if visited.contains(name) { return Ok(()); }
-        if !visiting.insert(name.to_string()) { bail!("dependency cycle detected at '{}'", name); }
-        let pkg = by_name.get(name).ok_or_else(|| anyhow!("missing dependency '{}' in active registry", name))?;
+        if visited.contains(name) {
+            return Ok(());
+        }
+        if !visiting.insert(name.to_string()) {
+            bail!("dependency cycle detected at '{}'", name);
+        }
+        let pkg = by_name
+            .get(name)
+            .ok_or_else(|| anyhow!("missing dependency '{}' in active registry", name))?;
         let mut deps = pkg.dependencies.clone();
         deps.sort();
         for dep in deps {
             if let Some(other) = by_name.get(&dep) {
                 if other.version != pkg.version && dep == pkg.name {
-                    bail!("simple dependency conflict detected for '{}': multiple versions", dep);
+                    bail!(
+                        "simple dependency conflict detected for '{}': multiple versions",
+                        dep
+                    );
                 }
             }
             visit(&dep, by_name, visiting, visited, order)?;
@@ -668,24 +822,37 @@ fn resolve_install_order(paths: &TrellisPaths, registry_root: &Path, root: &str)
 
     let mut entries = Vec::new();
     for name in order {
-        let pkg = by_name.get(&name).ok_or_else(|| anyhow!("resolved package '{}' missing", name))?;
+        let pkg = by_name
+            .get(&name)
+            .ok_or_else(|| anyhow!("resolved package '{}' missing", name))?;
         let spec_path = PathBuf::from(&pkg.spec_path);
         let spec = load_spec(&spec_path)?;
-        entries.push(RegistryEntry { registry: pkg.registry.clone(), spec_path, spec_rel_path: pkg.spec_rel_path.clone(), spec });
+        entries.push(RegistryEntry {
+            registry: pkg.registry.clone(),
+            spec_path,
+            spec_rel_path: pkg.spec_rel_path.clone(),
+            spec,
+        });
     }
 
     Ok(entries)
 }
 
-fn verify_state(paths: &TrellisPaths) -> Result<Vec<String>> {
+fn verify_state(paths: &TrellisPaths, profile: &str) -> Result<Vec<String>> {
     let mut issues = Vec::new();
     for entry in fs::read_dir(&paths.receipts)? {
         let entry = entry?;
-        if entry.path().extension().and_then(|v| v.to_str()) != Some("json") { continue; }
+        if entry.path().extension().and_then(|v| v.to_str()) != Some("json") {
+            continue;
+        }
         let receipt = read_receipt(&entry.path())?;
         let install_root = paths.cellar.join(&receipt.name).join(&receipt.version);
         if !install_root.exists() {
-            issues.push(format!("missing install root for {}: {}", receipt.name, install_root.display()));
+            issues.push(format!(
+                "missing install root for {}: {}",
+                receipt.name,
+                install_root.display()
+            ));
         }
         for (bin, target) in &receipt.exposed_binaries {
             let bin_path = paths.bin.join(bin);
@@ -698,10 +865,13 @@ fn verify_state(paths: &TrellisPaths) -> Result<Vec<String>> {
         }
     }
 
-    if let Ok(lock) = lock::read_lock(paths, "default") {
+    if let Ok(lock) = lock::read_lock(paths, profile) {
         for locked in lock.packages {
             if !is_installed(paths, &locked.name) {
-                issues.push(format!("lock references {} but receipt is missing", locked.name));
+                issues.push(format!(
+                    "lock references {} but receipt is missing",
+                    locked.name
+                ));
             }
         }
     }
@@ -713,21 +883,35 @@ fn repair_state(paths: &TrellisPaths) -> Result<Vec<String>> {
     let mut actions = Vec::new();
     for entry in fs::read_dir(&paths.receipts)? {
         let entry = entry?;
-        if entry.path().extension().and_then(|v| v.to_str()) != Some("json") { continue; }
+        if entry.path().extension().and_then(|v| v.to_str()) != Some("json") {
+            continue;
+        }
         let receipt = read_receipt(&entry.path())?;
         for (bin, target) in &receipt.exposed_binaries {
             let bin_path = paths.bin.join(bin);
-            if bin_path.exists() { continue; }
-            if !Path::new(target).exists() { continue; }
+            if bin_path.exists() {
+                continue;
+            }
+            if !Path::new(target).exists() {
+                continue;
+            }
             #[cfg(unix)]
             {
                 if std::os::unix::fs::symlink(target, &bin_path).is_ok() {
-                    actions.push(format!("repaired symlink {} -> {}", bin_path.display(), target));
+                    actions.push(format!(
+                        "repaired symlink {} -> {}",
+                        bin_path.display(),
+                        target
+                    ));
                     continue;
                 }
             }
             fs::copy(target, &bin_path)?;
-            actions.push(format!("repaired copy {} -> {}", bin_path.display(), target));
+            actions.push(format!(
+                "repaired copy {} -> {}",
+                bin_path.display(),
+                target
+            ));
         }
     }
     Ok(actions)
