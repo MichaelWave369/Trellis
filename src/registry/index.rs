@@ -29,11 +29,12 @@ pub fn scan_registry(registry_root: &Path) -> Result<Vec<RegistryEntry>> {
     let mut out = Vec::new();
     for entry in WalkDir::new(registry_root)
         .into_iter()
-        .filter_map(Result::ok)
+        .filter_map(|entry| entry.ok())
     {
         if !entry.file_type().is_file() {
             continue;
         }
+
         let path = entry.path();
         if path
             .file_name()
@@ -47,6 +48,7 @@ pub fn scan_registry(registry_root: &Path) -> Result<Vec<RegistryEntry>> {
             });
         }
     }
+
     out.sort_by(|a, b| a.spec.name.cmp(&b.spec.name));
     Ok(out)
 }

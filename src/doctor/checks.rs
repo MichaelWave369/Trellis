@@ -21,6 +21,11 @@ pub fn run_checks(paths: &TrellisPaths) -> Vec<CheckReport> {
     ]
 }
 
+pub fn report_counts(reports: &[CheckReport]) -> (usize, usize) {
+    let passed = reports.iter().filter(|r| r.ok).count();
+    (passed, reports.len().saturating_sub(passed))
+}
+
 fn check_dirs(paths: &TrellisPaths) -> CheckReport {
     let missing = paths
         .all_dirs()
@@ -28,6 +33,7 @@ fn check_dirs(paths: &TrellisPaths) -> CheckReport {
         .filter(|p| !p.exists())
         .map(|p| p.display().to_string())
         .collect::<Vec<_>>();
+
     if missing.is_empty() {
         CheckReport {
             name: "directories",
@@ -104,8 +110,17 @@ fn check_binaries(paths: &TrellisPaths) -> CheckReport {
         }
     };
 
+    let mut count = 0usize;
     for entry in entries.flatten() {
         let path = entry.path();
+        if !path.is_file() && !path.is_symlink() {
+            return CheckReport {
+                name: "binaries",
+                ok: false,
+                detail: format!("non-file entry in bin: {}", path.display()),
+            };
+        }
+
         if path.is_symlink() {
             match fs::read_link(&path) {
                 Ok(target) => {
@@ -126,12 +141,14 @@ fn check_binaries(paths: &TrellisPaths) -> CheckReport {
                 }
             }
         }
+
+        count += 1;
     }
 
     CheckReport {
         name: "binaries",
         ok: true,
-        detail: "binary links valid".to_string(),
+        detail: format!("{} exposed binary file(s) validated", count),
     }
 }
 

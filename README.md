@@ -43,16 +43,21 @@ Implemented commands:
 - no "replace every package manager" claims
 - no overbuilt mythology
 
-## Quickstart
+## Quickstart (repo-local demo)
+
+Run from the repository root:
 
 ```bash
 cargo build
-./target/debug/trellis --home /tmp/trellis-demo init
-./target/debug/trellis --home /tmp/trellis-demo update
-./target/debug/trellis --home /tmp/trellis-demo search vineyard
-./target/debug/trellis --home /tmp/trellis-demo install vineyard-core
-./target/debug/trellis --home /tmp/trellis-demo list
-./target/debug/trellis --home /tmp/trellis-demo doctor
+export TRELLIS_HOME="$(mktemp -d)"
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" init
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" update
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" search vineyard
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" info vineyard-core
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install vineyard-core
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" list
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" doctor
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" remove vineyard-core
 ```
 
 ## Package spec example

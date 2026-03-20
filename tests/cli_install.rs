@@ -42,4 +42,15 @@ fn install_creates_receipt_binary_and_list_output() {
         .assert()
         .success()
         .stdout(contains("vineyard-core"));
+
+    Command::cargo_bin("trellis")
+        .unwrap()
+        .arg("--home")
+        .arg(home.path())
+        .arg("--registry-root")
+        .arg(&registry_root)
+        .args(["install", "vineyard-core"])
+        .assert()
+        .failure()
+        .stderr(contains("already installed"));
 }

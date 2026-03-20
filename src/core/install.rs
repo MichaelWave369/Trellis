@@ -2,16 +2,28 @@ use anyhow::{bail, Context, Result};
 use chrono::Utc;
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use walkdir::WalkDir;
 
 use crate::core::paths::TrellisPaths;
-use crate::core::receipts::{write_receipt, Receipt};
+use crate::core::receipts::{read_receipt, write_receipt, Receipt};
 use crate::registry::index::RegistryEntry;
 use crate::spec::package::PackageSpec;
 use crate::trust::checksum;
 
 pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) -> Result<()> {
+    let receipt_path = paths.receipts.join(format!("{}.json", spec.name));
+    if receipt_path.exists() {
+        let existing = read_receipt(&receipt_path)?;
+        bail!(
+            "package '{}' {} is already installed (installed version: {}). Run `trellis remove {}` first",
+            spec.name,
+            spec.version,
+            existing.version,
+            spec.name
+        );
+    }
+
     let spec_dir = entry
         .spec_path
         .parent()
@@ -52,9 +64,14 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
         if !target.exists() {
             bail!("binary target missing: {}", target.display());
         }
+
         let link_path = paths.bin.join(name);
         if link_path.exists() {
-            fs::remove_file(&link_path).or_else(|_| fs::remove_dir_all(&link_path))?;
+            fs::remove_file(&link_path)
+                .or_else(|_| fs::remove_dir_all(&link_path))
+                .with_context(|| {
+                    format!("failed to clean existing binary {}", link_path.display())
+                })?;
         }
         link_or_copy(&target, &link_path)?;
         exposed.insert(name.clone(), target.to_string_lossy().to_string());
@@ -73,7 +90,6 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
         license: spec.provenance.license.clone(),
     };
 
-    let receipt_path = paths.receipts.join(format!("{}.json", spec.name));
     write_receipt(&receipt_path, &receipt)?;
     Ok(())
 }
@@ -112,6 +128,7 @@ fn link_or_copy(target: &Path, link_path: &Path) -> Result<()> {
             return Ok(());
         }
     }
+
     #[cfg(windows)]
     {
         if std::os::windows::fs::symlink_file(target, link_path).is_ok() {

@@ -9,7 +9,6 @@ use crate::core::{remove, state};
 use crate::doctor::checks;
 use crate::registry::index::{read_index, scan_registry};
 use crate::registry::sync::sync_registry;
-use crate::spec::load_spec;
 
 pub fn run(cli: Cli) -> Result<()> {
     let paths = TrellisPaths::resolve(cli.home.as_deref())?;
@@ -31,11 +30,18 @@ pub fn run(cli: Cli) -> Result<()> {
             let query_lower = query.to_lowercase();
             let index = read_index(&paths.registry.join("index.json"))?;
             println!("Search results");
+
+            let mut matched = 0usize;
             for pkg in index.packages.iter().filter(|p| {
                 p.name.to_lowercase().contains(&query_lower)
                     || p.description.to_lowercase().contains(&query_lower)
             }) {
                 println!("- {:<20} {}", pkg.name, pkg.description);
+                matched += 1;
+            }
+
+            if matched == 0 {
+                println!("(no matches)");
             }
         }
         Command::Info { pkg } => {
@@ -82,11 +88,15 @@ pub fn run(cli: Cli) -> Result<()> {
             ensure_initialized(&paths)?;
             ensure_index(&paths, &registry_root)?;
             let reports = checks::run_checks(&paths);
+            let (passed, failed) = checks::report_counts(&reports);
+
             println!("Trellis doctor");
             for report in &reports {
                 let mark = if report.ok { "OK" } else { "FAIL" };
                 println!("- {:<14} {:<4} {}", report.name, mark, report.detail);
             }
+            println!("Summary: {} passed, {} failed", passed, failed);
+
             checks::summarize(&reports)?;
             println!("Environment is healthy");
         }
@@ -130,10 +140,4 @@ fn find_package(
         .into_iter()
         .find(|e| e.spec.name == name)
         .ok_or_else(|| anyhow!("package '{}' not found in local registry", name))
-}
-
-#[allow(dead_code)]
-fn _load_spec_from_path(path: &Path) -> Result<()> {
-    let _ = load_spec(path)?;
-    Ok(())
 }
