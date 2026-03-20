@@ -60,3 +60,8 @@ Doctor reports pass/warn/fail with remediation hints for:
 - key management and signature policy enforcement
 - full transactional rollback engine
 - remote publishing/mirror transport behavior
+
+
+## Human-readable receipts (v0.5)
+
+Use `trellis receipt <pkg>` to render the machine receipt into an operator-friendly summary for quick incident/debug review.

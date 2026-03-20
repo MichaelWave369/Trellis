@@ -4,28 +4,41 @@ Trellis is a local-first, infrastructure-grade package manager focused on determ
 
 ## Status
 
-**v0.4 — Trust, Shield, and Provenance**
+**v0.5 — UX and Identity Layer**
 
-Trellis now emphasizes install trust clarity: explicit checksum states, signature metadata status scaffolding, upgraded receipts as a trust ledger, safer conflict detection, and stronger doctor integrity checks.
+Trellis now adds a cohesive CLI output system, clearer progress/status reporting, refined package discovery/install summaries, and human-readable receipt rendering via `trellis receipt <pkg>`.
 
-## Scope (v0.4)
+## CLI UX philosophy
 
-- registry-driven package resolution (from v0.3)
-- explicit checksum verification paths (`local_file`, `local_archive`, `local_dir`)
-- trust state model (`verified`, `unverified`, `unavailable`, `mismatched`)
-- signature metadata state model (`present`, `missing`, `malformed`, `unsupported`)
-- receipt model upgraded for provenance, trust summary, and rollback groundwork
-- install integrity report and explicit conflict detection
-- doctor pass/warn/fail with trust/integrity remediation hints
+- clear over clever
+- trust signals over decoration
+- stable, terminal-friendly structure
+- practical remediation guidance
 
-## Explicitly deferred beyond v0.4
+## Scope (v0.5)
+
+- consistent section headers and status markers across commands
+- lightweight step/status reporting for update/install/doctor flows
+- polished search/list/info layouts for faster scanning
+- install resolution summary before apply
+- human-readable receipt rendering (`trellis receipt <pkg>`)
+- refined health/trust indicator presentation
+
+## Health and trust indicators
+
+Trellis uses concise status labels:
+
+- command statuses: `[✓]`, `[!]`, `[x]`, `[i]`, `[>]`
+- doctor check states: `PASS`, `WARN`, `FAIL`
+- trust states in info/receipt/install output (checksum + signature)
+
+## Explicitly deferred beyond v0.5
 
 - full dependency solver
 - lockfiles
-- full rollback/transaction engine
-- distributed signature network and key infrastructure
-- remote registry publishing and mirror transport behavior
-- GUI/dashboard, marketplace/social features, blockchain/token mechanics
+- rollback engine
+- remote registry publishing and mirror transport runtime
+- GUI/dashboard, marketplace/community features, blockchain/token mechanics
 
 ## Commands
 
@@ -37,20 +50,21 @@ Trellis now emphasizes install trust clarity: explicit checksum states, signatur
 - `trellis inspect <pkg-or-spec-path>`
 - `trellis install <pkg>`
 - `trellis install --from <spec-path>`
+- `trellis receipt <installed-pkg>`
 - `trellis list`
 - `trellis remove <pkg>`
 - `trellis doctor`
 
-## Quick v0.4 demo
+## Quick v0.5 demo
 
 ```bash
 cargo build
 export TRELLIS_HOME="$(mktemp -d)"
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" init
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" update
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" info vineyard-core
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" search vineyard
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install vineyard-core
-cat "$TRELLIS_HOME/receipts/vineyard-core.json"
+./target/debug/trellis --home "$TRELLIS_HOME" receipt vineyard-core
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" doctor
 cat "$TRELLIS_HOME/registry/sources.json"
 cat "$TRELLIS_HOME/registry/index.json"

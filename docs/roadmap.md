@@ -1,15 +1,14 @@
 # Trellis Roadmap
 
-## v0.4 (current) — Trust, Shield, and Provenance
+## v0.5 (current) — UX and Identity Layer
 
-- explicit install trust states for checksums and signature metadata
-- receipt model upgraded into a structured install ledger
-- conflict detection for binary and install-target collisions
-- install integrity report with provenance + trust summary
-- doctor expanded to pass/warn/fail trust and integrity checks
-- rollback groundwork through transaction and richer receipt metadata
+- cohesive CLI output style with stable status markers and section headers
+- clearer update/install/doctor progress steps and summaries
+- polished search/list/info presentation for scanning package metadata
+- human-readable installed receipt rendering (`trellis receipt <pkg>`)
+- trust and health indicators integrated without runtime gimmicks
 
-## v0.5 (planned)
+## v0.6 (planned)
 
 - dependency resolution strategy and install planning model
 - lock state model for reproducible install plans
