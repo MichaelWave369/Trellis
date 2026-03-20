@@ -6,8 +6,9 @@ use tempfile::tempdir;
 fn doctor_reports_healthy_environment() {
     let home = tempdir().unwrap();
     let registry_root = format!("{}/packages", env!("CARGO_MANIFEST_DIR"));
+    let command_sets: &[&[&str]] = &[&["init"], &["update"], &["install", "vineyard-core"]];
 
-    for args in [["init"], ["update"], ["install", "vineyard-core"]] {
+    for args in command_sets {
         Command::cargo_bin("trellis")
             .unwrap()
             .arg("--home")

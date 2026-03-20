@@ -5,8 +5,9 @@ use tempfile::tempdir;
 fn remove_cleans_installed_state() {
     let home = tempdir().unwrap();
     let registry_root = format!("{}/packages", env!("CARGO_MANIFEST_DIR"));
+    let command_sets: &[&[&str]] = &[&["init"], &["update"], &["install", "vineyard-core"]];
 
-    for args in [["init"], ["update"], ["install", "vineyard-core"]] {
+    for args in command_sets {
         Command::cargo_bin("trellis")
             .unwrap()
             .arg("--home")
