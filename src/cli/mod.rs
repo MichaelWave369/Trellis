@@ -4,8 +4,8 @@ use clap::{Parser, Subcommand};
 #[command(
     name = "trellis",
     version,
-    about = "Local-first package manager prototype",
-    long_about = "Trellis v0.2 adds package authoring workflows: spec validation, package inspection, and local install from path."
+    about = "Registry-driven local-first package manager prototype",
+    long_about = "Trellis v0.3 adds Vineyard Registry indexing, provenance-aware search/info, and registry-backed installs while remaining local-first."
 )]
 pub struct Cli {
     #[arg(
@@ -40,7 +40,7 @@ pub enum Command {
     },
     /// Remove an installed package
     Remove { pkg: String },
-    /// Refresh local registry index from filesystem specs
+    /// Refresh active registry indexes and materialize local cache state
     Update,
     /// List installed packages from receipts
     List,

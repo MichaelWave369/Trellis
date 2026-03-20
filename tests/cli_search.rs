@@ -3,7 +3,7 @@ use predicates::str::contains;
 use tempfile::tempdir;
 
 #[test]
-fn search_finds_vineyard_core_and_info_prints_metadata() {
+fn search_finds_vineyard_core_and_info_prints_registry_metadata() {
     let home = tempdir().unwrap();
     let registry_root = format!("{}/packages", env!("CARGO_MANIFEST_DIR"));
 
@@ -26,7 +26,8 @@ fn search_finds_vineyard_core_and_info_prints_metadata() {
         .args(["search", "vineyard"])
         .assert()
         .success()
-        .stdout(contains("vineyard-core"));
+        .stdout(contains("vineyard-core 0.2.0 [binary]"))
+        .stdout(contains("registry: vineyard-core"));
 
     Command::cargo_bin("trellis")
         .unwrap()
@@ -37,5 +38,6 @@ fn search_finds_vineyard_core_and_info_prints_metadata() {
         .args(["info", "vineyard-core"])
         .assert()
         .success()
-        .stdout(contains("Registry: vineyard-core"));
+        .stdout(contains("Resolved registry: vineyard-core"))
+        .stdout(contains("Signature status: Present"));
 }

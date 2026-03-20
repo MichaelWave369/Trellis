@@ -27,7 +27,8 @@ fn install_creates_receipt_binary_and_list_output() {
         .arg(&registry_root)
         .args(["install", "vineyard-core"])
         .assert()
-        .success();
+        .success()
+        .stdout(contains("from registry 'vineyard-core'"));
 
     assert!(home.path().join("receipts/vineyard-core.json").exists());
     assert!(home.path().join("bin/vineyard-core").exists());

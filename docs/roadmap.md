@@ -1,21 +1,23 @@
 # Trellis Roadmap
 
-## v0.2 (current)
+## v0.4 (current) — Trust, Shield, and Provenance
 
-- stronger package authoring schema
-- `validate` and `inspect` author commands
-- install from local spec path (`install --from`)
-- package kind and platform-aware install planning
-- expanded local registry fixtures (`vineyard-core`, `overstrings-cli`, `tiekat-pulse`)
+- explicit install trust states for checksums and signature metadata
+- receipt model upgraded into a structured install ledger
+- conflict detection for binary and install-target collisions
+- install integrity report with provenance + trust summary
+- doctor expanded to pass/warn/fail trust and integrity checks
+- rollback groundwork through transaction and richer receipt metadata
 
-## v0.3 (deferred)
+## v0.5 (planned)
 
-- dependency resolution and lock state
-- richer integrity policies and local signature verification
-- transactional rollback engine
-- multi-registry/tap architecture
+- dependency resolution strategy and install planning model
+- lock state model for reproducible install plans
+- transactional rollback/repair execution engine
+- signature policy enforcement and key management foundations
 
-## later
+## Later
 
-- remote sync/publish workflows
+- scoped remote sync/publish workflows
+- mirror/fallback transport behavior
 - broader ecosystem interoperability tooling
