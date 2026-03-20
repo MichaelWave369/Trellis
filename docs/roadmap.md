@@ -1,21 +1,21 @@
 # Trellis Roadmap
 
-## v0.2 (current)
+## v0.9 (current) — Advanced Resolution and Ecosystem Growth
 
-- stronger package authoring schema
-- `validate` and `inspect` author commands
-- install from local spec path (`install --from`)
-- package kind and platform-aware install planning
-- expanded local registry fixtures (`vineyard-core`, `overstrings-cli`, `tiekat-pulse`)
+- direct dependency resolution with deterministic install order
+- profile-scoped lock state artifacts
+- verify/repair command surface for installed-state drift
+- stronger docs around trust policy, profiles, lock state, and dependency behavior
 
-## v0.3 (deferred)
+## v1.0+ (planned)
 
-- dependency resolution and lock state
-- richer integrity policies and local signature verification
-- transactional rollback engine
-- multi-registry/tap architecture
+- broader dependency solving strategy and policy model
+- robust lock reproducibility workflows across teams
+- transactional rollback/repair execution maturity
+- stronger registry trust policy enforcement and ecosystem operations
 
-## later
+## Later
 
-- remote sync/publish workflows
+- scoped remote sync/publish workflows
+- mirror/fallback transport behavior
 - broader ecosystem interoperability tooling

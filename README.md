@@ -1,33 +1,60 @@
 # Trellis
 
-Trellis is a local-first package manager focused on deterministic state, explicit metadata, and trustworthy package workflows.
+Trellis is a local-first, infrastructure-grade package manager focused on deterministic state, explicit provenance, and trustworthy package workflows.
 
 ## Status
 
-**v0.2 Formula System + Native Packages**
+**v0.9 — Advanced Resolution and Ecosystem Growth**
 
-Trellis now supports package authoring workflows so package authors can add packages without editing Trellis core code.
+Trellis now adds a disciplined first dependency resolver, profile-scoped lock state, and usable verify/repair commands to move toward durable ecosystem infrastructure.
 
-## Scope (v0.2)
+## Quick infrastructure demo
 
-- local filesystem registry (`packages/`)
-- package spec validation and inspection
-- install by package name or `--from <spec-path>`
-- deterministic installs/removals with receipts
-- package kind and platform constraint checks
-- dependency declaration parsing (non-recursive)
+```bash
+cargo build
+export TRELLIS_HOME="$(mktemp -d)"
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" seed
 
-## Non-goals (v0.2)
+# dependency-aware install + lock write
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" --profile default install overstrings-cli
+cat "$TRELLIS_HOME/locks/default.lock.json"
 
-- no remote registry publishing/sync
-- no lockfiles
-- no full dependency solver
-- no GUI/dashboard
-- no blockchain/social features
+# verify / repair surface
+./target/debug/trellis --home "$TRELLIS_HOME" verify
+./target/debug/trellis --home "$TRELLIS_HOME" repair
+```
+
+## v0.9 highlights
+
+- deterministic direct-dependency resolution with cycle/missing-dependency failure modes
+- profile-scoped lock state (`locks/<profile>.lock.json`)
+- simple environment profile model (`--profile`)
+- verify/repair commands for receipt/install/bin drift handling
+- explicit trust-policy documentation for recorded vs enforced behavior
+
+## Native package catalog
+
+| Package | Role | Primary value |
+|---|---|---|
+| `overstrings-cli` | Flagship utility | text normalization/formatting commands |
+| `vineyard-core` | Ecosystem substrate | platform/path/operator baseline commands |
+| `tiekat-pulse` | Diagnostics tool | runtime snapshots and process pulse checks |
+
+## Explicitly deferred beyond v0.9
+
+- full global dependency solving
+- lockfile policy orchestration beyond current deterministic lock artifacts
+- full transactional rollback execution
+- remote publishing service and mirror transport runtime
+- GUI/dashboard, package marketplace/community features, blockchain/token mechanics
 
 ## Commands
 
 - `trellis init`
+- `trellis seed`
+- `trellis bootstrap`
+- `trellis scaffold <package-name> [--kind binary|source] [--out <path>]`
+- `trellis readiness <spec-or-package>`
 - `trellis update`
 - `trellis search <query>`
 - `trellis info <pkg-or-spec-path>`
@@ -35,42 +62,28 @@ Trellis now supports package authoring workflows so package authors can add pack
 - `trellis inspect <pkg-or-spec-path>`
 - `trellis install <pkg>`
 - `trellis install --from <spec-path>`
+- `trellis verify`
+- `trellis repair`
+- `trellis receipt <installed-pkg>`
 - `trellis list`
 - `trellis remove <pkg>`
 - `trellis doctor`
 
-## Official local packages (v0.2)
+## Docs
 
-- `vineyard-core`
-- `overstrings-cli`
-- `tiekat-pulse`
-
-## 2-minute demo
-
-```bash
-cargo build
-export TRELLIS_HOME="$(mktemp -d)"
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" init
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" update
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" validate overstrings-cli
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" inspect overstrings-cli
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install overstrings-cli
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" list
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" doctor
-```
-
-## Authoring guide
-
-See `docs/authoring.md` and `docs/package-spec.md` for the full v0.2 authoring model.
-
-## Trust/provenance model
-
-Trellis keeps trust explicit and local:
-
-- provenance fields are required
-- checksum fields are supported and validated
-- receipt records include provenance and integrity metadata
-- signatures are metadata placeholders in v0.2 (no remote signing infra)
+- `docs/dependencies.md`
+- `docs/lock-state.md`
+- `docs/profiles.md`
+- `docs/repair.md`
+- `docs/trust-policy.md`
+- `docs/authoring.md`
+- `docs/submission.md`
+- `docs/onboarding.md`
+- `docs/packages.md`
+- `docs/registry.md`
+- `docs/trust.md`
+- `docs/package-spec.md`
+- `docs/roadmap.md`
 
 ## License
 

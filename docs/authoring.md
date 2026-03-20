@@ -1,51 +1,73 @@
-# Trellis Author Guide (v0.2)
+# Trellis Package Author Guide (v0.8)
 
-## Goal
+This guide is for external contributors authoring Trellis-native packages.
 
-A package author can add a package to the local Trellis registry without changing Trellis core code.
+## Author workflow (recommended)
 
-## Basic flow
+1. Scaffold a package:
+   - `trellis scaffold my-tool`
+   - or `trellis scaffold my-tool --kind source`
+2. Edit package metadata and payload files.
+3. Validate spec:
+   - `trellis validate packages/my-tool/my-tool.trellis.yaml`
+4. Inspect rendered metadata:
+   - `trellis inspect packages/my-tool/my-tool.trellis.yaml`
+5. Test local install:
+   - `trellis install --from packages/my-tool/my-tool.trellis.yaml`
+6. Check submission readiness:
+   - `trellis readiness packages/my-tool/my-tool.trellis.yaml`
 
-1. Create package folder under `packages/<name>/`.
-2. Add payload files under `payload/`.
-3. Create `<name>.trellis.yaml`.
-4. Run `trellis validate <path-to-spec>`.
-5. Run `trellis inspect <path-to-spec>`.
-6. Run `trellis install --from <path-to-spec>`.
+## Spec anatomy
 
-## Minimal binary example
+Key fields in `<name>.trellis.yaml`:
 
-```yaml
-schema_version: "0.2"
-name: my-tool
-version: 0.1.0
-description: My local tool
-homepage: https://example.org/my-tool
-kind: binary
-source:
-  type: local_dir
-  path: payload
-install:
-  strategy: copy
-  entries: [bin]
-bin:
-  my-tool: bin/my-tool
-dependencies: []
-provenance:
-  publisher: Example Org
-  license: MIT
-  registry: vineyard-core
-platform:
-  os: [linux, macos]
-  arch: [x86_64, aarch64]
-```
+- `name`, `version`, `description`, `homepage`
+- `kind` (`binary` or `source`)
+- `source` (`type`, `path`, optional `checksum_sha256`, optional `signature`)
+- `install.entries`
+- `bin` mappings
+- `dependencies` (declaration only; no full solver yet)
+- `provenance` (`publisher`, `license`, `registry`)
+- optional `platform` constraints
+- optional `post_install` with allowlisted policy
 
-## Minimal source-kind example
+## Naming and versioning
 
-Use `kind: source` when package payload is source-oriented but still installable through local copy strategy.
+- Names: lowercase + digits + hyphen (`2-64` chars)
+- Versions: semver-like (`1.2.3`, `1.2.3-alpha`)
 
-## Trust and provenance in v0.2
+## Source types
 
-- Add `checksum_sha256` when the source is a file.
-- Use `signature` as a local placeholder metadata field.
-- Verify metadata through `trellis inspect` and receipt output.
+- `local_dir` (recommended for most authoring)
+- `local_file`
+- `local_archive`
+
+## Trust/provenance expectations
+
+- Fill all provenance fields with real values.
+- Prefer declaring `checksum_sha256` when stable payload hashes are available.
+- Signature metadata is currently structural (`sig:<value>`) and not full cryptographic network trust.
+
+## Platform constraints
+
+Use `platform.os` and `platform.arch` to avoid installs where the package cannot run.
+
+## Post-install policy
+
+If `post_install` is used, policy must be allowlisted and command must satisfy current validator constraints.
+
+## Local testing checklist
+
+- `validate` passes
+- `inspect` shows expected metadata
+- `install --from` succeeds
+- exposed binaries run
+- receipt output reflects trust/provenance correctly
+
+## Common mistakes
+
+- invalid package name casing
+- missing `bin` mapping for `kind: binary`
+- absolute or parent-relative `source.path`
+- placeholder provenance fields left as `TODO`
+- platform constraints that do not match intended target systems

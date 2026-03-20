@@ -1,13 +1,14 @@
 schema_version: "0.2"
 name: vineyard-core
-version: 0.2.0
-description: Core utilities for the Trellis reference registry.
+version: 0.6.0
+description: Core substrate utilities for Trellis runtime paths, platform identity, and operator hints.
 homepage: https://example.org/vineyard-core
 kind: binary
 source:
   type: local_dir
   path: payload
-  signature: dev-local
+  checksum_sha256: d85a3678a995d33175d0fe8bd618bc49953c1db03f012a90ed39b67d22366750
+  signature: sig:vineyard-core-dev-local
 install:
   strategy: copy
   entries:
@@ -20,7 +21,7 @@ provenance:
   license: MIT
   registry: vineyard-core
 platform:
-  os: [linux, macos, windows]
+  os: [linux, macos]
   arch: [x86_64, aarch64]
 health:
-  notes: Baseline fixture package for end-to-end testing.
+  notes: Foundational package for ecosystem identity and operational baseline checks.
