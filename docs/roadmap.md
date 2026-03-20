@@ -1,21 +1,22 @@
 # Trellis Roadmap
 
-## v0.2 (current)
+## v0.5 (current) — UX and Identity Layer
 
-- stronger package authoring schema
-- `validate` and `inspect` author commands
-- install from local spec path (`install --from`)
-- package kind and platform-aware install planning
-- expanded local registry fixtures (`vineyard-core`, `overstrings-cli`, `tiekat-pulse`)
+- cohesive CLI output style with stable status markers and section headers
+- clearer update/install/doctor progress steps and summaries
+- polished search/list/info presentation for scanning package metadata
+- human-readable installed receipt rendering (`trellis receipt <pkg>`)
+- trust and health indicators integrated without runtime gimmicks
 
-## v0.3 (deferred)
+## v0.6 (planned)
 
-- dependency resolution and lock state
-- richer integrity policies and local signature verification
-- transactional rollback engine
-- multi-registry/tap architecture
+- dependency resolution strategy and install planning model
+- lock state model for reproducible install plans
+- transactional rollback/repair execution engine
+- signature policy enforcement and key management foundations
 
-## later
+## Later
 
-- remote sync/publish workflows
+- scoped remote sync/publish workflows
+- mirror/fallback transport behavior
 - broader ecosystem interoperability tooling

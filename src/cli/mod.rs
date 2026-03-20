@@ -4,8 +4,8 @@ use clap::{Parser, Subcommand};
 #[command(
     name = "trellis",
     version,
-    about = "Local-first package manager prototype",
-    long_about = "Trellis v0.2 adds package authoring workflows: spec validation, package inspection, and local install from path."
+    about = "Registry-driven local-first package manager",
+    long_about = "Trellis v0.5 adds a cohesive CLI UX layer with clearer status output, install resolution summaries, and human-readable receipt rendering."
 )]
 pub struct Cli {
     #[arg(
@@ -40,7 +40,7 @@ pub enum Command {
     },
     /// Remove an installed package
     Remove { pkg: String },
-    /// Refresh local registry index from filesystem specs
+    /// Refresh active registry indexes and materialize local cache state
     Update,
     /// List installed packages from receipts
     List,
@@ -52,6 +52,8 @@ pub enum Command {
     Validate { target: String },
     /// Inspect a package spec path or package name
     Inspect { target: String },
+    /// Render an installed package receipt in human-readable form
+    Receipt { pkg: String },
     /// Run environment and state integrity checks
     Doctor,
 }
@@ -61,3 +63,4 @@ pub fn parse() -> Cli {
 }
 
 pub mod commands;
+pub mod ui;

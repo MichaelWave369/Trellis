@@ -7,7 +7,7 @@ kind: binary
 source:
   type: local_dir
   path: payload
-  signature: dev-local
+  signature: sig:dev-local
 install:
   strategy: copy
   entries:

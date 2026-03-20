@@ -1,29 +1,44 @@
 # Trellis
 
-Trellis is a local-first package manager focused on deterministic state, explicit metadata, and trustworthy package workflows.
+Trellis is a local-first, infrastructure-grade package manager focused on deterministic state, explicit provenance, and trustworthy package workflows.
 
 ## Status
 
-**v0.2 Formula System + Native Packages**
+**v0.5 — UX and Identity Layer**
 
-Trellis now supports package authoring workflows so package authors can add packages without editing Trellis core code.
+Trellis now adds a cohesive CLI output system, clearer progress/status reporting, refined package discovery/install summaries, and human-readable receipt rendering via `trellis receipt <pkg>`.
 
-## Scope (v0.2)
+## CLI UX philosophy
 
-- local filesystem registry (`packages/`)
-- package spec validation and inspection
-- install by package name or `--from <spec-path>`
-- deterministic installs/removals with receipts
-- package kind and platform constraint checks
-- dependency declaration parsing (non-recursive)
+- clear over clever
+- trust signals over decoration
+- stable, terminal-friendly structure
+- practical remediation guidance
 
-## Non-goals (v0.2)
+## Scope (v0.5)
 
-- no remote registry publishing/sync
-- no lockfiles
-- no full dependency solver
-- no GUI/dashboard
-- no blockchain/social features
+- consistent section headers and status markers across commands
+- lightweight step/status reporting for update/install/doctor flows
+- polished search/list/info layouts for faster scanning
+- install resolution summary before apply
+- human-readable receipt rendering (`trellis receipt <pkg>`)
+- refined health/trust indicator presentation
+
+## Health and trust indicators
+
+Trellis uses concise status labels:
+
+- command statuses: `[✓]`, `[!]`, `[x]`, `[i]`, `[>]`
+- doctor check states: `PASS`, `WARN`, `FAIL`
+- trust states in info/receipt/install output (checksum + signature)
+
+## Explicitly deferred beyond v0.5
+
+- full dependency solver
+- lockfiles
+- rollback engine
+- remote registry publishing and mirror transport runtime
+- GUI/dashboard, marketplace/community features, blockchain/token mechanics
 
 ## Commands
 
@@ -35,42 +50,30 @@ Trellis now supports package authoring workflows so package authors can add pack
 - `trellis inspect <pkg-or-spec-path>`
 - `trellis install <pkg>`
 - `trellis install --from <spec-path>`
+- `trellis receipt <installed-pkg>`
 - `trellis list`
 - `trellis remove <pkg>`
 - `trellis doctor`
 
-## Official local packages (v0.2)
-
-- `vineyard-core`
-- `overstrings-cli`
-- `tiekat-pulse`
-
-## 2-minute demo
+## Quick v0.5 demo
 
 ```bash
 cargo build
 export TRELLIS_HOME="$(mktemp -d)"
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" init
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" update
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" validate overstrings-cli
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" inspect overstrings-cli
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install overstrings-cli
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" list
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" search vineyard
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install vineyard-core
+./target/debug/trellis --home "$TRELLIS_HOME" receipt vineyard-core
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" doctor
 ```
 
-## Authoring guide
+## Docs
 
-See `docs/authoring.md` and `docs/package-spec.md` for the full v0.2 authoring model.
-
-## Trust/provenance model
-
-Trellis keeps trust explicit and local:
-
-- provenance fields are required
-- checksum fields are supported and validated
-- receipt records include provenance and integrity metadata
-- signatures are metadata placeholders in v0.2 (no remote signing infra)
+- `docs/registry.md`
+- `docs/trust.md`
+- `docs/package-spec.md`
+- `docs/roadmap.md`
 
 ## License
 
