@@ -4,45 +4,54 @@ Trellis is a local-first, infrastructure-grade package manager focused on determ
 
 ## Status
 
-**v0.5 — UX and Identity Layer**
+**v0.8 — Ecosystem Authoring**
 
-Trellis now adds a cohesive CLI output system, clearer progress/status reporting, refined package discovery/install summaries, and human-readable receipt rendering via `trellis receipt <pkg>`.
+Trellis now includes a contributor-ready author workflow so external developers can scaffold, validate, inspect, test-install, and prepare package submissions with low friction.
 
-## CLI UX philosophy
+## Fastest author workflow
 
-- clear over clever
-- trust signals over decoration
-- stable, terminal-friendly structure
-- practical remediation guidance
+```bash
+cargo build
+export TRELLIS_HOME="$(mktemp -d)"
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" seed
+./target/debug/trellis scaffold my-tool
+./target/debug/trellis validate packages/my-tool/my-tool.trellis.yaml
+./target/debug/trellis inspect packages/my-tool/my-tool.trellis.yaml
+./target/debug/trellis --home "$TRELLIS_HOME" install --from packages/my-tool/my-tool.trellis.yaml
+./target/debug/trellis readiness packages/my-tool/my-tool.trellis.yaml
+```
 
-## Scope (v0.5)
+## What changed in v0.8
 
-- consistent section headers and status markers across commands
-- lightweight step/status reporting for update/install/doctor flows
-- polished search/list/info layouts for faster scanning
-- install resolution summary before apply
-- human-readable receipt rendering (`trellis receipt <pkg>`)
-- refined health/trust indicator presentation
+- new package scaffolding command (`trellis scaffold <name>`)
+- source/binary scaffold kind support (`--kind source|binary`)
+- submission readiness helper (`trellis readiness <spec-or-package>`)
+- expanded author and submission documentation
+- maintained local-first install/validate/inspect/test loop
 
-## Health and trust indicators
+## Native package catalog
 
-Trellis uses concise status labels:
+| Package | Role | Primary value |
+|---|---|---|
+| `overstrings-cli` | Flagship utility | text normalization/formatting commands |
+| `vineyard-core` | Ecosystem substrate | platform/path/operator baseline commands |
+| `tiekat-pulse` | Diagnostics tool | runtime snapshots and process pulse checks |
 
-- command statuses: `[✓]`, `[!]`, `[x]`, `[i]`, `[>]`
-- doctor check states: `PASS`, `WARN`, `FAIL`
-- trust states in info/receipt/install output (checksum + signature)
+## Explicitly deferred beyond v0.8
 
-## Explicitly deferred beyond v0.5
-
-- full dependency solver
+- full dependency resolver
 - lockfiles
-- rollback engine
-- remote registry publishing and mirror transport runtime
-- GUI/dashboard, marketplace/community features, blockchain/token mechanics
+- transactional rollback execution
+- remote publishing service and mirror runtime transport
+- GUI/dashboard, package marketplace/community features, blockchain/token mechanics
 
 ## Commands
 
 - `trellis init`
+- `trellis seed`
+- `trellis bootstrap`
+- `trellis scaffold <package-name> [--kind binary|source] [--out <path>]`
+- `trellis readiness <spec-or-package>`
 - `trellis update`
 - `trellis search <query>`
 - `trellis info <pkg-or-spec-path>`
@@ -55,23 +64,12 @@ Trellis uses concise status labels:
 - `trellis remove <pkg>`
 - `trellis doctor`
 
-## Quick v0.5 demo
-
-```bash
-cargo build
-export TRELLIS_HOME="$(mktemp -d)"
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" init
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" update
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" search vineyard
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install vineyard-core
-./target/debug/trellis --home "$TRELLIS_HOME" receipt vineyard-core
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" doctor
-cat "$TRELLIS_HOME/registry/sources.json"
-cat "$TRELLIS_HOME/registry/index.json"
-```
-
 ## Docs
 
+- `docs/authoring.md`
+- `docs/submission.md`
+- `docs/onboarding.md`
+- `docs/packages.md`
 - `docs/registry.md`
 - `docs/trust.md`
 - `docs/package-spec.md`

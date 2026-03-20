@@ -7,6 +7,7 @@ use crate::cli::{Cli, Command};
 use crate::core::install;
 use crate::core::paths::TrellisPaths;
 use crate::core::receipts::read_receipt;
+use crate::core::scaffold::{self, ScaffoldKind};
 use crate::core::{remove, state};
 use crate::doctor::checks;
 use crate::registry::index::{read_index, RegistryEntry};
@@ -63,14 +64,26 @@ pub fn run(cli: Cli) -> Result<()> {
                 "Name", "Version", "Kind", "Registry"
             );
 
+            let mut matches = index
+                .packages
+                .iter()
+                .filter(|p| {
+                    p.name.to_lowercase().contains(&query_lower)
+                        || p.description.to_lowercase().contains(&query_lower)
+                })
+                .collect::<Vec<_>>();
+            matches.sort_by(|a, b| {
+                b.featured
+                    .cmp(&a.featured)
+                    .then_with(|| a.name.cmp(&b.name))
+            });
+
             let mut matched = 0usize;
-            for pkg in index.packages.iter().filter(|p| {
-                p.name.to_lowercase().contains(&query_lower)
-                    || p.description.to_lowercase().contains(&query_lower)
-            }) {
+            for pkg in matches {
+                let featured = if pkg.featured { "featured" } else { "catalog" };
                 println!(
-                    "{:<20} {:<10} {:<8} {:<14} {}",
-                    pkg.name, pkg.version, pkg.kind, pkg.registry, pkg.description
+                    "{:<20} {:<10} {:<8} {:<14} {} [{}]",
+                    pkg.name, pkg.version, pkg.kind, pkg.registry, pkg.description, featured
                 );
                 matched += 1;
             }
@@ -196,8 +209,8 @@ pub fn run(cli: Cli) -> Result<()> {
             ensure_initialized(&paths)?;
             ui::header("Installed Packages");
             println!(
-                "{:<20} {:<10} {:<10} {:<10}",
-                "Name", "Version", "Kind", "Trust"
+                "{:<20} {:<10} {:<10} {:<12} {:<10}",
+                "Name", "Version", "Kind", "Registry", "Trust"
             );
             let mut found = 0usize;
             for entry in fs::read_dir(&paths.receipts)? {
@@ -205,10 +218,11 @@ pub fn run(cli: Cli) -> Result<()> {
                 if entry.path().extension().and_then(|v| v.to_str()) == Some("json") {
                     let receipt = read_receipt(&entry.path())?;
                     println!(
-                        "{:<20} {:<10} {:<10} {:<10}",
+                        "{:<20} {:<10} {:<10} {:<12} {:<10}",
                         receipt.name,
                         receipt.version,
                         receipt.kind,
+                        receipt.registry.name,
                         format!("{:?}", receipt.trust.checksum_state).to_lowercase()
                     );
                     found += 1;
@@ -220,6 +234,77 @@ pub fn run(cli: Cli) -> Result<()> {
             } else {
                 ui::ok(format!("{} installed package(s)", found));
             }
+        }
+        Command::Scaffold {
+            package_name,
+            kind,
+            out,
+        } => {
+            ui::header("Scaffold Package");
+            crate::spec::validate::validate_name(&package_name)?;
+            let kind = ScaffoldKind::from_str(&kind)?;
+            let root = out.unwrap_or_else(|| PathBuf::from("packages"));
+            ui::step(format!("Creating scaffold in {}", root.display()));
+            let package_dir = scaffold::scaffold_package(&root, &package_name, kind)?;
+            ui::ok(format!("Scaffold created at {}", package_dir.display()));
+            ui::info(format!(
+                "Next: trellis validate {}",
+                package_dir
+                    .join(format!("{}.trellis.yaml", package_name))
+                    .display()
+            ));
+        }
+        Command::Readiness { target } => {
+            ui::header("Submission Readiness");
+            if !Path::new(&target).exists() {
+                ensure_initialized(&paths)?;
+            }
+            let entry = resolve_target(&paths, &registry_root, &target)?;
+            validate::validate(&entry.spec)?;
+            println!("Checklist");
+            println!("  [ok] spec validates");
+            println!(
+                "  [{}] provenance.publisher set",
+                if entry.spec.provenance.publisher.starts_with("TODO") {
+                    "warn"
+                } else {
+                    "ok"
+                }
+            );
+            println!(
+                "  [{}] provenance.license set",
+                if entry.spec.provenance.license.starts_with("TODO") {
+                    "warn"
+                } else {
+                    "ok"
+                }
+            );
+            println!(
+                "  [{}] checksum declared",
+                if entry.spec.source.checksum_sha256.is_some() {
+                    "ok"
+                } else {
+                    "warn"
+                }
+            );
+            println!(
+                "  [{}] signature metadata",
+                match crate::trust::assess_signature(entry.spec.source.signature.as_deref()).state {
+                    crate::trust::SignatureState::Present => "ok",
+                    crate::trust::SignatureState::Missing => "warn",
+                    crate::trust::SignatureState::Malformed => "warn",
+                    crate::trust::SignatureState::Unsupported => "warn",
+                }
+            );
+            println!(
+                "  [ok] install entries: {}",
+                entry.spec.install.entries.len()
+            );
+            println!("  [ok] bin mappings: {}", entry.spec.bin.len());
+            ui::info("For official registry submissions, include package folder, payload, and spec in one PR.");
+        }
+        Command::Seed | Command::Bootstrap => {
+            run_seed(&paths, &registry_root)?;
         }
         Command::Doctor => {
             ensure_initialized(&paths)?;
@@ -323,6 +408,121 @@ fn render_receipt(paths: &TrellisPaths, pkg: &str) -> Result<()> {
 
     println!("Installed files: {}", receipt.installed_files.len());
     Ok(())
+}
+
+fn run_seed(paths: &TrellisPaths, registry_root: &Path) -> Result<()> {
+    ui::header("Trellis Seed");
+    ui::step("Ensuring local Trellis state exists");
+    state::init(paths)?;
+    ui::ok(format!("State ready at {}", paths.home.display()));
+
+    ui::step("Refreshing official registry metadata");
+    let report = sync_registry(paths, Some(registry_root))?;
+    ui::ok(format!(
+        "Registry ready: {} package(s), {} malformed",
+        report.index.packages.len(),
+        report.index.skipped.len()
+    ));
+
+    ui::step("Running health and trust checks");
+    let reports = checks::run_checks(paths);
+    let (passed, warnings, failed) = checks::report_counts(&reports);
+    println!(
+        "Health summary: {} passed, {} warning(s), {} failed",
+        passed, warnings, failed
+    );
+    for report in reports
+        .iter()
+        .filter(|r| r.status == checks::CheckStatus::Fail)
+    {
+        println!("  - {}: {}", report.name, report.detail);
+        if let Some(remediation) = &report.remediation {
+            println!("    remediation: {}", remediation);
+        }
+    }
+    checks::summarize(&reports)?;
+
+    let index = read_index(&paths.registry_index)?;
+    let mut featured = index
+        .packages
+        .iter()
+        .filter(|p| p.featured)
+        .map(|p| p.name.clone())
+        .collect::<Vec<_>>();
+    featured.sort();
+    featured.dedup();
+
+    println!(
+        "
+Featured packages"
+    );
+    if featured.is_empty() {
+        println!("  - (none declared)");
+    } else {
+        for name in &featured {
+            println!("  - {}", name);
+        }
+    }
+
+    let recommended = "vineyard-core";
+    println!(
+        "
+Recommended first package: {}",
+        recommended
+    );
+    println!(
+        "Why: establishes core substrate commands and environment/path visibility for Trellis operators."
+    );
+
+    if !is_installed(paths, recommended) {
+        ui::info(format!(
+            "Install now: trellis --home {} --registry-root {} install {}",
+            paths.home.display(),
+            registry_root.display(),
+            recommended
+        ));
+    } else {
+        ui::ok(format!("{} is already installed", recommended));
+    }
+
+    println!(
+        "
+Paths"
+    );
+    println!("  Trellis home : {}", paths.home.display());
+    println!("  Registry idx : {}", paths.registry_index.display());
+    println!("  Bin dir      : {}", paths.bin.display());
+    println!("  Receipts dir : {}", paths.receipts.display());
+    println!(
+        "  PATH hint    : add '{}' to PATH to run installed binaries directly",
+        paths.bin.display()
+    );
+
+    println!(
+        "
+Try next"
+    );
+    println!(
+        "  trellis --home {} --registry-root {} search cli",
+        paths.home.display(),
+        registry_root.display()
+    );
+    println!(
+        "  trellis --home {} --registry-root {} install overstrings-cli",
+        paths.home.display(),
+        registry_root.display()
+    );
+    println!(
+        "  trellis --home {} receipt vineyard-core",
+        paths.home.display()
+    );
+
+    ui::ok("Seed flow complete");
+    Ok(())
+}
+
+fn is_installed(paths: &TrellisPaths, pkg: &str) -> bool {
+    paths.receipts.join(format!("{}.json", pkg)).exists()
 }
 
 fn print_info(spec: &crate::spec::package::PackageSpec, resolved_registry: Option<&str>) {

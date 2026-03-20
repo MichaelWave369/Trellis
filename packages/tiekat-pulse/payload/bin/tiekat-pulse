@@ -1,2 +1,36 @@
 #!/usr/bin/env sh
-echo "tiekat-pulse 0.1.0"
+set -eu
+
+cmd="${1:-snapshot}"
+
+case "$cmd" in
+  snapshot)
+    now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    load="$(uptime | awk -F'load averages?: ' '{print $2}' 2>/dev/null || true)"
+    echo "tiekat-pulse snapshot"
+    echo "timestamp=$now"
+    if [ -n "$load" ]; then
+      echo "load=$load"
+    fi
+    ;;
+  process)
+    target="trellis"
+    if [ "${2:-}" = "--name" ] && [ -n "${3:-}" ]; then
+      target="$3"
+    fi
+    count="$(ps -A | grep -c "$target" || true)"
+    echo "process_name=$target count=$count"
+    ;;
+  version)
+    echo "tiekat-pulse 0.6.0"
+    ;;
+  *)
+    cat <<USAGE
+tiekat-pulse
+usage:
+  tiekat-pulse snapshot
+  tiekat-pulse process --name <pattern>
+  tiekat-pulse version
+USAGE
+    ;;
+esac

@@ -38,7 +38,12 @@ pub fn sync_registry(
         let scan = super::index::scan_registry(&source.name, &source_path);
         let package_count = scan.entries.len();
 
-        packages.extend(scan.entries.iter().map(build_package));
+        let featured = scan.metadata.featured_packages.clone().unwrap_or_default();
+        packages.extend(
+            scan.entries
+                .iter()
+                .map(|entry| build_package(entry, &featured)),
+        );
         skipped.extend(scan.skipped);
 
         registries.push(RegistrySummary {

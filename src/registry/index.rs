@@ -34,6 +34,7 @@ pub struct IndexedPackage {
     pub platform_arch: Vec<String>,
     pub provenance: IndexedProvenance,
     pub integrity: IndexedIntegrity,
+    pub featured: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -93,6 +94,7 @@ pub struct RegistryMetadata {
     pub title: String,
     pub revision: Option<String>,
     pub generated_at: Option<DateTime<Utc>>,
+    pub featured_packages: Option<Vec<String>>,
     pub provenance: RegistryMetadataProvenance,
 }
 
@@ -192,7 +194,7 @@ pub fn read_index(index_path: &Path) -> Result<RegistryIndex> {
     Ok(index)
 }
 
-pub fn build_package(entry: &RegistryEntry) -> IndexedPackage {
+pub fn build_package(entry: &RegistryEntry, featured_packages: &[String]) -> IndexedPackage {
     let source_type = match entry.spec.source.source_type {
         SourceType::File => "local_file",
         SourceType::Dir => "local_dir",
@@ -229,6 +231,7 @@ pub fn build_package(entry: &RegistryEntry) -> IndexedPackage {
             checksum_declared: entry.spec.source.checksum_sha256.is_some(),
             signature_declared: entry.spec.source.signature.is_some(),
         },
+        featured: featured_packages.iter().any(|p| p == &entry.spec.name),
     }
 }
 
@@ -254,6 +257,7 @@ pub fn default_registry_metadata(registry_name: &str, registry_root: &Path) -> R
         title: format!("{} local source", registry_name),
         revision: None,
         generated_at: None,
+        featured_packages: None,
         provenance: RegistryMetadataProvenance {
             maintainer: "unknown".to_string(),
             trust_policy: "metadata-only".to_string(),

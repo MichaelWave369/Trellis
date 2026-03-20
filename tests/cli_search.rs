@@ -70,3 +70,30 @@ fn search_no_results_shows_guidance() {
         .stdout(contains("No packages matched your query"))
         .stdout(contains("Try a broader query"));
 }
+
+#[test]
+fn install_unknown_package_includes_discovery_hint() {
+    let home = tempdir().unwrap();
+    let registry_root = format!("{}/packages", env!("CARGO_MANIFEST_DIR"));
+
+    Command::cargo_bin("trellis")
+        .unwrap()
+        .arg("--home")
+        .arg(home.path())
+        .arg("--registry-root")
+        .arg(&registry_root)
+        .args(["seed"])
+        .assert()
+        .success();
+
+    Command::cargo_bin("trellis")
+        .unwrap()
+        .arg("--home")
+        .arg(home.path())
+        .arg("--registry-root")
+        .arg(&registry_root)
+        .args(["install", "unknown-package"])
+        .assert()
+        .failure()
+        .stderr(contains("Run `trellis search"));
+}

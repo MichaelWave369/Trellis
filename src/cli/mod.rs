@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
     name = "trellis",
     version,
     about = "Registry-driven local-first package manager",
-    long_about = "Trellis v0.5 adds a cohesive CLI UX layer with clearer status output, install resolution summaries, and human-readable receipt rendering."
+    long_about = "Trellis v0.7 adds a first-run seed/bootstrap experience that initializes state, refreshes registry metadata, validates health, and guides users to a first successful package install."
 )]
 pub struct Cli {
     #[arg(
@@ -54,6 +54,20 @@ pub enum Command {
     Inspect { target: String },
     /// Render an installed package receipt in human-readable form
     Receipt { pkg: String },
+    /// Scaffold a new package authoring workspace
+    Scaffold {
+        package_name: String,
+        #[arg(long, default_value = "binary", value_parser = ["binary", "source"]) ]
+        kind: String,
+        #[arg(long, value_name = "PATH")]
+        out: Option<std::path::PathBuf>,
+    },
+    /// Print author/maintainer submission readiness hints for a spec or package
+    Readiness { target: String },
+    /// Guided first-run onboarding flow
+    Seed,
+    /// Alias for `seed`
+    Bootstrap,
     /// Run environment and state integrity checks
     Doctor,
 }

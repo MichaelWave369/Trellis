@@ -8,6 +8,7 @@ The default official registry source is `vineyard-core`.
 
 - source content root: local `packages/` tree (or `--registry-root` override)
 - optional registry metadata file: `<registry-root>/registry.yaml`
+- optional `featured_packages` list for curated catalog presentation
 - package specs: `*.trellis.yaml`
 
 ## Registry source config
@@ -40,6 +41,7 @@ Trellis separates source content from local state:
 - schema + generation timestamp
 - per-registry summary (counts, revision, mirrors)
 - flattened package entries for command resolution
+- featured package markers for curated catalog UX
 - skipped/malformed spec diagnostics
 
 Index generation is deterministic:

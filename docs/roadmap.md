@@ -1,19 +1,17 @@
 # Trellis Roadmap
 
-## v0.5 (current) — UX and Identity Layer
+## v0.8 (current) — Ecosystem Authoring
 
-- cohesive CLI output style with stable status markers and section headers
-- clearer update/install/doctor progress steps and summaries
-- polished search/list/info presentation for scanning package metadata
-- human-readable installed receipt rendering (`trellis receipt <pkg>`)
-- trust and health indicators integrated without runtime gimmicks
+- contributor-first package author workflow (`scaffold`, `validate`, `inspect`, `install --from`, `readiness`)
+- stronger authoring and submission docs for PR-based registry contributions
+- local-first package testing and readiness checks for external developers
 
-## v0.6 (planned)
+## v0.9 (planned)
 
 - dependency resolution strategy and install planning model
 - lock state model for reproducible install plans
-- transactional rollback/repair execution engine
-- signature policy enforcement and key management foundations
+- transactional rollback/repair execution foundations
+- stronger package lifecycle tooling for expanding native catalogs
 
 ## Later
 

@@ -1,2 +1,30 @@
 #!/usr/bin/env sh
-echo "vineyard-core 0.1.0"
+set -eu
+
+cmd="${1:-status}"
+
+case "$cmd" in
+  status)
+    echo "vineyard-core 0.6.0"
+    echo "platform=$(uname -s | tr '[:upper:]' '[:lower:]')"
+    echo "arch=$(uname -m)"
+    ;;
+  paths)
+    home="${TRELLIS_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/trellis}"
+    echo "trellis_home=$home"
+    echo "registry=$home/registry"
+    echo "cellar=$home/cellar"
+    ;;
+  doctor-hint)
+    echo "Run: trellis doctor"
+    ;;
+  *)
+    cat <<USAGE
+vineyard-core
+usage:
+  vineyard-core status
+  vineyard-core paths
+  vineyard-core doctor-hint
+USAGE
+    ;;
+esac
