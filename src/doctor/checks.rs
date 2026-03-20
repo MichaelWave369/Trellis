@@ -1,8 +1,11 @@
 use anyhow::Result;
+use chrono::{Duration, Utc};
+use std::collections::HashSet;
 use std::fs;
 
 use crate::core::paths::TrellisPaths;
 use crate::core::receipts::read_receipt;
+use crate::registry::config::read_registry_config;
 use crate::registry::index::read_index;
 
 #[derive(Debug)]
@@ -15,7 +18,9 @@ pub struct CheckReport {
 pub fn run_checks(paths: &TrellisPaths) -> Vec<CheckReport> {
     vec![
         check_dirs(paths),
+        check_registry_config(paths),
         check_registry_index(paths),
+        check_registry_integrity(paths),
         check_receipts(paths),
         check_binaries(paths),
     ]
@@ -49,18 +54,100 @@ fn check_dirs(paths: &TrellisPaths) -> CheckReport {
     }
 }
 
-fn check_registry_index(paths: &TrellisPaths) -> CheckReport {
-    let path = paths.registry.join("index.json");
-    match read_index(&path) {
-        Ok(index) => CheckReport {
-            name: "registry index",
-            ok: true,
-            detail: format!("readable ({} packages)", index.packages.len()),
+fn check_registry_config(paths: &TrellisPaths) -> CheckReport {
+    match read_registry_config(&paths.registry_sources) {
+        Ok(config) => {
+            let enabled = config.sources.into_iter().filter(|s| s.enabled).count();
+            CheckReport {
+                name: "registry config",
+                ok: enabled > 0,
+                detail: format!("{} enabled source(s)", enabled),
+            }
+        }
+        Err(err) => CheckReport {
+            name: "registry config",
+            ok: false,
+            detail: err.to_string(),
         },
+    }
+}
+
+fn check_registry_index(paths: &TrellisPaths) -> CheckReport {
+    match read_index(&paths.registry_index) {
+        Ok(index) => {
+            let age = Utc::now() - index.generated_at;
+            let stale = age > Duration::days(30);
+            CheckReport {
+                name: "registry index",
+                ok: !stale,
+                detail: if stale {
+                    format!(
+                        "stale index ({} packages, generated {})",
+                        index.packages.len(),
+                        index.generated_at
+                    )
+                } else {
+                    format!(
+                        "readable ({} packages, generated {})",
+                        index.packages.len(),
+                        index.generated_at
+                    )
+                },
+            }
+        }
         Err(err) => CheckReport {
             name: "registry index",
             ok: false,
             detail: err.to_string(),
+        },
+    }
+}
+
+fn check_registry_integrity(paths: &TrellisPaths) -> CheckReport {
+    let index = match read_index(&paths.registry_index) {
+        Ok(index) => index,
+        Err(err) => {
+            return CheckReport {
+                name: "registry health",
+                ok: false,
+                detail: err.to_string(),
+            }
+        }
+    };
+
+    let mut duplicate_guard = HashSet::new();
+    for pkg in &index.packages {
+        let key = format!("{}:{}:{}", pkg.registry, pkg.name, pkg.version);
+        if !duplicate_guard.insert(key.clone()) {
+            return CheckReport {
+                name: "registry health",
+                ok: false,
+                detail: format!("duplicate package entry: {}", key),
+            };
+        }
+
+        if !std::path::Path::new(&pkg.spec_path).exists() {
+            return CheckReport {
+                name: "registry health",
+                ok: false,
+                detail: format!("missing spec path in index: {}", pkg.spec_path),
+            };
+        }
+    }
+
+    CheckReport {
+        name: "registry health",
+        ok: index.skipped.is_empty(),
+        detail: if index.skipped.is_empty() {
+            format!(
+                "{} indexed package(s) with no malformed entries",
+                index.packages.len()
+            )
+        } else {
+            format!(
+                "{} malformed spec(s); run 'trellis update' and inspect registry/index.json",
+                index.skipped.len()
+            )
         },
     }
 }
