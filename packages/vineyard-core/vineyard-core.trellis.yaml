@@ -1,0 +1,20 @@
+name: vineyard-core
+version: 0.1.0
+description: Core utilities for the Trellis reference registry.
+homepage: https://example.org/vineyard-core
+source:
+  type: file
+  path: payload
+install:
+  strategy: copy
+  entries:
+    - bin
+bin:
+  vineyard-core: bin/vineyard-core
+dependencies: []
+provenance:
+  publisher: Trellis Maintainers
+  license: MIT
+  registry: vineyard-core
+health:
+  notes: Baseline fixture package for end-to-end testing.
