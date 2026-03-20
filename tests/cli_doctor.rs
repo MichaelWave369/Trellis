@@ -3,7 +3,7 @@ use predicates::str::contains;
 use tempfile::tempdir;
 
 #[test]
-fn doctor_reports_healthy_environment() {
+fn doctor_reports_health_with_trust_summary() {
     let home = tempdir().unwrap();
     let registry_root = format!("{}/packages", env!("CARGO_MANIFEST_DIR"));
     let command_sets: &[&[&str]] = &[&["init"], &["update"], &["install", "vineyard-core"]];
@@ -29,5 +29,6 @@ fn doctor_reports_healthy_environment() {
         .args(["doctor"])
         .assert()
         .success()
-        .stdout(contains("Environment is healthy"));
+        .stdout(contains("Summary:"))
+        .stdout(contains("warning(s)"));
 }

@@ -1,23 +1,23 @@
 # Trellis Roadmap
 
-## v0.3 (current) — Vineyard Registry
+## v0.4 (current) — Trust, Shield, and Provenance
 
-- official default registry model (`vineyard-core`)
-- versioned registry source config and deterministic local index materialization
-- malformed-spec-tolerant indexing with actionable diagnostics
-- registry-aware `update`, `search`, `info`, `install`, and `doctor`
-- trust/provenance surfaced at registry and package index layers
-- mirror/fallback configuration groundwork (local-first runtime)
+- explicit install trust states for checksums and signature metadata
+- receipt model upgraded into a structured install ledger
+- conflict detection for binary and install-target collisions
+- install integrity report with provenance + trust summary
+- doctor expanded to pass/warn/fail trust and integrity checks
+- rollback groundwork through transaction and richer receipt metadata
 
-## v0.4 (planned)
+## v0.5 (planned)
 
-- dependency resolution strategy (still deterministic/local-first)
+- dependency resolution strategy and install planning model
 - lock state model for reproducible install plans
-- fallback/mirror runtime behavior beyond metadata placeholders
-- improved local integrity enforcement policies
+- transactional rollback/repair execution engine
+- signature policy enforcement and key management foundations
 
 ## Later
 
 - scoped remote sync/publish workflows
-- transactional rollback primitives
+- mirror/fallback transport behavior
 - broader ecosystem interoperability tooling

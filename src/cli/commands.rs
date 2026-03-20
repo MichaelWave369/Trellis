@@ -97,7 +97,7 @@ pub fn run(cli: Cli) -> Result<()> {
             println!("  Dependencies: {}", spec.dependencies.len());
             if !spec.dependencies.is_empty() {
                 println!(
-                    "  Note: dependencies are declared but not automatically resolved in v0.3"
+                    "  Note: dependencies are declared but not automatically resolved in v0.4"
                 );
             }
             println!(
@@ -151,17 +151,27 @@ pub fn run(cli: Cli) -> Result<()> {
             ensure_initialized(&paths)?;
             ensure_index(&paths, &registry_root)?;
             let reports = checks::run_checks(&paths);
-            let (passed, failed) = checks::report_counts(&reports);
+            let (passed, warnings, failed) = checks::report_counts(&reports);
 
             println!("Trellis doctor");
             for report in &reports {
-                let mark = if report.ok { "OK" } else { "FAIL" };
-                println!("- {:<16} {:<4} {}", report.name, mark, report.detail);
+                let mark = match report.status {
+                    checks::CheckStatus::Pass => "PASS",
+                    checks::CheckStatus::Warn => "WARN",
+                    checks::CheckStatus::Fail => "FAIL",
+                };
+                println!("- {:<16} {:<5} {}", report.name, mark, report.detail);
+                if let Some(remediation) = &report.remediation {
+                    println!("  remediation: {}", remediation);
+                }
             }
-            println!("Summary: {} passed, {} failed", passed, failed);
+            println!(
+                "Summary: {} passed, {} warning(s), {} failed",
+                passed, warnings, failed
+            );
 
             checks::summarize(&reports)?;
-            println!("Environment is healthy");
+            println!("Environment is healthy enough for local operation");
         }
     }
 
@@ -189,8 +199,19 @@ fn print_info(spec: &crate::spec::package::PackageSpec, resolved_registry: Optio
         println!("Platform.os: {:?}", platform.os);
         println!("Platform.arch: {:?}", platform.arch);
     }
+    let checksum_status = if spec.source.checksum_sha256.is_some() {
+        "declared (verification occurs during install)"
+    } else {
+        "unavailable"
+    };
+    let signature_assessment = crate::trust::assess_signature(spec.source.signature.as_deref());
+    println!("Checksum status: {}", checksum_status);
     println!(
-        "Integrity: checksum={} signature={}",
+        "Signature status: {:?} ({})",
+        signature_assessment.state, signature_assessment.note
+    );
+    println!(
+        "Integrity fields: checksum={} signature={}",
         spec.source.checksum_sha256.as_deref().unwrap_or("absent"),
         spec.source.signature.as_deref().unwrap_or("absent")
     );

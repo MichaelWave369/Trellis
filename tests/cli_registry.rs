@@ -97,6 +97,7 @@ fn doctor_fails_on_stale_or_malformed_registry_health() {
         .arg(&registry_root)
         .args(["doctor"])
         .assert()
-        .failure()
+        .success()
+        .stdout(contains("WARN"))
         .stdout(contains("stale index"));
 }

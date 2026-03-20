@@ -39,5 +39,5 @@ fn search_finds_vineyard_core_and_info_prints_registry_metadata() {
         .assert()
         .success()
         .stdout(contains("Resolved registry: vineyard-core"))
-        .stdout(contains("Integrity: checksum=absent signature=dev-local"));
+        .stdout(contains("Signature status: Present"));
 }
