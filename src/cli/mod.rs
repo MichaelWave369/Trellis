@@ -54,6 +54,16 @@ pub enum Command {
     Inspect { target: String },
     /// Render an installed package receipt in human-readable form
     Receipt { pkg: String },
+    /// Scaffold a new package authoring workspace
+    Scaffold {
+        package_name: String,
+        #[arg(long, default_value = "binary", value_parser = ["binary", "source"]) ]
+        kind: String,
+        #[arg(long, value_name = "PATH")]
+        out: Option<std::path::PathBuf>,
+    },
+    /// Print author/maintainer submission readiness hints for a spec or package
+    Readiness { target: String },
     /// Guided first-run onboarding flow
     Seed,
     /// Alias for `seed`

@@ -1,13 +1,12 @@
 # Trellis Roadmap
 
-## v0.7 (current) — Seed Installer Experience
+## v0.8 (current) — Ecosystem Authoring
 
-- guided first-run onboarding via `trellis seed` / `trellis bootstrap`
-- bootstrap script groundwork for local/dev installation flow
-- doctor-integrated confidence checkpoint during onboarding
-- first-package recommendations and path-model clarity
+- contributor-first package author workflow (`scaffold`, `validate`, `inspect`, `install --from`, `readiness`)
+- stronger authoring and submission docs for PR-based registry contributions
+- local-first package testing and readiness checks for external developers
 
-## v0.8 (planned)
+## v0.9 (planned)
 
 - dependency resolution strategy and install planning model
 - lock state model for reproducible install plans
