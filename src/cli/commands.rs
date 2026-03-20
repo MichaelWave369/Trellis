@@ -7,7 +7,7 @@ use crate::core::install;
 use crate::core::paths::TrellisPaths;
 use crate::core::{remove, state};
 use crate::doctor::checks;
-use crate::registry::index::{read_index, scan_registry, RegistryEntry};
+use crate::registry::index::{read_index, RegistryEntry};
 use crate::registry::sync::sync_registry;
 use crate::spec::{load_spec, validate};
 
@@ -22,22 +22,43 @@ pub fn run(cli: Cli) -> Result<()> {
         }
         Command::Update => {
             ensure_initialized(&paths)?;
-            let count = sync_registry(&paths, &registry_root)?;
-            println!("Updated registry index ({} package(s))", count);
+            let report = sync_registry(&paths, Some(&registry_root))?;
+            println!(
+                "Updated registry index: {} package(s), {} malformed",
+                report.index.packages.len(),
+                report.index.skipped.len()
+            );
+            for registry in report.index.registries {
+                println!(
+                    "- {}: {} package(s), {} skipped, refreshed {}{}",
+                    registry.name,
+                    registry.package_count,
+                    registry.skipped_count,
+                    registry.refreshed_at,
+                    registry
+                        .revision
+                        .as_ref()
+                        .map(|r| format!(", revision {}", r))
+                        .unwrap_or_default()
+                );
+            }
         }
         Command::Search { query } => {
             ensure_initialized(&paths)?;
             ensure_index(&paths, &registry_root)?;
             let query_lower = query.to_lowercase();
-            let index = read_index(&paths.registry.join("index.json"))?;
-            println!("Search results");
+            let index = read_index(&paths.registry_index)?;
+            println!("Search results for '{}'", query);
 
             let mut matched = 0usize;
             for pkg in index.packages.iter().filter(|p| {
                 p.name.to_lowercase().contains(&query_lower)
                     || p.description.to_lowercase().contains(&query_lower)
             }) {
-                println!("- {:<20} {}", pkg.name, pkg.description);
+                println!(
+                    "- {} {} [{}] - {} (registry: {})",
+                    pkg.name, pkg.version, pkg.kind, pkg.description, pkg.registry
+                );
                 matched += 1;
             }
 
@@ -48,7 +69,7 @@ pub fn run(cli: Cli) -> Result<()> {
         Command::Info { pkg } => {
             ensure_initialized(&paths)?;
             let entry = resolve_target(&paths, &registry_root, &pkg)?;
-            print_info(&entry.spec);
+            print_info(&entry.spec, Some(&entry.registry));
         }
         Command::Validate { target } => {
             ensure_initialized(&paths)?;
@@ -76,7 +97,7 @@ pub fn run(cli: Cli) -> Result<()> {
             println!("  Dependencies: {}", spec.dependencies.len());
             if !spec.dependencies.is_empty() {
                 println!(
-                    "  Note: dependencies are declared but not automatically resolved in v0.2"
+                    "  Note: dependencies are declared but not automatically resolved in v0.3"
                 );
             }
             println!(
@@ -97,7 +118,10 @@ pub fn run(cli: Cli) -> Result<()> {
                 _ => bail!("use exactly one install target: either <pkg> or --from <path>"),
             };
             install::install(&paths, &entry, &entry.spec)?;
-            println!("Installed {} {}", entry.spec.name, entry.spec.version);
+            println!(
+                "Installed {} {} from registry '{}' ({})",
+                entry.spec.name, entry.spec.version, entry.registry, entry.spec_rel_path
+            );
         }
         Command::Remove { pkg } => {
             ensure_initialized(&paths)?;
@@ -132,7 +156,7 @@ pub fn run(cli: Cli) -> Result<()> {
             println!("Trellis doctor");
             for report in &reports {
                 let mark = if report.ok { "OK" } else { "FAIL" };
-                println!("- {:<14} {:<4} {}", report.name, mark, report.detail);
+                println!("- {:<16} {:<4} {}", report.name, mark, report.detail);
             }
             println!("Summary: {} passed, {} failed", passed, failed);
 
@@ -144,7 +168,7 @@ pub fn run(cli: Cli) -> Result<()> {
     Ok(())
 }
 
-fn print_info(spec: &crate::spec::package::PackageSpec) {
+fn print_info(spec: &crate::spec::package::PackageSpec, resolved_registry: Option<&str>) {
     println!("Package: {}", spec.name);
     println!("Version: {}", spec.version);
     println!("Description: {}", spec.description);
@@ -154,10 +178,22 @@ fn print_info(spec: &crate::spec::package::PackageSpec) {
         "Source: {:?} ({})",
         spec.source.source_type, spec.source.path
     );
-    println!("Registry: {}", spec.provenance.registry);
+    if let Some(registry) = resolved_registry {
+        println!("Resolved registry: {}", registry);
+    }
+    println!("Registry provenance: {}", spec.provenance.registry);
     println!("Publisher: {}", spec.provenance.publisher);
     println!("License: {}", spec.provenance.license);
     println!("Dependencies declared: {}", spec.dependencies.len());
+    if let Some(platform) = &spec.platform {
+        println!("Platform.os: {:?}", platform.os);
+        println!("Platform.arch: {:?}", platform.arch);
+    }
+    println!(
+        "Integrity: checksum={} signature={}",
+        spec.source.checksum_sha256.as_deref().unwrap_or("absent"),
+        spec.source.signature.as_deref().unwrap_or("absent")
+    );
 }
 
 fn ensure_initialized(paths: &TrellisPaths) -> Result<()> {
@@ -168,9 +204,8 @@ fn ensure_initialized(paths: &TrellisPaths) -> Result<()> {
 }
 
 fn ensure_index(paths: &TrellisPaths, registry_root: &Path) -> Result<()> {
-    let index_path = paths.registry.join("index.json");
-    if !index_path.exists() {
-        sync_registry(paths, registry_root)?;
+    if !paths.registry_index.exists() {
+        sync_registry(paths, Some(registry_root))?;
     }
     Ok(())
 }
@@ -186,11 +221,22 @@ fn resolve_registry_root(override_root: Option<&Path>) -> Result<PathBuf> {
 
 fn find_package(paths: &TrellisPaths, registry_root: &Path, name: &str) -> Result<RegistryEntry> {
     ensure_index(paths, registry_root)?;
-    let entries = scan_registry(registry_root)?;
-    entries
+    let index = read_index(&paths.registry_index)?;
+
+    let pkg = index
+        .packages
         .into_iter()
-        .find(|e| e.spec.name == name)
-        .ok_or_else(|| anyhow!("package '{}' not found in local registry", name))
+        .find(|pkg| pkg.name == name)
+        .ok_or_else(|| anyhow!("package '{}' not found in active registries", name))?;
+
+    let spec_path = PathBuf::from(pkg.spec_path);
+    let spec = load_spec(&spec_path)?;
+    Ok(RegistryEntry {
+        registry: pkg.registry,
+        spec_path,
+        spec_rel_path: pkg.spec_rel_path,
+        spec,
+    })
 }
 
 fn resolve_target(
@@ -227,5 +273,10 @@ fn load_entry_from_path(path: &Path) -> Result<RegistryEntry> {
     };
 
     let spec = load_spec(&spec_path)?;
-    Ok(RegistryEntry { spec_path, spec })
+    Ok(RegistryEntry {
+        registry: spec.provenance.registry.clone(),
+        spec_rel_path: spec_path.to_string_lossy().to_string(),
+        spec_path,
+        spec,
+    })
 }
