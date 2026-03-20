@@ -14,7 +14,7 @@ fn remove_cleans_installed_state() {
             .arg(home.path())
             .arg("--registry-root")
             .arg(&registry_root)
-            .args(args)
+            .args(*args)
             .assert()
             .success();
     }

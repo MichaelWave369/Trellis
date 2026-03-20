@@ -15,7 +15,7 @@ fn doctor_reports_healthy_environment() {
             .arg(home.path())
             .arg("--registry-root")
             .arg(&registry_root)
-            .args(args)
+            .args(*args)
             .assert()
             .success();
     }
