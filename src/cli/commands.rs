@@ -316,6 +316,77 @@ pub fn run(cli: Cli) -> Result<()> {
                 bail!("repair could not resolve all issues");
             }
         }
+        Command::Scaffold {
+            package_name,
+            kind,
+            out,
+        } => {
+            ui::header("Scaffold Package");
+            crate::spec::validate::validate_name(&package_name)?;
+            let kind = ScaffoldKind::from_str(&kind)?;
+            let root = out.unwrap_or_else(|| PathBuf::from("packages"));
+            ui::step(format!("Creating scaffold in {}", root.display()));
+            let package_dir = scaffold::scaffold_package(&root, &package_name, kind)?;
+            ui::ok(format!("Scaffold created at {}", package_dir.display()));
+            ui::info(format!(
+                "Next: trellis validate {}",
+                package_dir
+                    .join(format!("{}.trellis.yaml", package_name))
+                    .display()
+            ));
+        }
+        Command::Readiness { target } => {
+            ui::header("Submission Readiness");
+            if !Path::new(&target).exists() {
+                ensure_initialized(&paths)?;
+            }
+            let entry = resolve_target(&paths, &registry_root, &target)?;
+            validate::validate(&entry.spec)?;
+            println!("Checklist");
+            println!("  [ok] spec validates");
+            println!(
+                "  [{}] provenance.publisher set",
+                if entry.spec.provenance.publisher.starts_with("TODO") {
+                    "warn"
+                } else {
+                    "ok"
+                }
+            );
+            println!(
+                "  [{}] provenance.license set",
+                if entry.spec.provenance.license.starts_with("TODO") {
+                    "warn"
+                } else {
+                    "ok"
+                }
+            );
+            println!(
+                "  [{}] checksum declared",
+                if entry.spec.source.checksum_sha256.is_some() {
+                    "ok"
+                } else {
+                    "warn"
+                }
+            );
+            println!(
+                "  [{}] signature metadata",
+                match crate::trust::assess_signature(entry.spec.source.signature.as_deref()).state {
+                    crate::trust::SignatureState::Present => "ok",
+                    crate::trust::SignatureState::Missing => "warn",
+                    crate::trust::SignatureState::Malformed => "warn",
+                    crate::trust::SignatureState::Unsupported => "warn",
+                }
+            );
+            println!(
+                "  [ok] install entries: {}",
+                entry.spec.install.entries.len()
+            );
+            println!("  [ok] bin mappings: {}", entry.spec.bin.len());
+            ui::info("For official registry submissions, include package folder, payload, and spec in one PR.");
+        }
+        Command::Seed | Command::Bootstrap => {
+            run_seed(&paths, &registry_root)?;
+        }
         Command::Doctor => {
             ensure_initialized(&paths)?;
             ensure_index(&paths, &registry_root)?;
@@ -349,6 +420,25 @@ pub fn run(cli: Cli) -> Result<()> {
         }
     }
 
+    println!("Post-install  :");
+    if receipt.post_install_actions.is_empty() {
+        println!("  - none");
+    } else {
+        for action in &receipt.post_install_actions {
+            println!("  - {}", action);
+        }
+    }
+
+    println!("Warnings      :");
+    if receipt.trust.warnings.is_empty() {
+        println!("  - none");
+    } else {
+        for warning in &receipt.trust.warnings {
+            println!("  - {}", warning);
+        }
+    }
+
+    println!("Installed files: {}", receipt.installed_files.len());
     Ok(())
 }
 
