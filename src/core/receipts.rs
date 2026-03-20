@@ -9,9 +9,13 @@ use std::path::Path;
 pub struct Receipt {
     pub name: String,
     pub version: String,
+    pub kind: String,
     pub installed_at: DateTime<Utc>,
     pub source_path: String,
     pub checksum_sha256: Option<String>,
+    pub checksum_verified: bool,
+    pub signature: Option<String>,
+    pub dependencies_declared: Vec<String>,
     pub installed_files: Vec<String>,
     pub exposed_binaries: BTreeMap<String, String>,
     pub registry: String,

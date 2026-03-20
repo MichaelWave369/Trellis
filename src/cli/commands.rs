@@ -7,8 +7,9 @@ use crate::core::install;
 use crate::core::paths::TrellisPaths;
 use crate::core::{remove, state};
 use crate::doctor::checks;
-use crate::registry::index::{read_index, scan_registry};
+use crate::registry::index::{read_index, scan_registry, RegistryEntry};
 use crate::registry::sync::sync_registry;
+use crate::spec::{load_spec, validate};
 
 pub fn run(cli: Cli) -> Result<()> {
     let paths = TrellisPaths::resolve(cli.home.as_deref())?;
@@ -46,20 +47,55 @@ pub fn run(cli: Cli) -> Result<()> {
         }
         Command::Info { pkg } => {
             ensure_initialized(&paths)?;
-            let entry = find_package(&paths, &registry_root, &pkg)?;
-            let spec = entry.spec;
-            println!("Package: {}", spec.name);
-            println!("Version: {}", spec.version);
-            println!("Description: {}", spec.description);
-            println!("Homepage: {}", spec.homepage);
-            println!("Source: {} ({})", spec.source.path, spec.source.source_type);
-            println!("Registry: {}", spec.provenance.registry);
-            println!("Publisher: {}", spec.provenance.publisher);
-            println!("License: {}", spec.provenance.license);
+            let entry = resolve_target(&paths, &registry_root, &pkg)?;
+            print_info(&entry.spec);
         }
-        Command::Install { pkg } => {
+        Command::Validate { target } => {
             ensure_initialized(&paths)?;
-            let entry = find_package(&paths, &registry_root, &pkg)?;
+            let entry = resolve_target(&paths, &registry_root, &target)?;
+            validate::validate(&entry.spec)?;
+            println!(
+                "Valid: {} {} ({})",
+                entry.spec.name, entry.spec.version, entry.spec.schema_version
+            );
+        }
+        Command::Inspect { target } => {
+            ensure_initialized(&paths)?;
+            let entry = resolve_target(&paths, &registry_root, &target)?;
+            let spec = entry.spec;
+            println!("Inspect: {} {}", spec.name, spec.version);
+            println!("  Schema: {}", spec.schema_version);
+            println!("  Kind: {:?}", spec.kind);
+            println!(
+                "  Source: {:?} {}",
+                spec.source.source_type, spec.source.path
+            );
+            println!("  Registry: {}", spec.provenance.registry);
+            println!("  Publisher: {}", spec.provenance.publisher);
+            println!("  License: {}", spec.provenance.license);
+            println!("  Dependencies: {}", spec.dependencies.len());
+            if !spec.dependencies.is_empty() {
+                println!(
+                    "  Note: dependencies are declared but not automatically resolved in v0.2"
+                );
+            }
+            println!(
+                "  Integrity: checksum={} signature={}",
+                spec.source
+                    .checksum_sha256
+                    .as_ref()
+                    .map(|_| "present")
+                    .unwrap_or("absent"),
+                spec.source.signature.as_deref().unwrap_or("absent")
+            );
+        }
+        Command::Install { pkg, from } => {
+            ensure_initialized(&paths)?;
+            let entry = match (pkg, from) {
+                (Some(name), None) => find_package(&paths, &registry_root, &name)?,
+                (None, Some(path)) => load_entry_from_path(&path)?,
+                _ => bail!("use exactly one install target: either <pkg> or --from <path>"),
+            };
             install::install(&paths, &entry, &entry.spec)?;
             println!("Installed {} {}", entry.spec.name, entry.spec.version);
         }
@@ -76,7 +112,10 @@ pub fn run(cli: Cli) -> Result<()> {
                 let entry = entry?;
                 if entry.path().extension().and_then(|v| v.to_str()) == Some("json") {
                     let receipt = crate::core::receipts::read_receipt(&entry.path())?;
-                    println!("- {:<20} {}", receipt.name, receipt.version);
+                    println!(
+                        "- {:<20} {} ({})",
+                        receipt.name, receipt.version, receipt.kind
+                    );
                     found += 1;
                 }
             }
@@ -105,6 +144,22 @@ pub fn run(cli: Cli) -> Result<()> {
     Ok(())
 }
 
+fn print_info(spec: &crate::spec::package::PackageSpec) {
+    println!("Package: {}", spec.name);
+    println!("Version: {}", spec.version);
+    println!("Description: {}", spec.description);
+    println!("Homepage: {}", spec.homepage);
+    println!("Kind: {:?}", spec.kind);
+    println!(
+        "Source: {:?} ({})",
+        spec.source.source_type, spec.source.path
+    );
+    println!("Registry: {}", spec.provenance.registry);
+    println!("Publisher: {}", spec.provenance.publisher);
+    println!("License: {}", spec.provenance.license);
+    println!("Dependencies declared: {}", spec.dependencies.len());
+}
+
 fn ensure_initialized(paths: &TrellisPaths) -> Result<()> {
     if !paths.home.exists() {
         bail!("Trellis home not initialized. Run 'trellis init'.");
@@ -129,15 +184,48 @@ fn resolve_registry_root(override_root: Option<&Path>) -> Result<PathBuf> {
     }
 }
 
-fn find_package(
-    paths: &TrellisPaths,
-    registry_root: &Path,
-    name: &str,
-) -> Result<crate::registry::index::RegistryEntry> {
+fn find_package(paths: &TrellisPaths, registry_root: &Path, name: &str) -> Result<RegistryEntry> {
     ensure_index(paths, registry_root)?;
     let entries = scan_registry(registry_root)?;
     entries
         .into_iter()
         .find(|e| e.spec.name == name)
         .ok_or_else(|| anyhow!("package '{}' not found in local registry", name))
+}
+
+fn resolve_target(
+    paths: &TrellisPaths,
+    registry_root: &Path,
+    target: &str,
+) -> Result<RegistryEntry> {
+    let target_path = Path::new(target);
+    if target_path.exists() {
+        load_entry_from_path(target_path)
+    } else {
+        find_package(paths, registry_root, target)
+    }
+}
+
+fn load_entry_from_path(path: &Path) -> Result<RegistryEntry> {
+    let spec_path = if path.is_dir() {
+        let mut found = None;
+        for entry in fs::read_dir(path)? {
+            let entry = entry?;
+            if entry
+                .path()
+                .file_name()
+                .and_then(|v| v.to_str())
+                .is_some_and(|name| name.ends_with(".trellis.yaml"))
+            {
+                found = Some(entry.path());
+                break;
+            }
+        }
+        found.ok_or_else(|| anyhow!("no .trellis.yaml spec file found in {}", path.display()))?
+    } else {
+        path.to_path_buf()
+    };
+
+    let spec = load_spec(&spec_path)?;
+    Ok(RegistryEntry { spec_path, spec })
 }

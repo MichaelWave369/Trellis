@@ -1,21 +1,27 @@
-# Trellis v0.1 Architecture
+# Trellis v0.2 Architecture
 
-Trellis is a single-binary Rust CLI with a filesystem-first control plane.
+Trellis is a single Rust CLI binary with explicit filesystem state.
 
-## Modules
+## Core modules
 
-- `cli`: argument parsing and command dispatch
-- `core`: path resolution, state init, install/remove flows, receipts
-- `registry`: package spec scanning and local index sync
-- `spec`: YAML schema and validation
-- `doctor`: environment checks
+- `cli`: parsing and command dispatch
+- `spec`: package schema + validation rules
+- `registry`: local filesystem index scanning/materialization
+- `core`: install/remove/state/receipts
 - `trust`: checksum helpers
+- `doctor`: environment checks
 
-## State model
+## Authoring model
 
-Trellis home defaults to XDG data dir when available, otherwise OS-appropriate fallback.
+v0.2 adds:
 
-Subdirectories:
+- `validate` for schema/rules checking
+- `inspect` for package metadata/trust summary
+- `install --from <spec-path>` for local author workflow
+
+## Deterministic state
+
+Trellis home contains:
 
 - `cache/`
 - `cellar/`
@@ -23,12 +29,4 @@ Subdirectories:
 - `registry/`
 - `bin/`
 
-## Deterministic install path
-
-`cellar/<name>/<version>/...`
-
-Install receipts are JSON files at `receipts/<name>.json` and include provenance plus exposed binaries.
-
-## Registry model
-
-v0.1 supports local filesystem scanning of `*.trellis.yaml` specs. `update` creates a materialized index used by search and doctor.
+Each install writes a receipt with provenance and integrity fields.

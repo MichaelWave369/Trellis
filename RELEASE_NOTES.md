@@ -1,40 +1,26 @@
-# Trellis v0.1.0-alpha Release Notes
+# Trellis v0.2.0-alpha Release Notes
 
 Release date: 2026-03-20
 
 ## Highlights
-- First working Trellis prototype focused on reliable local-first package operations.
-- Deterministic install/remove behavior with explicit receipt tracking.
-- Filesystem-native registry scanning and local index refresh.
-- Baseline trust/provenance groundwork (checksums + provenance fields).
-- CI checks for format, lint, and test execution.
 
-## Included commands
-- `trellis init`
-- `trellis update`
-- `trellis search <query>`
-- `trellis info <pkg>`
-- `trellis install <pkg>`
-- `trellis list`
-- `trellis remove <pkg>`
-- `trellis doctor`
+- Trellis now supports package authoring workflows without changing core code.
+- `validate` and `inspect` make package spec development deterministic and auditable.
+- `install --from <spec-path>` lets authors test local packages directly.
+- Official local registry now includes multiple native package fixtures.
 
-## What is intentionally not in this alpha
-- No remote registry transport or publishing.
-- No dependency resolver or lockfile.
-- No GUI/dashboard.
-- No blockchain/social layer.
+## What shipped
 
-## 2-minute demo
-From repo root:
+- Expanded v0.2 spec model (kind/source/platform/provenance/post-install policy)
+- `trellis validate <pkg-or-spec-path>`
+- `trellis inspect <pkg-or-spec-path>`
+- `trellis install --from <spec-path>`
+- New package fixtures: `overstrings-cli`, `tiekat-pulse`
 
-```bash
-cargo build
-export TRELLIS_HOME="$(mktemp -d)"
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" init
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" update
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install vineyard-core
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" list
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" doctor
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" remove vineyard-core
-```
+## Explicitly deferred
+
+- remote registry publishing/sync
+- full dependency solver
+- lockfiles
+- rollback engine
+- GUI/social/blockchain features

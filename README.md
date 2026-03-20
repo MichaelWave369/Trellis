@@ -1,102 +1,77 @@
 # Trellis
 
-Trellis is a local-first package manager prototype designed for trustworthy, deterministic package workflows.
+Trellis is a local-first package manager focused on deterministic state, explicit metadata, and trustworthy package workflows.
 
-## Why Trellis exists
+## Status
 
-Modern package tooling is powerful, but often over-coupled to remote systems and opaque state. Trellis starts from infrastructure basics:
+**v0.2 Formula System + Native Packages**
 
-- local-first operations
-- explicit install state
-- human-readable metadata
-- trust and provenance groundwork
+Trellis now supports package authoring workflows so package authors can add packages without editing Trellis core code.
 
-## How Trellis differs from Homebrew
+## Scope (v0.2)
 
-- **Scope**: v0.1 is intentionally narrow and filesystem-centric.
-- **Model**: package specs are explicit YAML (`*.trellis.yaml`) and registry indexing is transparent.
-- **Trust posture**: provenance fields and optional checksums are first-class from day one.
+- local filesystem registry (`packages/`)
+- package spec validation and inspection
+- install by package name or `--from <spec-path>`
+- deterministic installs/removals with receipts
+- package kind and platform constraint checks
+- dependency declaration parsing (non-recursive)
 
-## Current status
+## Non-goals (v0.2)
 
-**v0.1 bootstrap prototype**. The core flows work end-to-end against a local registry fixture.
+- no remote registry publishing/sync
+- no lockfiles
+- no full dependency solver
+- no GUI/dashboard
+- no blockchain/social features
 
-## Launch scope
-
-Implemented commands:
+## Commands
 
 - `trellis init`
 - `trellis update`
 - `trellis search <query>`
-- `trellis info <pkg>`
+- `trellis info <pkg-or-spec-path>`
+- `trellis validate <pkg-or-spec-path>`
+- `trellis inspect <pkg-or-spec-path>`
 - `trellis install <pkg>`
+- `trellis install --from <spec-path>`
 - `trellis list`
 - `trellis remove <pkg>`
 - `trellis doctor`
 
-## Non-goals for v0.1
+## Official local packages (v0.2)
 
-- no blockchain
-- no social layer
-- no GUI/dashboard
-- no remote registry publishing yet
-- no "replace every package manager" claims
-- no overbuilt mythology
+- `vineyard-core`
+- `overstrings-cli`
+- `tiekat-pulse`
 
-## Quickstart (repo-local demo)
-
-Run from the repository root:
+## 2-minute demo
 
 ```bash
 cargo build
 export TRELLIS_HOME="$(mktemp -d)"
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" init
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" update
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" search vineyard
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" info vineyard-core
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install vineyard-core
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" validate overstrings-cli
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" inspect overstrings-cli
+./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install overstrings-cli
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" list
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" doctor
-./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" remove vineyard-core
 ```
 
-## Package spec example
+## Authoring guide
 
-```yaml
-name: vineyard-core
-version: 0.1.0
-description: Core utilities for the Trellis reference registry.
-homepage: https://example.org/vineyard-core
-source:
-  type: file
-  path: payload
-install:
-  strategy: copy
-  entries:
-    - bin
-bin:
-  vineyard-core: bin/vineyard-core
-dependencies: []
-provenance:
-  publisher: Trellis Maintainers
-  license: MIT
-  registry: vineyard-core
-health:
-  notes: Baseline fixture package for end-to-end testing.
-```
+See `docs/authoring.md` and `docs/package-spec.md` for the full v0.2 authoring model.
 
-## Local registry model
+## Trust/provenance model
 
-v0.1 uses a filesystem-driven registry rooted at `packages/`. `trellis update` scans specs and writes a local index into `TRELLIS_HOME/registry/index.json`.
+Trellis keeps trust explicit and local:
 
-## Trust and provenance philosophy
+- provenance fields are required
+- checksum fields are supported and validated
+- receipt records include provenance and integrity metadata
+- signatures are metadata placeholders in v0.2 (no remote signing infra)
 
-Trellis favors explicit package metadata over implicit trust:
+## License
 
-- provenance fields (`publisher`, `license`, `registry`) are required
-- checksums are supported for file-based sources
-- install receipts are written for every install and drive list/remove behavior
-
-## Roadmap
-
-See `docs/roadmap.md` for phased milestones toward richer registries, signatures, lock state, and resolver improvements.
+AGPL-3.0-only.

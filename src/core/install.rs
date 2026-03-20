@@ -8,10 +8,21 @@ use walkdir::WalkDir;
 use crate::core::paths::TrellisPaths;
 use crate::core::receipts::{read_receipt, write_receipt, Receipt};
 use crate::registry::index::RegistryEntry;
-use crate::spec::package::PackageSpec;
+use crate::spec::package::{PackageKind, PackageSpec, SourceType};
+use crate::spec::validate::platform_matches;
 use crate::trust::checksum;
 
 pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) -> Result<()> {
+    if !platform_matches(spec) {
+        bail!(
+            "package '{}' {} does not support this platform (os={}, arch={})",
+            spec.name,
+            spec.version,
+            std::env::consts::OS,
+            std::env::consts::ARCH
+        );
+    }
+
     let receipt_path = paths.receipts.join(format!("{}.json", spec.name));
     if receipt_path.exists() {
         let existing = read_receipt(&receipt_path)?;
@@ -29,17 +40,27 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
         .parent()
         .context("spec must have parent directory")?;
     let source_root = spec_dir.join(&spec.source.path);
-    if !source_root.exists() {
-        bail!("source path does not exist: {}", source_root.display());
-    }
+    validate_source_shape(&source_root, &spec.source.source_type)?;
 
-    if let Some(expected) = &spec.source.checksum_sha256 {
+    let checksum_verified = if let Some(expected) = &spec.source.checksum_sha256 {
         if source_root.is_file() {
             let actual = checksum::sha256_file(&source_root)?;
             if &actual != expected {
                 bail!("checksum mismatch for {}", source_root.display());
             }
+            true
+        } else {
+            false
         }
+    } else {
+        false
+    };
+
+    if !spec.dependencies.is_empty() {
+        println!(
+            "Note: {} dependency declaration(s) found; automatic dependency resolution is not enabled in v0.2",
+            spec.dependencies.len()
+        );
     }
 
     let install_root = paths.cellar.join(&spec.name).join(&spec.version);
@@ -80,17 +101,58 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
     let receipt = Receipt {
         name: spec.name.clone(),
         version: spec.version.clone(),
+        kind: match spec.kind {
+            PackageKind::Binary => "binary".to_string(),
+            PackageKind::Source => "source".to_string(),
+        },
         installed_at: Utc::now(),
         source_path: source_root.to_string_lossy().to_string(),
         checksum_sha256: spec.source.checksum_sha256.clone(),
+        checksum_verified,
+        dependencies_declared: spec.dependencies.clone(),
         installed_files,
         exposed_binaries: exposed,
         registry: spec.provenance.registry.clone(),
         publisher: spec.provenance.publisher.clone(),
         license: spec.provenance.license.clone(),
+        signature: spec.source.signature.clone(),
     };
 
     write_receipt(&receipt_path, &receipt)?;
+    Ok(())
+}
+
+fn validate_source_shape(path: &Path, source_type: &SourceType) -> Result<()> {
+    match source_type {
+        SourceType::File => {
+            if !path.is_file() {
+                bail!("source.type local_file requires a file: {}", path.display());
+            }
+        }
+        SourceType::Dir => {
+            if !path.is_dir() {
+                bail!(
+                    "source.type local_dir requires a directory: {}",
+                    path.display()
+                );
+            }
+        }
+        SourceType::Archive => {
+            if !path.is_file() {
+                bail!(
+                    "source.type local_archive requires a file: {}",
+                    path.display()
+                );
+            }
+            let name = path
+                .file_name()
+                .and_then(|v| v.to_str())
+                .unwrap_or_default();
+            if !(name.ends_with(".tar") || name.ends_with(".tar.gz") || name.ends_with(".zip")) {
+                bail!("local_archive path must end with .tar, .tar.gz, or .zip");
+            }
+        }
+    }
     Ok(())
 }
 

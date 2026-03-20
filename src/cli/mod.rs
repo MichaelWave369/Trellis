@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
     name = "trellis",
     version,
     about = "Local-first package manager prototype",
-    long_about = "Trellis v0.1 is a local-first package manager prototype with deterministic state, filesystem registry indexing, and auditable install receipts."
+    long_about = "Trellis v0.2 adds package authoring workflows: spec validation, package inspection, and local install from path."
 )]
 pub struct Cli {
     #[arg(
@@ -32,8 +32,12 @@ pub struct Cli {
 pub enum Command {
     /// Create Trellis home directories
     Init,
-    /// Install a package from the local registry by exact package name
-    Install { pkg: String },
+    /// Install a package by name or directly from a spec path
+    Install {
+        pkg: Option<String>,
+        #[arg(long, value_name = "PATH")]
+        from: Option<std::path::PathBuf>,
+    },
     /// Remove an installed package
     Remove { pkg: String },
     /// Refresh local registry index from filesystem specs
@@ -42,8 +46,12 @@ pub enum Command {
     List,
     /// Search package names and descriptions
     Search { query: String },
-    /// Show package metadata from the registry
+    /// Show package metadata from the registry or a spec path
     Info { pkg: String },
+    /// Validate a package spec path or package name
+    Validate { target: String },
+    /// Inspect a package spec path or package name
+    Inspect { target: String },
     /// Run environment and state integrity checks
     Doctor,
 }
