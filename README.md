@@ -66,6 +66,8 @@ export TRELLIS_HOME="$(mktemp -d)"
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" install vineyard-core
 ./target/debug/trellis --home "$TRELLIS_HOME" receipt vineyard-core
 ./target/debug/trellis --home "$TRELLIS_HOME" --registry-root "$(pwd)/packages" doctor
+cat "$TRELLIS_HOME/registry/sources.json"
+cat "$TRELLIS_HOME/registry/index.json"
 ```
 
 ## Docs
