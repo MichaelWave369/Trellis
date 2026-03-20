@@ -6,11 +6,14 @@ use std::path::Path;
 use walkdir::WalkDir;
 
 use crate::core::paths::TrellisPaths;
-use crate::core::receipts::{read_receipt, write_receipt, Receipt};
+use crate::core::receipts::{
+    read_receipt, write_receipt, PlatformEvaluation, ProvenanceReceipt, Receipt, RegistryReceipt,
+    SourceReceipt, TrustSummary,
+};
 use crate::registry::index::RegistryEntry;
 use crate::spec::package::{PackageKind, PackageSpec, SourceType};
 use crate::spec::validate::platform_matches;
-use crate::trust::checksum;
+use crate::trust::{assess_signature, checksum, ChecksumState};
 
 pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) -> Result<()> {
     if !platform_matches(spec) {
@@ -35,6 +38,14 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
         );
     }
 
+    let install_root = paths.cellar.join(&spec.name).join(&spec.version);
+    if install_root.exists() {
+        bail!(
+            "install target already exists at {}. Remove existing state before reinstalling",
+            install_root.display()
+        );
+    }
+
     let spec_dir = entry
         .spec_path
         .parent()
@@ -42,31 +53,40 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
     let source_root = spec_dir.join(&spec.source.path);
     validate_source_shape(&source_root, &spec.source.source_type)?;
 
-    let checksum_verified = if let Some(expected) = &spec.source.checksum_sha256 {
-        if source_root.is_file() {
-            let actual = checksum::sha256_file(&source_root)?;
-            if &actual != expected {
-                bail!("checksum mismatch for {}", source_root.display());
-            }
-            true
-        } else {
-            false
+    for bin_name in spec.bin.keys() {
+        if let Some(owner) = find_binary_owner(paths, bin_name)? {
+            bail!(
+                "binary '{}' is already managed by '{}'. Remove '{}' first",
+                bin_name,
+                owner,
+                owner
+            );
         }
-    } else {
-        false
-    };
+
+        let link_path = paths.bin.join(bin_name);
+        if link_path.exists() {
+            bail!(
+                "binary '{}' already exists at {}. Refusing to overwrite unmanaged binary",
+                bin_name,
+                link_path.display()
+            );
+        }
+    }
+
+    let (checksum_state, checksum_actual) = verify_checksum(spec, &source_root)?;
+    if checksum_state == ChecksumState::Mismatched {
+        bail!("checksum mismatch for {}", source_root.display());
+    }
+
+    let signature = assess_signature(spec.source.signature.as_deref());
 
     if !spec.dependencies.is_empty() {
         println!(
-            "Note: {} dependency declaration(s) found; automatic dependency resolution is not enabled in v0.2",
+            "Dependency declarations: {} (resolved when installed from indexed package names)",
             spec.dependencies.len()
         );
     }
 
-    let install_root = paths.cellar.join(&spec.name).join(&spec.version);
-    if install_root.exists() {
-        fs::remove_dir_all(&install_root)?;
-    }
     fs::create_dir_all(&install_root)?;
 
     let mut installed_files = Vec::new();
@@ -76,6 +96,12 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
             bail!("install entry missing: {}", src.display());
         }
         let dest = install_root.join(item);
+        if dest.exists() {
+            bail!(
+                "install target collision at {}. Refusing to overwrite existing managed files",
+                dest.display()
+            );
+        }
         copy_recursively(&src, &dest, &mut installed_files)?;
     }
 
@@ -87,18 +113,47 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
         }
 
         let link_path = paths.bin.join(name);
-        if link_path.exists() {
-            fs::remove_file(&link_path)
-                .or_else(|_| fs::remove_dir_all(&link_path))
-                .with_context(|| {
-                    format!("failed to clean existing binary {}", link_path.display())
-                })?;
-        }
         link_or_copy(&target, &link_path)?;
         exposed.insert(name.clone(), target.to_string_lossy().to_string());
     }
 
+    installed_files.sort();
+    let post_install_actions = spec
+        .post_install
+        .as_ref()
+        .map(|p| vec![format!("declared:{}:{}", p.policy, p.command)])
+        .unwrap_or_default();
+
+    let mut warnings = Vec::new();
+    if checksum_state != ChecksumState::Verified {
+        warnings.push(format!(
+            "checksum state is {:?}; verify source integrity policy before production use",
+            checksum_state
+        ));
+    }
+    if signature.state != crate::trust::SignatureState::Present {
+        warnings.push(signature.note.clone());
+    }
+
+    let trust_summary = TrustSummary {
+        checksum_state: checksum_state.clone(),
+        signature_state: signature.state.clone(),
+        warnings: warnings.clone(),
+        summary: format!(
+            "checksum={:?}; signature={:?}",
+            checksum_state, signature.state
+        ),
+    };
+
+    let (constraints_os, constraints_arch) = if let Some(platform) = &spec.platform {
+        (platform.os.clone(), platform.arch.clone())
+    } else {
+        (Vec::new(), Vec::new())
+    };
+
     let receipt = Receipt {
+        schema_version: "0.4".to_string(),
+        transaction_id: format!("install-{}-{}", spec.name, Utc::now().timestamp_millis()),
         name: spec.name.clone(),
         version: spec.version.clone(),
         kind: match spec.kind {
@@ -106,20 +161,130 @@ pub fn install(paths: &TrellisPaths, entry: &RegistryEntry, spec: &PackageSpec) 
             PackageKind::Source => "source".to_string(),
         },
         installed_at: Utc::now(),
-        source_path: source_root.to_string_lossy().to_string(),
-        checksum_sha256: spec.source.checksum_sha256.clone(),
-        checksum_verified,
+        registry: RegistryReceipt {
+            name: entry.registry.clone(),
+            source_path: entry.spec_path.to_string_lossy().to_string(),
+        },
+        source: SourceReceipt {
+            source_type: source_type_label(&spec.source.source_type).to_string(),
+            source_path: source_root.to_string_lossy().to_string(),
+            checksum_expected_sha256: spec.source.checksum_sha256.clone(),
+            checksum_actual_sha256: checksum_actual,
+        },
+        provenance: ProvenanceReceipt {
+            publisher: spec.provenance.publisher.clone(),
+            license: spec.provenance.license.clone(),
+            declared_registry: spec.provenance.registry.clone(),
+            signature,
+        },
         dependencies_declared: spec.dependencies.clone(),
+        platform_evaluated: PlatformEvaluation {
+            os: std::env::consts::OS.to_string(),
+            arch: std::env::consts::ARCH.to_string(),
+            matched: true,
+            constraints_os,
+            constraints_arch,
+        },
         installed_files,
-        exposed_binaries: exposed,
-        registry: spec.provenance.registry.clone(),
-        publisher: spec.provenance.publisher.clone(),
-        license: spec.provenance.license.clone(),
-        signature: spec.source.signature.clone(),
+        exposed_binaries: exposed.clone(),
+        post_install_actions,
+        trust: trust_summary,
     };
 
     write_receipt(&receipt_path, &receipt)?;
+
+    print_install_report(
+        spec,
+        entry,
+        &source_root,
+        &checksum_state,
+        &receipt,
+        &warnings,
+    );
     Ok(())
+}
+
+fn verify_checksum(
+    spec: &PackageSpec,
+    source_root: &Path,
+) -> Result<(ChecksumState, Option<String>)> {
+    let Some(expected) = &spec.source.checksum_sha256 else {
+        return Ok((ChecksumState::Unavailable, None));
+    };
+
+    let actual = match spec.source.source_type {
+        SourceType::File | SourceType::Archive => checksum::sha256_file(source_root)?,
+        SourceType::Dir => checksum::sha256_dir(source_root)?,
+    };
+
+    if &actual == expected {
+        Ok((ChecksumState::Verified, Some(actual)))
+    } else {
+        Ok((ChecksumState::Mismatched, Some(actual)))
+    }
+}
+
+fn find_binary_owner(paths: &TrellisPaths, bin_name: &str) -> Result<Option<String>> {
+    for entry in fs::read_dir(&paths.receipts)? {
+        let entry = entry?;
+        let path = entry.path();
+        if path.extension().and_then(|v| v.to_str()) != Some("json") {
+            continue;
+        }
+
+        let receipt = read_receipt(&path)?;
+        if receipt.exposed_binaries.contains_key(bin_name) {
+            return Ok(Some(receipt.name));
+        }
+    }
+    Ok(None)
+}
+
+fn source_type_label(source_type: &SourceType) -> &'static str {
+    match source_type {
+        SourceType::File => "local_file",
+        SourceType::Dir => "local_dir",
+        SourceType::Archive => "local_archive",
+    }
+}
+
+fn print_install_report(
+    spec: &PackageSpec,
+    entry: &RegistryEntry,
+    source_root: &Path,
+    checksum_state: &ChecksumState,
+    receipt: &Receipt,
+    warnings: &[String],
+) {
+    println!("Install summary");
+    println!("- Package: {} {}", spec.name, spec.version);
+    println!("- Registry: {}", entry.registry);
+    println!(
+        "- Source: {} ({})",
+        source_type_label(&spec.source.source_type),
+        source_root.display()
+    );
+    println!("- Checksum: {:?}", checksum_state);
+    println!("- Signature: {:?}", receipt.provenance.signature.state);
+    println!("- Publisher: {}", spec.provenance.publisher);
+    println!("- Dependencies declared: {}", spec.dependencies.len());
+    if receipt.exposed_binaries.is_empty() {
+        println!("- Exposed binaries: none");
+    } else {
+        println!("- Exposed binaries:");
+        for (name, target) in &receipt.exposed_binaries {
+            println!("  - {} -> {}", name, target);
+        }
+    }
+
+    if warnings.is_empty() {
+        println!("- Trust warnings: none");
+    } else {
+        println!("- Trust warnings:");
+        for warning in warnings {
+            println!("  - {}", warning);
+        }
+    }
 }
 
 fn validate_source_shape(path: &Path, source_type: &SourceType) -> Result<()> {

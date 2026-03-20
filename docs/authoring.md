@@ -1,51 +1,36 @@
-# Trellis Author Guide (v0.2)
+# Trellis Package Author Guide (v1.0.0-rc1)
 
-## Goal
+This guide covers the maintained author workflow without hidden steps.
 
-A package author can add a package to the local Trellis registry without changing Trellis core code.
+## Author workflow
 
-## Basic flow
+```bash
+export TRELLIS_HOME="$(mktemp -d)"
+./target/debug/trellis --home "$TRELLIS_HOME" init
 
-1. Create package folder under `packages/<name>/`.
-2. Add payload files under `payload/`.
-3. Create `<name>.trellis.yaml`.
-4. Run `trellis validate <path-to-spec>`.
-5. Run `trellis inspect <path-to-spec>`.
-6. Run `trellis install --from <path-to-spec>`.
-
-## Minimal binary example
-
-```yaml
-schema_version: "0.2"
-name: my-tool
-version: 0.1.0
-description: My local tool
-homepage: https://example.org/my-tool
-kind: binary
-source:
-  type: local_dir
-  path: payload
-install:
-  strategy: copy
-  entries: [bin]
-bin:
-  my-tool: bin/my-tool
-dependencies: []
-provenance:
-  publisher: Example Org
-  license: MIT
-  registry: vineyard-core
-platform:
-  os: [linux, macos]
-  arch: [x86_64, aarch64]
+./target/debug/trellis scaffold my-tool --kind binary --out /tmp
+./target/debug/trellis validate /tmp/my-tool/my-tool.trellis.yaml
+./target/debug/trellis inspect /tmp/my-tool/my-tool.trellis.yaml
+./target/debug/trellis --home "$TRELLIS_HOME" install --from /tmp/my-tool/my-tool.trellis.yaml
+./target/debug/trellis readiness /tmp/my-tool/my-tool.trellis.yaml
 ```
 
-## Minimal source-kind example
+## Trust/provenance honesty
 
-Use `kind: source` when package payload is source-oriented but still installable through local copy strategy.
+- `checksum_sha256` is verified during install when present.
+- signature fields are recorded and structurally assessed (`present/missing/malformed/unsupported`).
+- Trellis does not claim distributed cryptographic signature verification in rc1.
 
-## Trust and provenance in v0.2
+## Dependencies
 
-- Add `checksum_sha256` when the source is a file.
-- Use `signature` as a local placeholder metadata field.
-- Verify metadata through `trellis inspect` and receipt output.
+- declare dependencies in spec metadata.
+- indexed installs (`trellis install <pkg>`) resolve dependencies deterministically.
+- local path installs (`trellis install --from`) install only the target spec; they do not expand dependency graph from index.
+
+## Pre-submission checklist
+
+- spec validates (`trellis validate`)
+- metadata is inspectable and intentional (`trellis inspect`)
+- local install succeeds (`trellis install --from`)
+- readiness output is acceptable (`trellis readiness`)
+- exposed binaries run as described

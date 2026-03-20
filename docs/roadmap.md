@@ -1,21 +1,21 @@
 # Trellis Roadmap
 
-## v0.2 (current)
+## v1.0.0-rc1 (current)
 
-- stronger package authoring schema
-- `validate` and `inspect` author commands
-- install from local spec path (`install --from`)
-- package kind and platform-aware install planning
-- expanded local registry fixtures (`vineyard-core`, `overstrings-cli`, `tiekat-pulse`)
+Hardening and coherence release candidate:
+- stable CLI contract across onboarding/authoring/maintenance paths
+- deterministic indexed dependency ordering + profile-scoped lock state
+- verify/repair operational integrity flow
+- trust/provenance language aligned with real guarantees
 
-## v0.3 (deferred)
+## 1.0 GA focus
 
-- dependency resolution and lock state
-- richer integrity policies and local signature verification
-- transactional rollback engine
-- multi-registry/tap architecture
+- finalize release feedback from rc evaluations
+- tighten regression coverage and CI release quality gates
 
-## later
+## Post-1.0 candidates
 
-- remote sync/publish workflows
-- broader ecosystem interoperability tooling
+- richer dependency conflict policy (still deterministic/local-first)
+- stronger lock reproducibility workflows for team environments
+- transactional repair/rollback maturity
+- scoped remote registry transport/publish enhancements

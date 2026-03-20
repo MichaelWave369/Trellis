@@ -1,21 +1,31 @@
-# Registry (v0.2)
+# Registry Model (v1.0.0-rc1)
 
-Trellis v0.2 uses a local filesystem registry rooted at `packages/`.
+Trellis uses a local materialized index to keep command behavior deterministic and inspectable.
 
-## Flow
+## Local registry state
 
-1. `trellis update` scans for `*.trellis.yaml` files.
-2. Valid specs are materialized into `TRELLIS_HOME/registry/index.json`.
-3. `search`, `info`, `validate`, and `inspect` can resolve by package name.
-4. `install` can resolve by package name or directly from `--from <spec-path>`.
+- source config: `$TRELLIS_HOME/registry/sources.json`
+- materialized index: `$TRELLIS_HOME/registry/index.json`
+- cache directory: `$TRELLIS_HOME/registry/cache/`
 
-## Official local registry fixtures
+## Update behavior
 
-- `vineyard-core`
-- `overstrings-cli`
-- `tiekat-pulse`
+`trellis update`:
 
-## Deferred
+1. reads enabled registry sources
+2. discovers `*.trellis.yaml` specs
+3. validates and indexes valid package metadata
+4. records malformed entries in `skipped`
+5. writes deterministic `index.json`
 
-- no remote sync/publish in v0.2
-- no tap cloning/network transport in v0.2
+## Index consumers
+
+- `search` queries indexed package metadata
+- `info` resolves package metadata through index
+- `install <pkg>` resolves package + dependencies through index
+- `doctor` checks index readability and malformed/duplicate conditions
+
+## Scope boundaries
+
+- mirror/fallback fields may appear as metadata but runtime mirror transport is not implemented in rc1
+- no hosted publish service is implied by this repo

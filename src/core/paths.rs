@@ -9,7 +9,13 @@ pub struct TrellisPaths {
     pub cellar: PathBuf,
     pub receipts: PathBuf,
     pub registry: PathBuf,
+    pub registry_cache: PathBuf,
+    pub registry_sources: PathBuf,
+    pub registry_index: PathBuf,
+    pub locks: PathBuf,
+    pub profiles: PathBuf,
     pub bin: PathBuf,
+    pub default_registry_root: PathBuf,
 }
 
 impl TrellisPaths {
@@ -18,12 +24,21 @@ impl TrellisPaths {
             Some(path) => path.to_path_buf(),
             None => default_home(),
         };
+        let registry = home.join("registry");
         Ok(Self {
             cache: home.join("cache"),
             cellar: home.join("cellar"),
             receipts: home.join("receipts"),
-            registry: home.join("registry"),
+            registry_cache: registry.join("cache"),
+            registry_sources: registry.join("sources.json"),
+            registry_index: registry.join("index.json"),
+            locks: home.join("locks"),
+            profiles: home.join("profiles.json"),
             bin: home.join("bin"),
+            default_registry_root: std::env::current_dir()
+                .unwrap_or_else(|_| PathBuf::from("."))
+                .join("packages"),
+            registry,
             home,
         })
     }
@@ -35,6 +50,8 @@ impl TrellisPaths {
             &self.cellar,
             &self.receipts,
             &self.registry,
+            &self.registry_cache,
+            &self.locks,
             &self.bin,
         ]
     }

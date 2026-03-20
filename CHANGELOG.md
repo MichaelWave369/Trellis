@@ -1,21 +1,23 @@
 # Changelog
 
-## v0.2.0-alpha - 2026-03-20
+## v1.0.0-rc1 - 2026-03-20
 
-### Added
-- v0.2 package spec fields: schema version, package kind, local source shape, platform constraints, post-install policy, signature placeholder.
-- Authoring commands: `trellis validate` and `trellis inspect`.
-- Local author install workflow: `trellis install --from <spec-path>`.
-- Additional official local registry fixtures: `overstrings-cli`, `tiekat-pulse`.
-- Author-focused docs (`docs/authoring.md`) and updated spec/roadmap references.
-- Integration tests for validate/inspect/local-install/platform mismatch and invalid naming rules.
+### Hardened
+- audited and aligned public CLI command surface/help text for onboarding, authoring, and maintenance flows
+- aligned dependency/lock/verify/repair messaging with actual behavior and profile semantics
+- fixed verify/repair profile handling to evaluate lock state for the selected `--profile`
+- refined dependency install messaging to remove stale deferred-language contradictions
 
-### Changed
-- Install planning now enforces platform constraints and reports declared dependencies as non-resolved.
-- Receipts include package kind, checksum verification status, signature metadata, and declared dependencies.
+### Documentation
+- consolidated README around rc1 positioning, scope boundaries, and demoable workflows
+- updated onboarding, authoring, registry, trust, dependency, lock, profiles, repair, and roadmap docs for rc1
+- refreshed trust-policy wording to distinguish verified vs recorded vs deferred behaviors
 
-### Deferred (v0.3)
-- automatic dependency resolution
-- lockfiles
-- rollback engine
-- remote sync/publish
+### Tests and quality
+- expanded integration coverage for profile-specific verify behavior and CLI help contract
+- validated repository with `cargo fmt`, strict `cargo clippy`, and full `cargo test`
+
+### Still intentionally post-1.0
+- full SAT/global dependency conflict solving
+- transactional rollback guarantees
+- hosted publish services and remote transport/runtime distribution features

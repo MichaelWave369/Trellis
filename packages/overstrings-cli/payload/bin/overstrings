@@ -1,2 +1,47 @@
 #!/usr/bin/env sh
-echo "overstrings-cli 0.1.0"
+set -eu
+
+cmd="${1:-help}"
+shift || true
+
+case "$cmd" in
+  normalize)
+    input="${1:-}"
+    if [ -z "$input" ]; then
+      echo "usage: overstrings normalize <text>" >&2
+      exit 2
+    fi
+    printf '%s\n' "$input" | tr '[:upper:]' '[:lower:]' | tr -s ' ' '-'
+    ;;
+  title)
+    input="${1:-}"
+    if [ -z "$input" ]; then
+      echo "usage: overstrings title <text>" >&2
+      exit 2
+    fi
+    printf '%s\n' "$input" | awk '{ for (i=1; i<=NF; i++) { $i=toupper(substr($i,1,1)) tolower(substr($i,2)); } print }'
+    ;;
+  stats)
+    input="${1:-}"
+    if [ -z "$input" ]; then
+      echo "usage: overstrings stats <text>" >&2
+      exit 2
+    fi
+    chars=$(printf '%s' "$input" | wc -c | tr -d ' ')
+    words=$(printf '%s' "$input" | wc -w | tr -d ' ')
+    echo "chars=$chars words=$words"
+    ;;
+  version)
+    echo "overstrings-cli 0.6.0"
+    ;;
+  *)
+    cat <<USAGE
+overstrings-cli
+usage:
+  overstrings normalize <text>
+  overstrings title <text>
+  overstrings stats <text>
+  overstrings version
+USAGE
+    ;;
+esac
