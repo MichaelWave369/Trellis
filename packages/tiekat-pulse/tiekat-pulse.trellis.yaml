@@ -1,12 +1,14 @@
 schema_version: "0.2"
 name: tiekat-pulse
-version: 0.1.0
-description: Event pulse inspection CLI fixture for native Trellis package workflows.
+version: 0.6.0
+description: Diagnostic pulse utility for quick runtime snapshots and lightweight process checks.
 homepage: https://example.org/tiekat-pulse
-kind: source
+kind: binary
 source:
   type: local_dir
   path: payload
+  checksum_sha256: cd45f0061260b8b94932681c0c202c17f671899f5203ec0a2e471c7edfdd45a3
+  signature: sig:tiekat-pulse-dev-local
 install:
   strategy: copy
   entries:
@@ -19,10 +21,10 @@ provenance:
   license: BSD-3-Clause
   registry: vineyard-core
 platform:
-  os: [linux, macos, windows]
-  arch: [x86_64]
+  os: [linux, macos]
+  arch: [x86_64, aarch64]
 post_install:
   policy: allowlisted
   command: echo tiekat-pulse post-install noop
 health:
-  notes: Source-kind fixture package for v0.2 authoring model.
+  notes: Diagnostics-oriented package proving local introspection tooling in the native catalog.

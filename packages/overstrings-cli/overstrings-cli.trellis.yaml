@@ -1,12 +1,14 @@
 schema_version: "0.2"
 name: overstrings-cli
-version: 0.1.0
-description: String formatting and normalization utility CLI for Trellis examples.
+version: 0.6.0
+description: Text normalization and formatting CLI for quick shell workflows and pipeline hygiene.
 homepage: https://example.org/overstrings-cli
 kind: binary
 source:
   type: local_dir
   path: payload
+  checksum_sha256: 2cde90a8fa15559c7e6b469b796d8fa148f7040aa397eed8b1706454f8dfca8c
+  signature: sig:overstrings-dev-local
 install:
   strategy: copy
   entries:
@@ -23,4 +25,4 @@ platform:
   os: [linux, macos]
   arch: [x86_64, aarch64]
 health:
-  notes: Demonstrates dependency declaration without automatic resolution.
+  notes: Flagship native CLI package for text sanitation and formatting tasks.

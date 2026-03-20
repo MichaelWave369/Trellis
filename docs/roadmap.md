@@ -1,21 +1,21 @@
 # Trellis Roadmap
 
-## v0.2 (current)
+## v0.7 (current) — Seed Installer Experience
 
-- stronger package authoring schema
-- `validate` and `inspect` author commands
-- install from local spec path (`install --from`)
-- package kind and platform-aware install planning
-- expanded local registry fixtures (`vineyard-core`, `overstrings-cli`, `tiekat-pulse`)
+- guided first-run onboarding via `trellis seed` / `trellis bootstrap`
+- bootstrap script groundwork for local/dev installation flow
+- doctor-integrated confidence checkpoint during onboarding
+- first-package recommendations and path-model clarity
 
-## v0.3 (deferred)
+## v0.8 (planned)
 
-- dependency resolution and lock state
-- richer integrity policies and local signature verification
-- transactional rollback engine
-- multi-registry/tap architecture
+- dependency resolution strategy and install planning model
+- lock state model for reproducible install plans
+- transactional rollback/repair execution foundations
+- stronger package lifecycle tooling for expanding native catalogs
 
-## later
+## Later
 
-- remote sync/publish workflows
+- scoped remote sync/publish workflows
+- mirror/fallback transport behavior
 - broader ecosystem interoperability tooling
