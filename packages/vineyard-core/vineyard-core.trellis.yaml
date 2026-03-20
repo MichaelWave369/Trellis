@@ -1,0 +1,26 @@
+schema_version: "0.2"
+name: vineyard-core
+version: 0.2.0
+description: Core utilities for the Trellis reference registry.
+homepage: https://example.org/vineyard-core
+kind: binary
+source:
+  type: local_dir
+  path: payload
+  signature: dev-local
+install:
+  strategy: copy
+  entries:
+    - bin
+bin:
+  vineyard-core: bin/vineyard-core
+dependencies: []
+provenance:
+  publisher: Trellis Maintainers
+  license: MIT
+  registry: vineyard-core
+platform:
+  os: [linux, macos, windows]
+  arch: [x86_64, aarch64]
+health:
+  notes: Baseline fixture package for end-to-end testing.
