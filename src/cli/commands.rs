@@ -449,7 +449,9 @@ pub fn run(cli: Cli) -> Result<()> {
             if issues.is_empty() {
                 ui::ok("Installed state matches receipts and lock metadata");
             } else {
-                for issue in &issues { ui::warn(issue); }
+                for issue in &issues {
+                    ui::warn(issue);
+                }
                 bail!("verify found {} issue(s)", issues.len());
             }
         }
@@ -457,12 +459,16 @@ pub fn run(cli: Cli) -> Result<()> {
             ensure_initialized(&paths)?;
             ui::header("Repair Installed State");
             let repairs = repair_state(&paths)?;
-            for line in &repairs { ui::info(line); }
+            for line in &repairs {
+                ui::info(line);
+            }
             let issues = verify_state(&paths, &profile)?;
             if issues.is_empty() {
                 ui::ok("Repair completed; state is now consistent");
             } else {
-                for issue in &issues { ui::warn(issue); }
+                for issue in &issues {
+                    ui::warn(issue);
+                }
                 bail!("repair could not resolve all issues");
             }
         }
