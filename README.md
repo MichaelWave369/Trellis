@@ -132,4 +132,4 @@ Global flags:
 
 ## License
 
-AGPL-3.0-only.
+MIT. See [LICENSE](LICENSE) and [license transition notes](docs/LICENSE_TRANSITION.md) for the scope and history.

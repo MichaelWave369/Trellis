@@ -20,6 +20,12 @@ jobs:
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
 
+      - name: Check Trellis project license declarations
+        run: |
+          grep -Fxq 'license = "MIT"' Cargo.toml
+          grep -Fxq 'MIT License' LICENSE
+          grep -Fq 'MIT. See [LICENSE]' README.md
+
       - name: Format check
         run: cargo fmt --check
 
