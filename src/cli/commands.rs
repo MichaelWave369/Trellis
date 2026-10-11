@@ -445,7 +445,7 @@ pub fn run(cli: Cli) -> Result<()> {
         Command::Verify => {
             ensure_initialized(&paths)?;
             ui::header("Verify Installed State");
-            let issues = verify_state(&paths)?;
+            let issues = verify_state(&paths, &profile)?;
             if issues.is_empty() {
                 ui::ok("Installed state matches receipts and lock metadata");
             } else {
@@ -458,7 +458,7 @@ pub fn run(cli: Cli) -> Result<()> {
             ui::header("Repair Installed State");
             let repairs = repair_state(&paths)?;
             for line in &repairs { ui::info(line); }
-            let issues = verify_state(&paths)?;
+            let issues = verify_state(&paths, &profile)?;
             if issues.is_empty() {
                 ui::ok("Repair completed; state is now consistent");
             } else {
@@ -570,16 +570,6 @@ pub fn run(cli: Cli) -> Result<()> {
         }
     }
 
-    println!("Warnings      :");
-    if receipt.trust.warnings.is_empty() {
-        println!("  - none");
-    } else {
-        for warning in &receipt.trust.warnings {
-            println!("  - {}", warning);
-        }
-    }
-
-    println!("Installed files: {}", receipt.installed_files.len());
     Ok(())
 }
 
