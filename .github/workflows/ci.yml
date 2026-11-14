@@ -48,4 +48,4 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Test WinGet adapter with a mock (no actual installs)
-        run: cargo test core::winget::tests
+        run: cargo test winget
