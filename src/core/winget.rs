@@ -260,6 +260,73 @@ fn write_receipt(
     Ok(path)
 }
 
+#[derive(Debug, Serialize)]
+struct StatusEntry {
+    package_id: String,
+    observation: Observation,
+}
+
+#[derive(Debug, Serialize)]
+struct StatusReport {
+    schema_version: &'static str,
+    backend: &'static str,
+    observed_at_utc: String,
+    note: &'static str,
+    items: Vec<StatusEntry>,
+}
+
+/// Read-only installed-state observation. Does not create a network listener,
+/// mutate Trellis install state, or run package installers.
+pub fn run_status(plan: &Path, catalog: &Path, output: Option<&Path>) -> Result<()> {
+    if !cfg!(target_os = "windows") {
+        bail!("WinGet installed-state observation is supported on Windows only");
+    }
+    run_status_with(&SystemWinget, plan, catalog, output).map(|_| ())
+}
+
+fn run_status_with(
+    winget: &impl WingetBackend,
+    plan_file: &Path,
+    catalog_file: &Path,
+    output_file: Option<&Path>,
+) -> Result<StatusReport> {
+    let (plan, _) = SelectionPlan::from_file(plan_file)?;
+    let catalog_bytes = catalog_allowlist(catalog_file)?;
+    let ids = selected_ids(&plan, &catalog_bytes)?;
+    let mut items = Vec::new();
+    println!("Trellis WinGet status · {} selected candidates", ids.len());
+    println!("A package listed by WinGet is not proof that the program works.");
+    for id in ids {
+        let observation = winget
+            .list(&id)
+            .map(|value| classify_list(&value, &id))
+            .unwrap_or(Observation::Unknown);
+        println!("STATUS {}: {}", id, observation.label());
+        items.push(StatusEntry {
+            package_id: id,
+            observation,
+        });
+    }
+    let report = StatusReport {
+        schema_version: "trellis.winget-status.v0.1",
+        backend: "winget",
+        observed_at_utc: Utc::now().to_rfc3339(),
+        note: "WinGet list observation only. Not a functional, cryptographic, or security verification.",
+        items,
+    };
+    if let Some(path) = output_file {
+        // Never overwrite an arbitrary existing file from an untrusted plan.
+        let file = fs::OpenOptions::new()
+            .create_new(true)
+            .write(true)
+            .open(path)
+            .with_context(|| format!("status output must be a new file: {}", path.display()))?;
+        serde_json::to_writer_pretty(file, &report)?;
+        println!("Status report: {}", path.display());
+    }
+    Ok(report)
+}
+
 fn run_with(
     winget: &impl WingetBackend,
     plan_file: &Path,
