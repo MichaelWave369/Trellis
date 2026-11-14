@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a2e">
+  <title>Φ Trellis App Center | Preview</title>
+  <meta name="description" content="Build an auditable application selection and preflight plan for Trellis and PhiOS.">
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#catalog">Skip to app catalog</a>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="symbol" aria-hidden="true">Φ</span><span>TRELLIS <small>APP CENTER</small></span></div>
+      <a href="https://github.com/MichaelWave369/Trellis" target="_blank" rel="noopener noreferrer">Source repository</a>
+    </header>
+    <section class="hero">
+      <span class="eyebrow">OPTIONAL PREVIEW · NO INSTALL EXECUTION</span>
+      <h1>Pick your apps.<br><span>Own your setup.</span></h1>
+      <p>A Ninite-style selection surface for Trellis packages, external package managers, and the Φ public source fleet. Build a reviewable plan before any software touches a machine.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#catalog">Browse catalog</a>
+        <a class="button button-quiet" href="#plan">View selection plan</a>
+      </div>
+    </section>
+    <section class="notice" aria-label="Install readiness warning">
+      <strong>One catalog, three different kinds of readiness.</strong>
+      <p>Native Trellis packages have local package specs. WinGet and Flatpak entries require package-manager preflight. Public Φ repos are <strong>review candidates, not installable packages</strong> until PhiOS compatibility, licensing, build, and operator-approval gates pass. This page never runs installers.</p>
+    </section>
+    <section class="stats" aria-label="Catalog summary">
+      <div><strong id="stat-total">...</strong><span>Catalog entries</span></div>
+      <div><strong id="stat-native">...</strong><span>Native Trellis specs</span></div>
+      <div><strong id="stat-external">...</strong><span>External package targets</span></div>
+      <div><strong id="stat-repos">...</strong><span>Φ source repositories</span></div>
+    </section>
+    <section id="catalog" class="catalog">
+      <div class="section-head">
+        <div><span class="eyebrow">01 · CHOOSE</span><h2>Application catalog</h2><p>Browse, filter, and choose. The readiness label stays attached to every choice.</p></div>
+        <button type="button" id="refresh-repos" class="button button-quiet">Refresh public Φ repos</button>
+      </div>
+      <div class="filters">
+        <label class="search-label">Search by name or description<input id="search" type="search" placeholder="Search 7-Zip, PhiOS, Blender..." autocomplete="off"></label>
+        <label>Target<select id="platform"><option value="all">All targets</option><option value="windows">Windows</option><option value="linux">Linux / PhiOS (Linux)</option><option value="macos">macOS</option><option value="phios">Φ source reviews</option></select></label>
+        <label>Source type<select id="kind"><option value="all">All source types</option><option value="trellis">Trellis native</option><option value="winget">WinGet</option><option value="flatpak">Flatpak</option><option value="phi_repo">Φ GitHub repository</option></select></label>
+        <label>Category<select id="category"><option value="all">All categories</option></select></label>
+      </div>
+      <div class="list-toolbar">
+        <span id="visible-count">Loading catalog...</span>
+        <span class="toolbar-actions"><button type="button" id="select-visible">Select visible</button><button type="button" id="clear-selection">Clear selection</button></span>
+      </div>
+      <div id="app-list" class="app-list" role="group" aria-label="Selectable applications"></div>
+      <p class="footnote" id="snapshot-note"></p>
+      <p id="status" role="status" aria-live="polite"></p>
+    </section>
+    <section id="plan" class="plan">
+      <div class="section-head"><div><span class="eyebrow">02 · REVIEW</span><h2>Your selection plan</h2><p>Generate a plan you can examine, share, and eventually hand off to an explicitly approved installer.</p></div><span id="selected-count" class="selected-count">0 selected</span></div>
+      <div class="plan-actions"><button id="copy-plan" class="button button-quiet" type="button">Copy review commands</button><button id="download-plan" class="button button-primary" type="button">Download JSON plan</button></div>
+      <pre id="plan-preview" class="plan-preview" tabindex="0">Choose packages to see the plan.</pre>
+      <p class="footnote">No automatic installs, administrator privileges, credential access, remote execution, or permissions are granted by this preview. Check source, package IDs, licenses, and intended machine before executing any generated command.</p>
+    </section>
+    <footer>Φ Trellis · Local-first package workflows · <a href="https://github.com/MichaelWave369/PhiOS" target="_blank" rel="noopener noreferrer">PhiOS App Platform</a> · <a href="https://github.com/MichaelWave369/PhiRepoNerve" target="_blank" rel="noopener noreferrer">RepoNerve</a></footer>
+  </main>
+</body>
+</html>
