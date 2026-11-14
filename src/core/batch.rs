@@ -62,7 +62,9 @@ impl SelectionPlan {
             }
             match item.kind.as_str() {
                 "trellis" => {
-                    let name = item.id.strip_prefix("trellis:")
+                    let name = item
+                        .id
+                        .strip_prefix("trellis:")
                         .context("native Trellis selection has incorrect ID prefix")?;
                     crate::spec::validate::validate_name(name)?;
                     if item.status != "native_catalog" {
@@ -85,9 +87,11 @@ impl SelectionPlan {
                 }
                 _ => bail!("unknown selection kind: '{}'", item.kind),
             }
-            if item.id.len() > 160 || item.id.len() < 4
-                || !item.id.bytes().all(|b| b.is_ascii_alphanumeric()
-                    || matches!(b, b':' | b'.' | b'-' | b'_' | b'+'))
+            if item.id.len() > 160
+                || item.id.len() < 4
+                || !item.id.bytes().all(|b| {
+                    b.is_ascii_alphanumeric() || matches!(b, b':' | b'.' | b'-' | b'_' | b'+')
+                })
             {
                 bail!("invalid selection identifier");
             }
@@ -106,14 +110,23 @@ pub fn approval_hash(raw: &[u8], entries: &[RegistryEntry]) -> Result<String> {
     for entry in entries {
         add_bytes(&mut hasher, entry.spec.name.as_bytes());
         let spec_bytes = fs::read(&entry.spec_path).with_context(|| {
-            format!("cannot read local package spec {}", entry.spec_path.display())
+            format!(
+                "cannot read local package spec {}",
+                entry.spec_path.display()
+            )
         })?;
         add_bytes(&mut hasher, &spec_bytes);
-        let source = entry.spec_path.parent()
+        let source = entry
+            .spec_path
+            .parent()
             .context("local spec has no parent directory")?
             .join(&entry.spec.source.path);
 
-        let expected = entry.spec.source.checksum_sha256.as_deref()
+        let expected = entry
+            .spec
+            .source
+            .checksum_sha256
+            .as_deref()
             .context("native batch requires a declared SHA-256 checksum")?;
         let actual = match entry.spec.source.source_type {
             SourceType::Dir => checksum::sha256_dir(&source)?,
