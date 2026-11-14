@@ -82,7 +82,11 @@ pub enum Command {
         plan: std::path::PathBuf,
         #[arg(long, value_name = "FILE", default_value = "app-center/catalog.json")]
         catalog: std::path::PathBuf,
-        #[arg(long, value_name = "FILE", help = "Create a JSON observation report (no overwrite)")]
+        #[arg(
+            long,
+            value_name = "FILE",
+            help = "Create a JSON observation report (no overwrite)"
+        )]
         output: Option<std::path::PathBuf>,
     },
     /// Remove an installed package
