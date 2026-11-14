@@ -192,7 +192,10 @@
       "Nothing is installed or authorized by this file.",
       "Native-only preflight: trellis --registry-root packages batch --plan trellis-selection-plan.json",
       "Native-only apply: inspect the full approval hash, then use --apply --confirm HASH.",
-      "WinGet/Flatpak/Phi repos are HELD by the Trellis native batch importer.",
+      "WinGet-only Windows preflight: trellis winget-batch --plan trellis-selection-plan.json",
+      "WinGet-only Windows apply: inspect approval hash, then add --apply --confirm HASH.",
+      "Mixed plans are HELD. Export separate native and WinGet-only plans.",
+      "Flatpak/Phi repos remain review-only; no adapter installs them.",
       ""
     ];
     for (const app of plan.items) {
