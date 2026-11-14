@@ -60,9 +60,10 @@ class ApprovalGate:
     fixed arguments generated from allowlisted, canonical package identifiers.
     """
 
-    def __init__(self, catalog: Path, trellis_cli: Path, runner=run_cli):
+    def __init__(self, catalog: Path, trellis_cli: Path, home: Path, runner=run_cli):
         self.catalog = Path(catalog).resolve()
         self.trellis_cli = Path(trellis_cli)
+        self.home = Path(home).expanduser().resolve()
         self.runner = runner
         self._lock = threading.Lock()
         self._pending: dict | None = None
@@ -110,7 +111,7 @@ class ApprovalGate:
 
     def _argv(self, path: Path, apply_hash: str | None = None) -> list[str]:
         args = [
-            str(self.trellis_cli), "winget-batch",
+            str(self.trellis_cli), "--home", str(self.home), "winget-batch",
             "--plan", str(path),
             "--catalog", str(self.catalog),
         ]
