@@ -130,6 +130,10 @@ Global flags:
 - `CHANGELOG.md`
 - `RELEASE_NOTES.md`
 
+## Optional Φ Trellis App Center preview
+
+The [App Center](app-center/index.html) provides a searchable Ninite-style selection UI for native Trellis specs, external Windows/Linux package-manager targets, and the public Φ repository inventory. It exports **review-only** plans and never executes installers. GitHub repositories are not marked installable without compatibility and operator-approval checks. Run a local HTTP server from this checkout and open /app-center/; see [App Center guide](docs/APP_CENTER.md).
+
 ## License
 
 MIT. See [LICENSE](LICENSE) and [license transition notes](docs/LICENSE_TRANSITION.md) for the scope and history.
