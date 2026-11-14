@@ -238,10 +238,13 @@ pub fn run(cli: Cli) -> Result<()> {
                 confirm.as_deref(),
             )?;
         }
-        Command::WingetBatch { plan, catalog, apply, confirm } => {
-            crate::core::winget::run(
-                &plan, &catalog, &paths.home, apply, confirm.as_deref(),
-            )?;
+        Command::WingetBatch {
+            plan,
+            catalog,
+            apply,
+            confirm,
+        } => {
+            crate::core::winget::run(&plan, &catalog, &paths.home, apply, confirm.as_deref())?;
         }
         Command::Remove { pkg } => {
             ensure_initialized(&paths)?;
