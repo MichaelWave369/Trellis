@@ -68,15 +68,19 @@ struct BatchProgressEvent<'a> {
     observation: Option<Observation>,
 }
 
+pub struct ProgressUpdate<'a> {
+    pub index: usize,
+    pub total: usize,
+    pub package_id: &'a str,
+    pub phase: &'a str,
+    pub exit_code: Option<i32>,
+    pub observation: Option<Observation>,
+}
+
 pub fn append_progress(
     home: &Path,
     approval_hash: &str,
-    index: usize,
-    total: usize,
-    package_id: &str,
-    phase: &str,
-    exit_code: Option<i32>,
-    observation: Option<Observation>,
+    update: ProgressUpdate<'_>,
 ) -> Result<PathBuf> {
     // approval_hash is internally derived; package_id is catalog-validated.
     let dir = home.join("external").join("winget").join(approval_hash);
@@ -91,12 +95,12 @@ pub fn append_progress(
     let event = BatchProgressEvent {
         schema_version: "trellis.winget-progress.v0.1",
         observed_at_utc: Utc::now().to_rfc3339(),
-        package_id,
-        index: index + 1,
-        total,
-        phase,
-        exit_code,
-        observation,
+        package_id: update.package_id,
+        index: update.index + 1,
+        total: update.total,
+        phase: update.phase,
+        exit_code: update.exit_code,
+        observation: update.observation,
     };
     serde_json::to_writer(&mut writer, &event)?;
     writer.write_all(b"\n")?;
@@ -142,19 +146,19 @@ mod tests {
     fn progress_is_parseable_append_only_jsonl() {
         let home = tempfile::tempdir().unwrap();
         let hash = "a".repeat(64);
-        let file =
-            append_progress(home.path(), &hash, 0, 2, "Git.Git", "started", None, None).unwrap();
+        let file = append_progress(
+            home.path(), &hash, ProgressUpdate {
+                index: 0, total: 2, package_id: "Git.Git",
+                phase: "started", exit_code: None, observation: None,
+            },
+        ).unwrap();
         append_progress(
-            home.path(),
-            &hash,
-            0,
-            2,
-            "Git.Git",
-            "finished",
-            Some(0),
-            Some(Observation::ObservedInWingetList),
-        )
-        .unwrap();
+            home.path(), &hash, ProgressUpdate {
+                index: 0, total: 2, package_id: "Git.Git",
+                phase: "finished", exit_code: Some(0),
+                observation: Some(Observation::ObservedInWingetList),
+            },
+        ).unwrap();
         let lines = std::fs::read_to_string(file).unwrap();
         let events: Vec<serde_json::Value> = lines
             .lines()
