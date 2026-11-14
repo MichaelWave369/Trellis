@@ -275,6 +275,13 @@ fn run_with(
                 id
             );
         }
+        // Display the actual source metadata before the operator approves the batch.
+        // Remove terminal control characters from lower-trust package descriptions.
+        let readable: String = output
+            .chars()
+            .filter(|c| !c.is_control() || matches!(c, '\n' | '\t'))
+            .collect();
+        println!("WinGet metadata for {}:\n{}", id, readable.trim_end());
         observations.push((id.clone(), output));
     }
     let approval = fingerprint(&plan_bytes, &catalog_bytes, &version, &observations);
