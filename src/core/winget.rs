@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use crate::core::batch::SelectionPlan;
-use crate::core::winget_progress::{append_progress, classify_list, Observation};
+use crate::core::winget_progress::{append_progress, classify_list, Observation, ProgressUpdate};
 
 const MAX_CATALOG_BYTES: u64 = 2 * 1024 * 1024;
 const MAX_WINGET_OUTPUT: usize = 256 * 1024;
@@ -398,20 +398,21 @@ fn run_with(
     for (i, id) in ids.iter().enumerate() {
         // A durable journal entry precedes the external installer process.
         // Interrupted processes retain a "started" event without a fake success.
-        let event_file = append_progress(home, &approval, i, ids.len(), id, "started", None, None)?;
+        let event_file = append_progress(
+            home, &approval, ProgressUpdate {
+                index: i, total: ids.len(), package_id: id,
+                phase: "started", exit_code: None, observation: None,
+            },
+        )?;
         println!("PROGRESS [{}/{}] started {}", i + 1, ids.len(), id);
         let code = match winget.install(id) {
             Ok(code) => code,
             Err(error) => {
                 append_progress(
-                    home,
-                    &approval,
-                    i,
-                    ids.len(),
-                    id,
-                    "launch_failed",
-                    None,
-                    None,
+                    home, &approval, ProgressUpdate {
+                        index: i, total: ids.len(), package_id: id,
+                        phase: "launch_failed", exit_code: None, observation: None,
+                    },
                 )?;
                 return Err(error);
             }
@@ -424,14 +425,11 @@ fn run_with(
             .unwrap_or(Observation::Unknown);
         let receipt_path = write_receipt(home, &approval, i, id, code, observation)?;
         append_progress(
-            home,
-            &approval,
-            i,
-            ids.len(),
-            id,
-            "finished",
-            Some(code),
-            Some(observation),
+            home, &approval, ProgressUpdate {
+                index: i, total: ids.len(), package_id: id,
+                phase: "finished", exit_code: Some(code),
+                observation: Some(observation),
+            },
         )?;
         println!(
             "PROGRESS [{}/{}] {} exit={} observation={} receipt={} journal={}",
