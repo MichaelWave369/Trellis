@@ -451,6 +451,8 @@ mod tests {
     struct FakeWinget {
         installs: Cell<usize>,
         shows: Cell<usize>,
+        lists: Cell<usize>,
+        list_ok: bool,
         failure_code: i32,
     }
     impl WingetBackend for FakeWinget {
@@ -461,6 +463,16 @@ mod tests {
             self.shows.set(self.shows.get() + 1);
             Ok(format!(
                 "Found Example [{}]\nVersion: 1.2.3\nPublisher: Test\n",
+                id
+            ))
+        }
+        fn list(&self, id: &str) -> Result<String> {
+            self.lists.set(self.lists.get() + 1);
+            if !self.list_ok {
+                bail!("simulated list probe failure");
+            }
+            Ok(format!(
+                "Name      Id          Version  Source\n--------  ----------  -------  ------\nExample   {}    1.2.3    winget\n",
                 id
             ))
         }
@@ -509,6 +521,8 @@ mod tests {
         FakeWinget {
             installs: Cell::new(0),
             shows: Cell::new(0),
+            lists: Cell::new(0),
+            list_ok: true,
             failure_code: 0,
         }
     }
