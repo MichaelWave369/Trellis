@@ -26,9 +26,10 @@ jobs:
           grep -Fxq 'MIT License' LICENSE
           grep -Fq 'MIT. See [LICENSE]' README.md
 
-      - name: Validate App Center advisory catalog
+      - name: Validate App Center catalog and localhost bridge
         run: |
           python3 scripts/check_app_center.py
+          python3 -m unittest discover -s tests -p 'test_app_center_bridge.py'
           node --check app-center/app.js
 
       - name: Format check
@@ -49,3 +50,9 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Test WinGet adapter with a mock (no actual installs)
         run: cargo test winget
+      - name: Set up Python for read-only bridge tests
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test loopback bridge security (no installs)
+        run: python -m unittest discover -s tests -p test_app_center_bridge.py

@@ -29,6 +29,24 @@
       <strong>One catalog, three different kinds of readiness.</strong>
       <p>Native Trellis packages have local package specs. WinGet and Flatpak entries require package-manager preflight. Public Φ repos are <strong>review candidates, not installable packages</strong> until PhiOS compatibility, licensing, build, and operator-approval gates pass. This page never runs installers.</p>
     </section>
+    <section class="bridge-panel" aria-labelledby="bridge-heading">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">OPTIONAL · RUNG 5</span>
+          <h2 id="bridge-heading">Local progress bridge</h2>
+          <p>Pair with the read-only Trellis service running on this computer. It watches local installation events but never starts installers.</p>
+        </div>
+      </div>
+      <div class="bridge-pairing">
+        <label for="bridge-token">One-time pairing token from the bridge console</label>
+        <input type="password" id="bridge-token" autocomplete="off" spellcheck="false" placeholder="Paste token here">
+        <button type="button" id="bridge-connect" class="button button-primary">Pair and watch</button>
+        <button type="button" id="bridge-disconnect" class="button button-quiet" disabled>Disconnect</button>
+      </div>
+      <p id="bridge-state" class="footnote" role="status" aria-live="polite">Disconnected. Run the local bridge, open its App Center URL, then enter its token.</p>
+      <div id="bridge-progress" class="bridge-progress" aria-label="Recent local WinGet batch events"></div>
+      <p class="footnote">No token is saved in browser storage or sent to GitHub. Progress is observational only: WinGet exit codes and package listings do not establish functional installation.</p>
+    </section>
     <section class="stats" aria-label="Catalog summary">
       <div><strong id="stat-total">...</strong><span>Catalog entries</span></div>
       <div><strong id="stat-native">...</strong><span>Native Trellis specs</span></div>

@@ -107,9 +107,40 @@ For a confirmed WinGet-only batch executed with `winget-batch --apply --confirm 
 
     TRELLIS_HOME/external/winget/<approval-hash>/events.jsonl
 
-Successful WinGet process exit and later list observation are separate fields in each package's external receipt. An interrupted process may leave only its started event. The journal can help diagnose where execution stopped; it is **not** a transactional recovery, independent installer health test, rollback system, or streaming UI connection. The browser does not have privileged localhost APIs or automatic access to the progress journal.
+Successful WinGet process exit and later list observation are separate fields in each package's external receipt. An interrupted process may leave only its started event. The journal can help diagnose where execution stopped; it is **not** a transactional recovery, independent installer health test, rollback system, or streaming UI connection. The optional Rung 5 bridge below can expose a strictly read-only view of this journal after explicit local token pairing; it never grants install authority.
 
 This rung runs CLI and mocked backend tests on Linux and Windows GitHub runners; no live Windows applications are installed during CI. Physical Windows verification is still required.
+
+## Rung 5: Paired, read-only localhost progress bridge
+
+This optional **Python standard-library-only** service serves the existing App Center from loopback and exposes a bounded view of *local WinGet batch progress journals*. It does not expose installation or plan-upload endpoints.
+
+On Windows, from the Trellis repository root, using the same home folder as the Trellis CLI:
+
+    python .\scripts\app_center_bridge.py --home "$env:APPDATA\Trellis"
+
+On Linux/macOS development machines, use a test Trellis home:
+
+    python3 scripts/app_center_bridge.py --home /path/to/test/trellis-home
+
+The service binds **127.0.0.1:8765 only** by default and prints an ephemeral random pairing token in the local console. Open **http://127.0.0.1:8765/app-center/** on that same machine, paste the token in **Local progress bridge**, then select **Pair and watch**. Keep the console open; Ctrl+C stops the service. The token is never stored in localStorage, cookies or the catalog, and is cleared on disconnect/page exit.
+
+The paired page polls the exact same-origin endpoint \`GET /api/bridge/v1/progress\` every three seconds with \`X-Trellis-Bridge-Token\`. The endpoint returns only a bounded, schema-checked view of the latest WinGet batch journals found at:
+
+    TRELLIS_HOME/external/winget/<approval-hash>/events.jsonl
+
+This is **near-live journal monitoring, not a new installer process**. Run a separately reviewed \`trellis winget-batch --apply --confirm HASH\` in another local terminal after its own preflight to produce progress events. A \`started\` event without a \`finished\` event may represent an interrupted process, not a currently running program. A WinGet list observation is not proof of functional installation.
+
+**Trust boundaries:** The bridge serves only allowlisted App Center files and the one authenticated progress endpoint; it rejects non-loopback Host values, foreign Origin headers, unpaired API requests, query-token passing, and all POST/OPTIONS actions. It sets strict same-origin/CSP/no-store headers, reads only bounded journal files under hexadecimal session directories, skips symlinks, and strips unexpected fields from events. The service does not spawn executables, write install state, request elevation, forward browser credentials, or bind to the LAN. There is no CORS access for external websites.
+
+The pairing token guards against other webpages querying the service, but it does not defend against untrusted code already running with the same user's filesystem/process access, browser extensions with broad permissions, or a compromised local machine. Keep the token private. Avoid forwarding the port publicly. Public GitHub catalog refresh remains an optional unauthenticated request to api.github.com.
+
+**Testing:** 
+
+    python3 -m unittest discover -s tests -p 'test_app_center_bridge.py'
+    node --check app-center/app.js
+
+CI runs the Python bridge suite on both Ubuntu and Windows, including unauthorized access, DNS-rebinding-style Host rejection, cross-origin rejection, read-only endpoints, malicious journal input, and symlink handling. It does not perform real installer execution or verify physical Windows application health.
 
 ## Validation
 

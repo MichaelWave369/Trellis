@@ -136,6 +136,10 @@ Global flags:
 
 The [App Center](app-center/index.html) provides a searchable Ninite-style selection UI for native Trellis specs, external Windows/Linux package-manager targets, and the public Φ repository inventory. It exports **review-only** plans and never executes installers. GitHub repositories are not marked installable without compatibility and operator-approval checks. Run a local HTTP server from this checkout and open /app-center/; see [App Center guide](docs/APP_CENTER.md).
 
+## Optional Rung 5 local progress bridge
+
+Run `python scripts/app_center_bridge.py` from the checkout root to serve the App Center on `http://127.0.0.1:8765/app-center/`. Paste the random pairing token printed locally into the browser to watch WinGet journal events without installing anything. Specify `--home` to match your Trellis state folder. The bridge binds loopback only, requires a token, and has **no install/upload endpoint**. See [App Center guide](docs/APP_CENTER.md).
+
 ## License
 
 MIT. See [LICENSE](LICENSE) and [license transition notes](docs/LICENSE_TRANSITION.md) for the scope and history.

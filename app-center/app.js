@@ -21,6 +21,10 @@
   let visibleApps = [];
   let metadata = {};
   let importedObservations = new Map();
+  let bridgeToken = "";
+  let bridgeTimer = null;
+  let bridgeBusy = false;
+  let bridgeLastPayload = "";
 
   const setStatus = (message) => { ui.status.textContent = message; };
   const safeUrl = (value) => {
@@ -285,6 +289,145 @@
     }
   }
 
+  // The App Center communicates only with the exact same-origin bridge.
+  // Pairing is a user gesture, and the token stays in memory only.
+  function disconnectBridge(message) {
+    if (bridgeTimer !== null) clearInterval(bridgeTimer);
+    bridgeTimer = null;
+    bridgeToken = "";
+    bridgeLastPayload = "";
+    $("bridge-token").value = "";
+    $("bridge-connect").disabled = false;
+    $("bridge-disconnect").disabled = true;
+    $("bridge-progress").replaceChildren();
+    $("bridge-state").textContent = message || "Disconnected. No local progress is being read.";
+  }
+
+  function element(tag, className, value) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (value !== undefined) node.textContent = String(value);
+    return node;
+  }
+
+  function renderBridgeProgress(report) {
+    const root = $("bridge-progress");
+    const fragment = document.createDocumentFragment();
+    const sessions = report.sessions.slice(0, 4);
+    if (!sessions.length) {
+      fragment.append(element("p", "footnote",
+        "No local WinGet batches found. A confirmed CLI batch will write events here when it runs."));
+      root.replaceChildren(fragment);
+      return;
+    }
+    for (const session of sessions) {
+      if (!session || typeof session.approval_hash !== "string" ||
+          !/^[a-fA-F0-9]{64}$/.test(session.approval_hash) ||
+          !Array.isArray(session.events) || session.events.length > 1000) {
+        continue;
+      }
+      const latest = new Map();
+      let lastTimestamp = "";
+      for (const event of session.events) {
+        if (!event || typeof event.package_id !== "string" ||
+            !/^[A-Za-z0-9][A-Za-z0-9._-]{2,99}$/.test(event.package_id) ||
+            !["started", "finished", "launch_failed"].includes(event.phase)) continue;
+        latest.set(event.package_id, event);
+        if (typeof event.observed_at_utc === "string") {
+          lastTimestamp = event.observed_at_utc.slice(0, 64);
+        }
+      }
+      const panel = element("div", "bridge-session");
+      const processed = [...latest.values()].filter(event =>
+        event.phase === "finished" || event.phase === "launch_failed").length;
+      const total = Math.max(0, ...[...latest.values()]
+        .filter(event => Number.isInteger(event.total) && event.total <= 100)
+        .map(event => event.total));
+      panel.append(element("h3", "", "Batch " + session.approval_hash.slice(0, 10)));
+      panel.append(element("p", "footnote",
+        processed + " completed/attempted of " + (total || "unknown") +
+        " selected · Latest recorded event: " + (lastTimestamp || "unknown")));
+      const list = element("div", "bridge-session-items");
+      for (const event of [...latest.values()].slice(0, 20)) {
+        let description = "Started; no completion event recorded";
+        if (event.phase === "launch_failed") {
+          description = "Installer process could not start";
+        } else if (event.phase === "finished") {
+          description = "Installer exit " + (Number.isInteger(event.exit_code)
+            ? event.exit_code : "unknown");
+          const observations = {
+            observed_in_winget_list: " · listed by WinGet",
+            not_confirmed_in_winget_list: " · not confirmed in WinGet list",
+            unknown: " · list status unknown"
+          };
+          description += observations[event.observation] || " · no list observation";
+        }
+        const line = element("div", "bridge-event");
+        line.append(element("strong", "", event.package_id));
+        line.append(element("span", "", description));
+        list.append(line);
+      }
+      if (latest.size > 20) list.append(element("p", "footnote", "Showing first 20 packages."));
+      panel.append(list);
+      fragment.append(panel);
+    }
+    root.replaceChildren(fragment);
+  }
+
+  async function pollBridge() {
+    if (!bridgeToken || bridgeBusy || document.hidden) return;
+    bridgeBusy = true;
+    const activeToken = bridgeToken;
+    try {
+      const response = await fetch("/api/bridge/v1/progress", {
+        method: "GET",
+        mode: "same-origin",
+        credentials: "omit",
+        cache: "no-store",
+        redirect: "error",
+        headers: { "X-Trellis-Bridge-Token": activeToken }
+      });
+      if (activeToken !== bridgeToken) return;
+      if (!response.ok) {
+        throw new Error(response.status === 401
+          ? "Token refused by local bridge." : "Local bridge returned HTTP " + response.status + ".");
+      }
+      const report = await response.json();
+      if (activeToken !== bridgeToken) return;
+      if (!report || report.schema_version !== "trellis.bridge-progress.v0.1" ||
+          !Array.isArray(report.sessions) || report.sessions.length > 12) {
+        throw new Error("Unexpected local progress format.");
+      }
+      const serialized = JSON.stringify(report);
+      if (serialized !== bridgeLastPayload) {
+        renderBridgeProgress(report);
+        bridgeLastPayload = serialized;
+      }
+      $("bridge-state").textContent = "Paired to this local bridge. Checking journals every 3 seconds.";
+    } catch (error) {
+      if (activeToken === bridgeToken) disconnectBridge(
+        "Bridge connection stopped: " + error.message +
+        " Open the local bridge's exact URL and pair again.");
+    } finally {
+      bridgeBusy = false;
+    }
+  }
+
+  async function connectBridge() {
+    const entered = $("bridge-token").value.trim();
+    if (!/^[A-Za-z0-9_-]{20,120}$/.test(entered)) {
+      $("bridge-state").textContent = "Enter the token printed by the local bridge console.";
+      return;
+    }
+    bridgeToken = entered;
+    $("bridge-token").value = "";
+    $("bridge-connect").disabled = true;
+    $("bridge-disconnect").disabled = false;
+    $("bridge-state").textContent = "Checking local bridge pairing...";
+    await pollBridge();
+    if (bridgeToken) bridgeTimer = setInterval(pollBridge, 3000);
+  }
+
   async function importStatusReport() {
     const control = $("status-file");
     const file = control.files && control.files[0];
@@ -360,6 +503,15 @@
   });
   ui.refresh.addEventListener("click", refreshPublicRepos);
   $("status-file").addEventListener("change", importStatusReport);
+  $("bridge-connect").addEventListener("click", connectBridge);
+  $("bridge-disconnect").addEventListener("click", () => disconnectBridge());
+  $("bridge-token").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      connectBridge();
+    }
+  });
+  window.addEventListener("pagehide", () => disconnectBridge());
   $("clear-status").addEventListener("click", () => {
     importedObservations.clear();
     $("clear-status").disabled = true;
