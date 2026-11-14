@@ -189,7 +189,9 @@ class ApprovalTests(unittest.TestCase):
         self.assertEqual(len(self.runner.calls), 1)
         command = self.runner.calls[0]
         self.assertEqual(command[0], str(self.root / "trellis-test.exe"))
-        self.assertEqual(command[1:4], ["--home", str(self.home), "winget-batch"])
+        self.assertEqual(command[1], "--home")
+        self.assertEqual(Path(command[2]).resolve(), self.home.resolve())
+        self.assertEqual(command[3], "winget-batch")
         self.assertNotIn("--apply", command)
         self.assertEqual(preview["ids"], ["winget:Git.Git"])
         self.assertFalse((self.home / "external").exists())
