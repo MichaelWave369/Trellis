@@ -29,10 +29,25 @@ impl Observation {
 /// Require a standalone ID token in a table-like result row.
 /// Do not classify a name appearing in errors, summaries or headings as installed.
 pub fn classify_list(output: &str, id: &str) -> Observation {
-    let matched = output.lines().any(|line| {
-        let cols: Vec<&str> = line.split_whitespace().collect();
-        cols.len() >= 3 && cols.iter().skip(1).any(|field| *field == id)
-    });
+    let mut in_table = false;
+    let mut matched = false;
+    for line in output.lines() {
+        let trimmed = line.trim();
+        if trimmed.contains("---")
+            && trimmed.chars().all(|c| c == '-' || c.is_whitespace())
+        {
+            in_table = true;
+            continue;
+        }
+        if !in_table {
+            continue;
+        }
+        let cols: Vec<&str> = trimmed.split_whitespace().collect();
+        if cols.len() >= 3 && cols.iter().skip(1).any(|field| *field == id) {
+            matched = true;
+            break;
+        }
+    }
     if matched {
         Observation::ObservedInWingetList
     } else {
