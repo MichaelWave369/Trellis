@@ -224,8 +224,19 @@ pub fn run(cli: Cli) -> Result<()> {
             ));
             ui::info("Current dependency model resolves declared dependencies deterministically; advanced conflict solving remains intentionally out of scope.");
         }
-        Command::Batch { plan, apply, confirm } => {
-            run_batch(&paths, &registry_root, &profile, &plan, apply, confirm.as_deref())?;
+        Command::Batch {
+            plan,
+            apply,
+            confirm,
+        } => {
+            run_batch(
+                &paths,
+                &registry_root,
+                &profile,
+                &plan,
+                apply,
+                confirm.as_deref(),
+            )?;
         }
         Command::Remove { pkg } => {
             ensure_initialized(&paths)?;
@@ -800,7 +811,14 @@ fn run_batch(
     let (plan, raw) = SelectionPlan::from_file(plan_file)?;
     ui::header("App Center Native Batch");
     println!("Plan: {}", plan_file.display());
-    println!("Mode: {}", if apply { "explicit apply" } else { "read-only preview" });
+    println!(
+        "Mode: {}",
+        if apply {
+            "explicit apply"
+        } else {
+            "read-only preview"
+        }
+    );
     println!("Selections: {}", plan.items.len());
 
     let mut blocked = Vec::new();
@@ -811,11 +829,16 @@ fn run_batch(
 
     for item in roots {
         if item.kind != "trellis" {
-            println!("  HELD {}: {} requires separate provider/compatibility review", item.id, item.kind);
+            println!(
+                "  HELD {}: {} requires separate provider/compatibility review",
+                item.id, item.kind
+            );
             blocked.push(format!("{} is not a native Trellis package", item.id));
             continue;
         }
-        let package = item.id.strip_prefix("trellis:")
+        let package = item
+            .id
+            .strip_prefix("trellis:")
             .context("validated native package ID missing prefix")?;
         match resolve_install_order(paths, registry_root, package) {
             Ok(order) => {
@@ -833,17 +856,24 @@ fn run_batch(
         if !crate::spec::validate::platform_matches(&entry.spec) {
             blocked.push(format!(
                 "{} {} is unsupported on {} / {}",
-                entry.spec.name, entry.spec.version,
-                std::env::consts::OS, std::env::consts::ARCH
+                entry.spec.name,
+                entry.spec.version,
+                std::env::consts::OS,
+                std::env::consts::ARCH
             ));
         }
         if entry.spec.source.checksum_sha256.is_none() {
-            blocked.push(format!("{} has no declared source SHA-256", entry.spec.name));
+            blocked.push(format!(
+                "{} has no declared source SHA-256",
+                entry.spec.name
+            ));
         }
         let receipt_path = paths.receipts.join(format!("{}.json", entry.spec.name));
         if receipt_path.exists() {
             match read_receipt(&receipt_path) {
-                Ok(receipt) if receipt.name == entry.spec.name && receipt.version == entry.spec.version => {
+                Ok(receipt)
+                    if receipt.name == entry.spec.name && receipt.version == entry.spec.version =>
+                {
                     println!("  PRESENT {} {}", entry.spec.name, receipt.version);
                 }
                 Ok(receipt) => blocked.push(format!(
@@ -851,7 +881,8 @@ fn run_batch(
                     entry.spec.name, receipt.name, receipt.version
                 )),
                 Err(error) => blocked.push(format!(
-                    "{} has an unreadable receipt: {}", entry.spec.name, error
+                    "{} has an unreadable receipt: {}",
+                    entry.spec.name, error
                 )),
             }
         } else {
@@ -886,7 +917,10 @@ fn run_batch(
     if blocked.is_empty() {
         ui::ok("Preflight passed for locally indexed native packages");
     } else {
-        ui::warn(format!("{} item(s) held; batch apply is blocked", blocked.len()));
+        ui::warn(format!(
+            "{} item(s) held; batch apply is blocked",
+            blocked.len()
+        ));
         for reason in &blocked {
             println!("  HELD: {}", reason);
         }
@@ -894,11 +928,15 @@ fn run_batch(
 
     if !apply {
         println!("Dry run only. No installations or profile writes performed.");
-        println!("To apply an all-native plan, re-run with --apply --confirm <FULL_APPROVAL_HASH>.");
+        println!(
+            "To apply an all-native plan, re-run with --apply --confirm <FULL_APPROVAL_HASH>."
+        );
         return Ok(());
     }
     if !blocked.is_empty() {
-        bail!("batch refused: all selections must pass native preflight before installing anything");
+        bail!(
+            "batch refused: all selections must pass native preflight before installing anything"
+        );
     }
     let fingerprint = fingerprint.context("batch has no approval hash")?;
     if confirm != Some(fingerprint.as_str()) {
@@ -909,9 +947,15 @@ fn run_batch(
     for entry in entries {
         let receipt_path = paths.receipts.join(format!("{}.json", entry.spec.name));
         if receipt_path.exists() {
-            ui::info(format!("Already installed: {} {}", entry.spec.name, entry.spec.version));
+            ui::info(format!(
+                "Already installed: {} {}",
+                entry.spec.name, entry.spec.version
+            ));
         } else {
-            ui::step(format!("Installing {} {}", entry.spec.name, entry.spec.version));
+            ui::step(format!(
+                "Installing {} {}",
+                entry.spec.name, entry.spec.version
+            ));
             install::install(paths, &entry, &entry.spec)?;
             ui::ok(format!("Installed {}", entry.spec.name));
         }
@@ -924,7 +968,9 @@ fn run_batch(
         lock::write_lock(paths, profile, installed_for_lock.clone())?;
     }
     ui::ok(format!("Native batch finished (profile: {})", profile));
-    ui::info("WinGet, Flatpak, PhiOS GitHub installs and rollback are not enabled by this command.");
+    ui::info(
+        "WinGet, Flatpak, PhiOS GitHub installs and rollback are not enabled by this command.",
+    );
     Ok(())
 }
 
