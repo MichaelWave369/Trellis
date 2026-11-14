@@ -20,6 +20,7 @@
   let selected = new Set();
   let visibleApps = [];
   let metadata = {};
+  let importedObservations = new Map();
 
   const setStatus = (message) => { ui.status.textContent = message; };
   const safeUrl = (value) => {
@@ -100,6 +101,17 @@
     if (app.source) meta.append(makeLink(app.source, "Source"));
     if (app.homepage) meta.append(makeLink(app.homepage, "Website"));
     content.append(title, description, meta);
+    if (app.kind === "winget" && importedObservations.has(app.package_id)) {
+      const observation = document.createElement("div");
+      observation.className = "imported-observation";
+      const status = importedObservations.get(app.package_id);
+      observation.textContent = ({
+        observed_in_winget_list: "WinGet list: observed (not a functionality check)",
+        not_confirmed_in_winget_list: "WinGet list: not confirmed",
+        unknown: "WinGet list: status unknown"
+      })[status];
+      content.append(observation);
+    }
 
     const tag = document.createElement("span");
     tag.className = "tag " + (labels[app.status] ? app.status : "review_required");
@@ -193,6 +205,7 @@
       "Native-only preflight: trellis --registry-root packages batch --plan trellis-selection-plan.json",
       "Native-only apply: inspect the full approval hash, then use --apply --confirm HASH.",
       "WinGet-only Windows preflight: trellis winget-batch --plan trellis-selection-plan.json",
+      "WinGet-only Windows status: trellis winget-status --plan trellis-selection-plan.json --output trellis-winget-status.json",
       "WinGet-only Windows apply: inspect approval hash, then add --apply --confirm HASH.",
       "Mixed plans are HELD. Export separate native and WinGet-only plans.",
       "Flatpak/Phi repos remain review-only; no adapter installs them.",
@@ -272,6 +285,43 @@
     }
   }
 
+  async function importStatusReport() {
+    const control = $("status-file");
+    const file = control.files && control.files[0];
+    if (!file) return;
+    try {
+      if (file.size > 256 * 1024) throw new Error("The status file exceeds 256 KiB.");
+      const report = JSON.parse(await file.text());
+      if (report.schema_version !== "trellis.winget-status.v0.1" ||
+          report.backend !== "winget" || !Array.isArray(report.items) ||
+          report.items.length > 500) {
+        throw new Error("Unrecognized WinGet status report.");
+      }
+      const allowed = new Set(apps.filter(app => app.kind === "winget").map(app => app.package_id));
+      const valid = new Set([
+        "observed_in_winget_list", "not_confirmed_in_winget_list", "unknown"
+      ]);
+      const imported = new Map();
+      for (const record of report.items) {
+        if (!record || typeof record.package_id !== "string" ||
+            !allowed.has(record.package_id) || !valid.has(record.observation) ||
+            imported.has(record.package_id)) {
+          throw new Error("Invalid or duplicate WinGet observation.");
+        }
+        imported.set(record.package_id, record.observation);
+      }
+      importedObservations = imported;
+      $("clear-status").disabled = imported.size === 0;
+      renderCatalog();
+      setStatus("Loaded " + imported.size +
+        " local WinGet observations. These do not prove application health.");
+    } catch (error) {
+      setStatus("Status import rejected: " + error.message);
+    } finally {
+      control.value = "";
+    }
+  }
+
   async function init() {
     try {
       const response = await fetch("./catalog.json");
@@ -309,6 +359,13 @@
     renderPlan();
   });
   ui.refresh.addEventListener("click", refreshPublicRepos);
+  $("status-file").addEventListener("change", importStatusReport);
+  $("clear-status").addEventListener("click", () => {
+    importedObservations.clear();
+    $("clear-status").disabled = true;
+    renderCatalog();
+    setStatus("Imported status observations cleared.");
+  });
   $("download-plan").addEventListener("click", () => {
     const plan = buildPlan();
     if (!plan.items.length) return;
