@@ -329,14 +329,40 @@ fn run_with(
         ids.len()
     );
     for (i, id) in ids.iter().enumerate() {
-        println!("Installing [{}/{}]: {}", i + 1, ids.len(), id);
-        let code = winget.install(id)?;
-        let receipt_path = write_receipt(home, &approval, i, id, code)?;
+        // A durable journal entry precedes the external installer process.
+        // Interrupted processes retain a "started" event without a fake success.
+        let event_file = append_progress(
+            home, &approval, i, ids.len(), id, "started", None, None,
+        )?;
+        println!("PROGRESS [{}/{}] started {}", i + 1, ids.len(), id);
+        let code = match winget.install(id) {
+            Ok(code) => code,
+            Err(error) => {
+                append_progress(
+                    home, &approval, i, ids.len(), id, "launch_failed", None, None,
+                )?;
+                return Err(error);
+            }
+        };
+        // This observation is intentionally weaker than installation proof:
+        // a package can be listed yet fail to launch or function correctly.
+        let observation = winget
+            .list(id)
+            .map(|value| classify_list(&value, id))
+            .unwrap_or(Observation::Unknown);
+        let receipt_path = write_receipt(home, &approval, i, id, code, observation)?;
+        append_progress(
+            home, &approval, i, ids.len(), id, "finished", Some(code), Some(observation),
+        )?;
         println!(
-            "WinGet exit code {} for {}; local record: {}",
-            code,
+            "PROGRESS [{}/{}] {} exit={} observation={} receipt={} journal={}",
+            i + 1,
+            ids.len(),
             id,
-            receipt_path.display()
+            code,
+            observation.label(),
+            receipt_path.display(),
+            event_file.display()
         );
         if code != 0 {
             bail!(
