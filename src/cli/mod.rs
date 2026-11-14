@@ -52,6 +52,15 @@ pub enum Command {
         )]
         from: Option<std::path::PathBuf>,
     },
+    /// Preview or explicitly apply a local-only native batch from App Center JSON
+    Batch {
+        #[arg(long, value_name = "FILE")]
+        plan: std::path::PathBuf,
+        #[arg(long, help = "Run native Trellis installs after full preflight")]
+        apply: bool,
+        #[arg(long, value_name = "SHA256", help = "Full approval hash printed by the dry run")]
+        confirm: Option<String>,
+    },
     /// Remove an installed package
     Remove { pkg: String },
     /// Refresh active registry indexes and materialize local cache state
