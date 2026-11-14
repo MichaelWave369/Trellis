@@ -65,6 +65,17 @@ pub enum Command {
         )]
         confirm: Option<String>,
     },
+    /// Preview or explicitly install WinGet packages selected in App Center (Windows only)
+    WingetBatch {
+        #[arg(long, value_name = "FILE")]
+        plan: std::path::PathBuf,
+        #[arg(long, value_name = "FILE", default_value = "app-center/catalog.json")]
+        catalog: std::path::PathBuf,
+        #[arg(long, help = "Install WinGet packages after complete preflight")]
+        apply: bool,
+        #[arg(long, value_name = "SHA256", help = "Full hash printed by the preview")]
+        confirm: Option<String>,
+    },
     /// Remove an installed package
     Remove { pkg: String },
     /// Refresh active registry indexes and materialize local cache state
