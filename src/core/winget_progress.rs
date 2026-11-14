@@ -33,9 +33,7 @@ pub fn classify_list(output: &str, id: &str) -> Observation {
     let mut matched = false;
     for line in output.lines() {
         let trimmed = line.trim();
-        if trimmed.contains("---")
-            && trimmed.chars().all(|c| c == '-' || c.is_whitespace())
-        {
+        if trimmed.contains("---") && trimmed.chars().all(|c| c == '-' || c.is_whitespace()) {
             in_table = true;
             continue;
         }
@@ -110,8 +108,14 @@ mod tests {
     #[test]
     fn installed_observation_requires_exact_id_column() {
         let listing = "Name       Id            Version   Source\n------------------------------------------------\nGit        Git.Git       2.5.0     winget\n";
-        assert_eq!(classify_list(listing, "Git.Git"), Observation::ObservedInWingetList);
-        assert_eq!(classify_list(listing, "Git.Git.Extra"), Observation::NotConfirmedInWingetList);
+        assert_eq!(
+            classify_list(listing, "Git.Git"),
+            Observation::ObservedInWingetList
+        );
+        assert_eq!(
+            classify_list(listing, "Git.Git.Extra"),
+            Observation::NotConfirmedInWingetList
+        );
     }
 
     #[test]
@@ -126,14 +130,24 @@ mod tests {
     fn progress_is_parseable_append_only_jsonl() {
         let home = tempfile::tempdir().unwrap();
         let hash = "a".repeat(64);
-        let file = append_progress(home.path(), &hash, 0, 2, "Git.Git", "started", None, None).unwrap();
+        let file =
+            append_progress(home.path(), &hash, 0, 2, "Git.Git", "started", None, None).unwrap();
         append_progress(
-            home.path(), &hash, 0, 2, "Git.Git", "finished", Some(0),
+            home.path(),
+            &hash,
+            0,
+            2,
+            "Git.Git",
+            "finished",
+            Some(0),
             Some(Observation::ObservedInWingetList),
-        ).unwrap();
+        )
+        .unwrap();
         let lines = std::fs::read_to_string(file).unwrap();
-        let events: Vec<serde_json::Value> = lines.lines()
-            .map(|line| serde_json::from_str(line).unwrap()).collect();
+        let events: Vec<serde_json::Value> = lines
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
         assert_eq!(events.len(), 2);
         assert_eq!(events[0]["phase"], "started");
         assert_eq!(events[1]["observation"], "observed_in_winget_list");
