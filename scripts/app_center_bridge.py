@@ -318,7 +318,7 @@ def main() -> None:
             parser.error("--enable-install-api requires an explicit --trellis-cli PATH")
         if args.trellis_cli.is_symlink() or not args.trellis_cli.is_file():
             parser.error("--trellis-cli must be a real local Trellis executable, not a symlink")
-        gate = ApprovalGate(root / "catalog.json", args.trellis_cli.resolve())
+        gate = ApprovalGate(root / "catalog.json", args.trellis_cli.resolve(), args.home)
     elif args.trellis_cli is not None:
         parser.error("--trellis-cli requires --enable-install-api")
     server = build_server(root, args.home, token, args.port, approval_gate=gate)
