@@ -11,6 +11,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use crate::core::batch::SelectionPlan;
+use crate::core::winget_progress::{append_progress, classify_list, Observation};
 
 const MAX_CATALOG_BYTES: u64 = 2 * 1024 * 1024;
 const MAX_WINGET_OUTPUT: usize = 256 * 1024;
@@ -19,6 +20,7 @@ const MAX_SELECTIONS: usize = 100;
 trait WingetBackend {
     fn version(&self) -> Result<String>;
     fn show(&self, id: &str) -> Result<String>;
+    fn list(&self, id: &str) -> Result<String>;
     fn install(&self, id: &str) -> Result<i32>;
 }
 
@@ -62,6 +64,18 @@ impl WingetBackend for SystemWinget {
         ])
     }
 
+    fn list(&self, id: &str) -> Result<String> {
+        Self::output(&[
+            "list",
+            "--id",
+            id,
+            "--exact",
+            "--source",
+            "winget",
+            "--disable-interactivity",
+        ])
+    }
+
     fn install(&self, id: &str) -> Result<i32> {
         // No shell, no installer override, no remote script, no automatic agreement acceptance.
         // --no-upgrade prevents silently upgrading an existing package.
@@ -92,6 +106,8 @@ struct WingetReceipt {
     status: &'static str,
     exit_code: i32,
     approval_hash: String,
+    observation: Observation,
+    observed_at_utc: String,
     note: &'static str,
 }
 
@@ -215,7 +231,14 @@ fn fingerprint(plan: &[u8], catalog: &[u8], version: &str, shows: &[(String, Str
     format!("{:x}", hash.finalize())
 }
 
-fn write_receipt(home: &Path, hash: &str, index: usize, id: &str, code: i32) -> Result<PathBuf> {
+fn write_receipt(
+    home: &Path,
+    hash: &str,
+    index: usize,
+    id: &str,
+    code: i32,
+    observation: Observation,
+) -> Result<PathBuf> {
     let root = home.join("external").join("winget").join(hash);
     fs::create_dir_all(&root).context("could not create local WinGet receipt directory")?;
     let path = root.join(format!("{:03}-{}.json", index + 1, id));
@@ -228,7 +251,9 @@ fn write_receipt(home: &Path, hash: &str, index: usize, id: &str, code: i32) -> 
         status: if code == 0 { "winget_exit_zero_unverified" } else { "winget_exit_nonzero" },
         exit_code: code,
         approval_hash: hash.to_string(),
-        note: "Records WinGet process exit only. Not proof of installed software, rollback, license, or safety.",
+        observation,
+        observed_at_utc: Utc::now().to_rfc3339(),
+        note: "WinGet listing is an advisory observation, not proof of software function, rollback, license, or safety.",
     };
     fs::write(&path, serde_json::to_vec_pretty(&receipt)?)
         .with_context(|| format!("failed to write local receipt {}", path.display()))?;
