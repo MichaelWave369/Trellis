@@ -206,7 +206,9 @@
     const plan = buildPlan();
     ui.selected.textContent = plan.items.length + " selected";
     ui.preview.textContent = planText(plan);
-    $("copy-plan").disabled = !$("download-plan").disabled = plan.items.length === 0;
+    const disabled = plan.items.length === 0;
+    $("copy-plan").disabled = disabled;
+    $("download-plan").disabled = disabled;
   }
 
   function refreshUI() {
