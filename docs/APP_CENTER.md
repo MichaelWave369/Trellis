@@ -90,6 +90,27 @@ The default catalog file is app-center/catalog.json relative to the current work
 
 The WinGet adapter is separate from the native Trellis batch and from PhiOS App Platform's governed repository builder. Windows installation and privileges remain the responsibility of the local operator and WinGet. The repo's Linux CI runs deterministic mock-backend tests; Windows CI exercises the same tests with a mock, not actual package installs.
 
+## Rung 4: WinGet observation and progress (Windows)
+
+Rung 4 separates *what the external installer reported* from *what Windows Package Manager can currently observe*:
+
+1. On Windows, export a WinGet-only plan from App Center.
+2. Run a read-only installed-state observation:
+
+       .\target\debug\trellis.exe winget-status --plan trellis-selection-plan.json --output trellis-winget-status.json
+
+3. In the App Center browser page, manually choose the newly created JSON under **Import a local WinGet status report**. It displays three conservative labels: `observed_in_winget_list`, `not_confirmed_in_winget_list`, and `unknown`. The report never installs software and is read by the browser **only after explicit user file selection**.
+
+A package appearing in `winget list --id PACKAGE_ID --exact --source winget` is a **package-manager observation**, not proof that the program launches, works, is secure, or can be safely upgraded. A negative or failed query does not prove the software is absent. If the WinGet CLI fails or returns unusable output, Trellis reports `unknown`. Status reports are only written to new paths with `--output`; existing files are never silently overwritten. Avoid storing status reports in publicly served folders unless you explicitly want those observations visible.
+
+For a confirmed WinGet-only batch executed with `winget-batch --apply --confirm HASH`, Trellis now records two per-package progress events (`started`, then `finished` or `launch_failed`) in a local append-only JSONL journal:
+
+    TRELLIS_HOME/external/winget/<approval-hash>/events.jsonl
+
+Successful WinGet process exit and later list observation are separate fields in each package's external receipt. An interrupted process may leave only its started event. The journal can help diagnose where execution stopped; it is **not** a transactional recovery, independent installer health test, rollback system, or streaming UI connection. The browser does not have privileged localhost APIs or automatic access to the progress journal.
+
+This rung runs CLI and mocked backend tests on Linux and Windows GitHub runners; no live Windows applications are installed during CI. Physical Windows verification is still required.
+
 ## Validation
 
     python3 scripts/check_app_center.py

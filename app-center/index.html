@@ -46,6 +46,12 @@
         <label>Source type<select id="kind"><option value="all">All source types</option><option value="trellis">Trellis native</option><option value="winget">WinGet</option><option value="flatpak">Flatpak</option><option value="phi_repo">Φ GitHub repository</option></select></label>
         <label>Category<select id="category"><option value="all">All categories</option></select></label>
       </div>
+      <div class="status-import">
+        <label for="status-file">Import a local WinGet status report</label>
+        <input type="file" id="status-file" accept=".json,application/json" aria-describedby="status-help">
+        <button type="button" id="clear-status" disabled>Clear imported status</button>
+        <p id="status-help" class="footnote">Optional. Generated locally with trellis winget-status --output FILE. Browser reads only the report you choose; this does not check or install software.</p>
+      </div>
       <div class="list-toolbar">
         <span id="visible-count">Loading catalog...</span>
         <span class="toolbar-actions"><button type="button" id="select-visible">Select visible</button><button type="button" id="clear-selection">Clear selection</button></span>

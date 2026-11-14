@@ -11,6 +11,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use crate::core::batch::SelectionPlan;
+use crate::core::winget_progress::{append_progress, classify_list, Observation, ProgressUpdate};
 
 const MAX_CATALOG_BYTES: u64 = 2 * 1024 * 1024;
 const MAX_WINGET_OUTPUT: usize = 256 * 1024;
@@ -19,6 +20,7 @@ const MAX_SELECTIONS: usize = 100;
 trait WingetBackend {
     fn version(&self) -> Result<String>;
     fn show(&self, id: &str) -> Result<String>;
+    fn list(&self, id: &str) -> Result<String>;
     fn install(&self, id: &str) -> Result<i32>;
 }
 
@@ -62,6 +64,18 @@ impl WingetBackend for SystemWinget {
         ])
     }
 
+    fn list(&self, id: &str) -> Result<String> {
+        Self::output(&[
+            "list",
+            "--id",
+            id,
+            "--exact",
+            "--source",
+            "winget",
+            "--disable-interactivity",
+        ])
+    }
+
     fn install(&self, id: &str) -> Result<i32> {
         // No shell, no installer override, no remote script, no automatic agreement acceptance.
         // --no-upgrade prevents silently upgrading an existing package.
@@ -92,6 +106,8 @@ struct WingetReceipt {
     status: &'static str,
     exit_code: i32,
     approval_hash: String,
+    observation: Observation,
+    observed_at_utc: String,
     note: &'static str,
 }
 
@@ -215,7 +231,14 @@ fn fingerprint(plan: &[u8], catalog: &[u8], version: &str, shows: &[(String, Str
     format!("{:x}", hash.finalize())
 }
 
-fn write_receipt(home: &Path, hash: &str, index: usize, id: &str, code: i32) -> Result<PathBuf> {
+fn write_receipt(
+    home: &Path,
+    hash: &str,
+    index: usize,
+    id: &str,
+    code: i32,
+    observation: Observation,
+) -> Result<PathBuf> {
     let root = home.join("external").join("winget").join(hash);
     fs::create_dir_all(&root).context("could not create local WinGet receipt directory")?;
     let path = root.join(format!("{:03}-{}.json", index + 1, id));
@@ -228,11 +251,80 @@ fn write_receipt(home: &Path, hash: &str, index: usize, id: &str, code: i32) -> 
         status: if code == 0 { "winget_exit_zero_unverified" } else { "winget_exit_nonzero" },
         exit_code: code,
         approval_hash: hash.to_string(),
-        note: "Records WinGet process exit only. Not proof of installed software, rollback, license, or safety.",
+        observation,
+        observed_at_utc: Utc::now().to_rfc3339(),
+        note: "WinGet listing is an advisory observation, not proof of software function, rollback, license, or safety.",
     };
     fs::write(&path, serde_json::to_vec_pretty(&receipt)?)
         .with_context(|| format!("failed to write local receipt {}", path.display()))?;
     Ok(path)
+}
+
+#[derive(Debug, Serialize)]
+struct StatusEntry {
+    package_id: String,
+    observation: Observation,
+}
+
+#[derive(Debug, Serialize)]
+struct StatusReport {
+    schema_version: &'static str,
+    backend: &'static str,
+    observed_at_utc: String,
+    note: &'static str,
+    items: Vec<StatusEntry>,
+}
+
+/// Read-only installed-state observation. Does not create a network listener,
+/// mutate Trellis install state, or run package installers.
+pub fn run_status(plan: &Path, catalog: &Path, output: Option<&Path>) -> Result<()> {
+    if !cfg!(target_os = "windows") {
+        bail!("WinGet installed-state observation is supported on Windows only");
+    }
+    run_status_with(&SystemWinget, plan, catalog, output).map(|_| ())
+}
+
+fn run_status_with(
+    winget: &impl WingetBackend,
+    plan_file: &Path,
+    catalog_file: &Path,
+    output_file: Option<&Path>,
+) -> Result<StatusReport> {
+    let (plan, _) = SelectionPlan::from_file(plan_file)?;
+    let catalog_bytes = catalog_allowlist(catalog_file)?;
+    let ids = selected_ids(&plan, &catalog_bytes)?;
+    let mut items = Vec::new();
+    println!("Trellis WinGet status · {} selected candidates", ids.len());
+    println!("A package listed by WinGet is not proof that the program works.");
+    for id in ids {
+        let observation = winget
+            .list(&id)
+            .map(|value| classify_list(&value, &id))
+            .unwrap_or(Observation::Unknown);
+        println!("STATUS {}: {}", id, observation.label());
+        items.push(StatusEntry {
+            package_id: id,
+            observation,
+        });
+    }
+    let report = StatusReport {
+        schema_version: "trellis.winget-status.v0.1",
+        backend: "winget",
+        observed_at_utc: Utc::now().to_rfc3339(),
+        note: "WinGet list observation only. Not a functional, cryptographic, or security verification.",
+        items,
+    };
+    if let Some(path) = output_file {
+        // Never overwrite an arbitrary existing file from an untrusted plan.
+        let file = fs::OpenOptions::new()
+            .create_new(true)
+            .write(true)
+            .open(path)
+            .with_context(|| format!("status output must be a new file: {}", path.display()))?;
+        serde_json::to_writer_pretty(file, &report)?;
+        println!("Status report: {}", path.display());
+    }
+    Ok(report)
 }
 
 fn run_with(
@@ -304,14 +396,67 @@ fn run_with(
         ids.len()
     );
     for (i, id) in ids.iter().enumerate() {
-        println!("Installing [{}/{}]: {}", i + 1, ids.len(), id);
-        let code = winget.install(id)?;
-        let receipt_path = write_receipt(home, &approval, i, id, code)?;
+        // A durable journal entry precedes the external installer process.
+        // Interrupted processes retain a "started" event without a fake success.
+        let event_file = append_progress(
+            home,
+            &approval,
+            ProgressUpdate {
+                index: i,
+                total: ids.len(),
+                package_id: id,
+                phase: "started",
+                exit_code: None,
+                observation: None,
+            },
+        )?;
+        println!("PROGRESS [{}/{}] started {}", i + 1, ids.len(), id);
+        let code = match winget.install(id) {
+            Ok(code) => code,
+            Err(error) => {
+                append_progress(
+                    home,
+                    &approval,
+                    ProgressUpdate {
+                        index: i,
+                        total: ids.len(),
+                        package_id: id,
+                        phase: "launch_failed",
+                        exit_code: None,
+                        observation: None,
+                    },
+                )?;
+                return Err(error);
+            }
+        };
+        // This observation is intentionally weaker than installation proof:
+        // a package can be listed yet fail to launch or function correctly.
+        let observation = winget
+            .list(id)
+            .map(|value| classify_list(&value, id))
+            .unwrap_or(Observation::Unknown);
+        let receipt_path = write_receipt(home, &approval, i, id, code, observation)?;
+        append_progress(
+            home,
+            &approval,
+            ProgressUpdate {
+                index: i,
+                total: ids.len(),
+                package_id: id,
+                phase: "finished",
+                exit_code: Some(code),
+                observation: Some(observation),
+            },
+        )?;
         println!(
-            "WinGet exit code {} for {}; local record: {}",
-            code,
+            "PROGRESS [{}/{}] {} exit={} observation={} receipt={} journal={}",
+            i + 1,
+            ids.len(),
             id,
-            receipt_path.display()
+            code,
+            observation.label(),
+            receipt_path.display(),
+            event_file.display()
         );
         if code != 0 {
             bail!(
@@ -333,6 +478,8 @@ mod tests {
     struct FakeWinget {
         installs: Cell<usize>,
         shows: Cell<usize>,
+        lists: Cell<usize>,
+        list_ok: bool,
         failure_code: i32,
     }
     impl WingetBackend for FakeWinget {
@@ -343,6 +490,16 @@ mod tests {
             self.shows.set(self.shows.get() + 1);
             Ok(format!(
                 "Found Example [{}]\nVersion: 1.2.3\nPublisher: Test\n",
+                id
+            ))
+        }
+        fn list(&self, id: &str) -> Result<String> {
+            self.lists.set(self.lists.get() + 1);
+            if !self.list_ok {
+                bail!("simulated list probe failure");
+            }
+            Ok(format!(
+                "Name      Id          Version  Source\n--------  ----------  -------  ------\nExample   {}    1.2.3    winget\n",
                 id
             ))
         }
@@ -391,8 +548,66 @@ mod tests {
         FakeWinget {
             installs: Cell::new(0),
             shows: Cell::new(0),
+            lists: Cell::new(0),
+            list_ok: true,
             failure_code: 0,
         }
+    }
+
+    #[test]
+    fn status_observation_exports_json_without_installation() {
+        let (d, p, c) = fixture(&[("Git.Git", "winget")]);
+        let path = d.path().join("status.json");
+        let mock = backend();
+        let report = run_status_with(&mock, &p, &c, Some(&path)).unwrap();
+        assert_eq!(report.items.len(), 1);
+        assert_eq!(
+            report.items[0].observation,
+            Observation::ObservedInWingetList
+        );
+        assert_eq!(mock.installs.get(), 0);
+        assert_eq!(mock.shows.get(), 0);
+        assert_eq!(mock.lists.get(), 1);
+        let readback: serde_json::Value =
+            serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+        assert_eq!(
+            readback["items"][0]["observation"],
+            "observed_in_winget_list"
+        );
+        assert!(run_status_with(&mock, &p, &c, Some(&path)).is_err());
+    }
+
+    #[test]
+    fn list_failure_is_unknown_not_not_installed() {
+        let (d, p, c) = fixture(&[("Git.Git", "winget")]);
+        let mut mock = backend();
+        mock.list_ok = false;
+        let report = run_status_with(&mock, &p, &c, None).unwrap();
+        assert_eq!(report.items[0].observation, Observation::Unknown);
+        assert_eq!(mock.installs.get(), 0);
+        assert!(!d.path().join("external").exists());
+    }
+
+    #[test]
+    fn completed_install_reports_exit_and_observation_separately() {
+        let (d, p, c) = fixture(&[("Git.Git", "winget")]);
+        let mock = backend();
+        let approval = run_with(&mock, &p, &c, d.path(), false, None).unwrap();
+        run_with(&mock, &p, &c, d.path(), true, Some(&approval)).unwrap();
+        let dir = d.path().join("external/winget").join(&approval);
+        let receipt: serde_json::Value =
+            serde_json::from_slice(&fs::read(dir.join("001-Git.Git.json")).unwrap()).unwrap();
+        assert_eq!(receipt["status"], "winget_exit_zero_unverified");
+        assert_eq!(receipt["observation"], "observed_in_winget_list");
+        let journal = fs::read_to_string(dir.join("events.jsonl")).unwrap();
+        let events: Vec<serde_json::Value> = journal
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        assert_eq!(events.len(), 2);
+        assert_eq!(events[0]["phase"], "started");
+        assert_eq!(events[1]["phase"], "finished");
+        assert_eq!(events[1]["exit_code"], 0);
     }
 
     #[test]

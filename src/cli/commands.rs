@@ -246,6 +246,13 @@ pub fn run(cli: Cli) -> Result<()> {
         } => {
             crate::core::winget::run(&plan, &catalog, &paths.home, apply, confirm.as_deref())?;
         }
+        Command::WingetStatus {
+            plan,
+            catalog,
+            output,
+        } => {
+            crate::core::winget::run_status(&plan, &catalog, output.as_deref())?;
+        }
         Command::Remove { pkg } => {
             ensure_initialized(&paths)?;
             ui::header("Remove Package");

@@ -106,6 +106,7 @@ rm "$TRELLIS_HOME/bin/overstrings"
 - `trellis list`
 - `trellis remove <pkg>`
 - `trellis winget-batch --plan <file>` (Windows-only WinGet preflight; apply needs exact hash confirmation)
+- `trellis winget-status --plan <file> --output <new-file>` (read-only Windows install visibility report)
 - `trellis doctor`
 
 Global flags:
