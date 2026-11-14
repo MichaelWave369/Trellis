@@ -190,6 +190,9 @@
       "TRELLIS APP CENTER · REVIEW PLAN",
       "Selection count: " + plan.items.length,
       "Nothing is installed or authorized by this file.",
+      "Native-only preflight: trellis --registry-root packages batch --plan trellis-selection-plan.json",
+      "Native-only apply: inspect the full approval hash, then use --apply --confirm HASH.",
+      "WinGet/Flatpak/Phi repos are HELD by the Trellis native batch importer.",
       ""
     ];
     for (const app of plan.items) {
