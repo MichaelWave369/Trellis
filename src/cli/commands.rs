@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 
 use crate::cli::ui;
 use crate::cli::{Cli, Command};
+use crate::core::batch::SelectionPlan;
 use crate::core::install;
 use crate::core::lock::{self, LockedPackage};
 use crate::core::paths::TrellisPaths;
@@ -222,6 +223,20 @@ pub fn run(cli: Cli) -> Result<()> {
                 lock::lock_path(&paths, lock_profile).display()
             ));
             ui::info("Current dependency model resolves declared dependencies deterministically; advanced conflict solving remains intentionally out of scope.");
+        }
+        Command::Batch {
+            plan,
+            apply,
+            confirm,
+        } => {
+            run_batch(
+                &paths,
+                &registry_root,
+                &profile,
+                &plan,
+                apply,
+                confirm.as_deref(),
+            )?;
         }
         Command::Remove { pkg } => {
             ensure_initialized(&paths)?;
@@ -772,6 +787,191 @@ fn print_info(spec: &crate::spec::package::PackageSpec, resolved_registry: Optio
         "Signature     : {:?} ({})",
         signature_assessment.state, signature_assessment.note
     );
+}
+
+/// Resolve a downloaded App Center plan against local Trellis registry data.
+/// Never interpret browser-provided suggested_commands, URLs or shell fragments.
+fn run_batch(
+    paths: &TrellisPaths,
+    registry_root: &Path,
+    profile: &str,
+    plan_file: &Path,
+    apply: bool,
+    confirm: Option<&str>,
+) -> Result<()> {
+    if !apply && confirm.is_some() {
+        bail!("--confirm is only valid together with --apply");
+    }
+    // Preview must not silently initialize state or rewrite the registry index.
+    ensure_initialized(paths)?;
+    if !paths.registry_index.exists() {
+        bail!("batch requires a local registry index; run trellis update first");
+    }
+
+    let (plan, raw) = SelectionPlan::from_file(plan_file)?;
+    ui::header("App Center Native Batch");
+    println!("Plan: {}", plan_file.display());
+    println!(
+        "Mode: {}",
+        if apply {
+            "explicit apply"
+        } else {
+            "read-only preview"
+        }
+    );
+    println!("Selections: {}", plan.items.len());
+
+    let mut blocked = Vec::new();
+    let mut entries: Vec<RegistryEntry> = Vec::new();
+    let mut seen = std::collections::BTreeSet::new();
+    let mut roots = plan.items.iter().collect::<Vec<_>>();
+    roots.sort_by(|a, b| a.id.cmp(&b.id));
+
+    for item in roots {
+        if item.kind != "trellis" {
+            println!(
+                "  HELD {}: {} requires separate provider/compatibility review",
+                item.id, item.kind
+            );
+            blocked.push(format!("{} is not a native Trellis package", item.id));
+            continue;
+        }
+        let package = item
+            .id
+            .strip_prefix("trellis:")
+            .context("validated native package ID missing prefix")?;
+        match resolve_install_order(paths, registry_root, package) {
+            Ok(order) => {
+                for entry in order {
+                    if seen.insert(entry.spec.name.clone()) {
+                        entries.push(entry);
+                    }
+                }
+            }
+            Err(error) => blocked.push(format!("{}: {}", item.id, error)),
+        }
+    }
+
+    for entry in &entries {
+        if !crate::spec::validate::platform_matches(&entry.spec) {
+            blocked.push(format!(
+                "{} {} is unsupported on {} / {}",
+                entry.spec.name,
+                entry.spec.version,
+                std::env::consts::OS,
+                std::env::consts::ARCH
+            ));
+        }
+        if entry.spec.source.checksum_sha256.is_none() {
+            blocked.push(format!(
+                "{} has no declared source SHA-256",
+                entry.spec.name
+            ));
+        }
+        let receipt_path = paths.receipts.join(format!("{}.json", entry.spec.name));
+        if receipt_path.exists() {
+            match read_receipt(&receipt_path) {
+                Ok(receipt)
+                    if receipt.name == entry.spec.name && receipt.version == entry.spec.version =>
+                {
+                    println!("  PRESENT {} {}", entry.spec.name, receipt.version);
+                }
+                Ok(receipt) => blocked.push(format!(
+                    "{} has a conflicting installed receipt {} {}",
+                    entry.spec.name, receipt.name, receipt.version
+                )),
+                Err(error) => blocked.push(format!(
+                    "{} has an unreadable receipt: {}",
+                    entry.spec.name, error
+                )),
+            }
+        } else {
+            println!("  PENDING {} {}", entry.spec.name, entry.spec.version);
+        }
+    }
+
+    // Keep previous profile state instead of overwriting it with only this selection.
+    let locked = if lock::lock_path(paths, profile).exists() {
+        match lock::read_lock(paths, profile) {
+            Ok(state) => state.packages,
+            Err(error) => {
+                blocked.push(format!("current profile lock cannot be read: {}", error));
+                Vec::new()
+            }
+        }
+    } else {
+        Vec::new()
+    };
+
+    let fingerprint = match crate::core::batch::approval_hash(&raw, &entries) {
+        Ok(value) => {
+            println!("Approval hash: {}", value);
+            Some(value)
+        }
+        Err(error) => {
+            blocked.push(format!("native source integrity preflight: {}", error));
+            None
+        }
+    };
+
+    if blocked.is_empty() {
+        ui::ok("Preflight passed for locally indexed native packages");
+    } else {
+        ui::warn(format!(
+            "{} item(s) held; batch apply is blocked",
+            blocked.len()
+        ));
+        for reason in &blocked {
+            println!("  HELD: {}", reason);
+        }
+    }
+
+    if !apply {
+        println!("Dry run only. No installations or profile writes performed.");
+        println!(
+            "To apply an all-native plan, re-run with --apply --confirm <FULL_APPROVAL_HASH>."
+        );
+        return Ok(());
+    }
+    if !blocked.is_empty() {
+        bail!(
+            "batch refused: all selections must pass native preflight before installing anything"
+        );
+    }
+    let fingerprint = fingerprint.context("batch has no approval hash")?;
+    if confirm != Some(fingerprint.as_str()) {
+        bail!("batch refused: --confirm must equal the full approval hash from the preview");
+    }
+
+    let mut installed_for_lock = locked;
+    for entry in entries {
+        let receipt_path = paths.receipts.join(format!("{}.json", entry.spec.name));
+        if receipt_path.exists() {
+            ui::info(format!(
+                "Already installed: {} {}",
+                entry.spec.name, entry.spec.version
+            ));
+        } else {
+            ui::step(format!(
+                "Installing {} {}",
+                entry.spec.name, entry.spec.version
+            ));
+            install::install(paths, &entry, &entry.spec)?;
+            ui::ok(format!("Installed {}", entry.spec.name));
+        }
+        installed_for_lock.push(LockedPackage {
+            name: entry.spec.name,
+            version: entry.spec.version,
+            registry: entry.registry,
+        });
+        // Record each successful step so a later failure cannot erase prior progress.
+        lock::write_lock(paths, profile, installed_for_lock.clone())?;
+    }
+    ui::ok(format!("Native batch finished (profile: {})", profile));
+    ui::info(
+        "WinGet, Flatpak, PhiOS GitHub installs and rollback are not enabled by this command.",
+    );
+    Ok(())
 }
 
 fn ensure_initialized(paths: &TrellisPaths) -> Result<()> {

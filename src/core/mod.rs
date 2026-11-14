@@ -1,3 +1,4 @@
+pub mod batch;
 pub mod install;
 pub mod lock;
 pub mod paths;
