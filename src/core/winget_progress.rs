@@ -147,18 +147,31 @@ mod tests {
         let home = tempfile::tempdir().unwrap();
         let hash = "a".repeat(64);
         let file = append_progress(
-            home.path(), &hash, ProgressUpdate {
-                index: 0, total: 2, package_id: "Git.Git",
-                phase: "started", exit_code: None, observation: None,
+            home.path(),
+            &hash,
+            ProgressUpdate {
+                index: 0,
+                total: 2,
+                package_id: "Git.Git",
+                phase: "started",
+                exit_code: None,
+                observation: None,
             },
-        ).unwrap();
+        )
+        .unwrap();
         append_progress(
-            home.path(), &hash, ProgressUpdate {
-                index: 0, total: 2, package_id: "Git.Git",
-                phase: "finished", exit_code: Some(0),
+            home.path(),
+            &hash,
+            ProgressUpdate {
+                index: 0,
+                total: 2,
+                package_id: "Git.Git",
+                phase: "finished",
+                exit_code: Some(0),
                 observation: Some(Observation::ObservedInWingetList),
             },
-        ).unwrap();
+        )
+        .unwrap();
         let lines = std::fs::read_to_string(file).unwrap();
         let events: Vec<serde_json::Value> = lines
             .lines()
