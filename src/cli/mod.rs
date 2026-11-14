@@ -58,7 +58,11 @@ pub enum Command {
         plan: std::path::PathBuf,
         #[arg(long, help = "Run native Trellis installs after full preflight")]
         apply: bool,
-        #[arg(long, value_name = "SHA256", help = "Full approval hash printed by the dry run")]
+        #[arg(
+            long,
+            value_name = "SHA256",
+            help = "Full approval hash printed by the dry run"
+        )]
         confirm: Option<String>,
     },
     /// Remove an installed package
