@@ -76,6 +76,15 @@ pub enum Command {
         #[arg(long, value_name = "SHA256", help = "Full hash printed by the preview")]
         confirm: Option<String>,
     },
+    /// Observe installed application visibility through WinGet (Windows only, read-only)
+    WingetStatus {
+        #[arg(long, value_name = "FILE")]
+        plan: std::path::PathBuf,
+        #[arg(long, value_name = "FILE", default_value = "app-center/catalog.json")]
+        catalog: std::path::PathBuf,
+        #[arg(long, value_name = "FILE", help = "Create a JSON observation report (no overwrite)")]
+        output: Option<std::path::PathBuf>,
+    },
     /// Remove an installed package
     Remove { pkg: String },
     /// Refresh active registry indexes and materialize local cache state
