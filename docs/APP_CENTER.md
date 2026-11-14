@@ -142,6 +142,35 @@ The pairing token guards against other webpages querying the service, but it doe
 
 CI runs the Python bridge suite on both Ubuntu and Windows, including unauthorized access, DNS-rebinding-style Host rejection, cross-origin rejection, read-only endpoints, malicious journal input, and symlink handling. It does not perform real installer execution or verify physical Windows application health.
 
+## Rung 6: Explicit local Windows installation approval (opt-in)
+
+The Rung 5 bridge **remains read-only unless you deliberately start it with a separate installation flag**. Rung 6 adds a narrowly scoped local WinGet workflow, not a generic command-runner or unattended package installer.
+
+On **Windows**, from a reviewed Trellis checkout:
+
+1. Build the Rust CLI locally with \`cargo build\` and verify that Microsoft's WinGet / App Installer is configured.
+2. Start the loopback bridge with installation actions explicitly enabled, pointing it at that specific local executable and the correct Trellis home:
+
+       python .\scripts\app_center_bridge.py --home "$env:APPDATA\Trellis" --enable-install-api --trellis-cli .\target\debug\trellis.exe
+
+3. Open the printed local App Center URL (normally \`http://127.0.0.1:8765/app-center/\`) and paste the random pairing token from the local console. The browser never persists this token.
+4. Select **1–20 WinGet-only entries** from the reviewed bundled catalog. Click **Preflight selected WinGet apps**. This invokes **only** the reviewed local Trellis CLI \`winget-batch --plan\` to display exact package metadata, license information where available, and a full 64-character approval hash. It does not install at this stage.
+5. Read all package IDs, publishers, sources, versions and prompts. Verify \`winget source list --name winget\` separately in PowerShell because the source name alone is not a cryptographic identity check. Manually **re-enter the entire hash**, check the explicit installation acknowledgement, then click **Authorize local installation**. The approval is single-use and expires after **two minutes**.
+6. The localhost bridge launches the same local Trellis CLI once with a fixed \`winget-batch --apply --confirm FULL_HASH\` argument sequence. Trellis **re-runs preflight and checks the full hash again** before WinGet can install anything. The installed app selection is generated server-side from exact bundled catalog IDs; browser-provided shell commands, file paths, executable paths and package-manager options are never honored.
+
+The bridge uses its own \`--home\` path for the installation receipts and journals, so progress displays in the paired App Center. A confirmed batch runs sequentially and may show normal Windows UAC or installer prompts. Progress and completion are observational only. Closing a tab or disconnecting does not automatically cancel an installer that has already been approved; an interrupted bridge may leave installer processes or pending Windows prompts.
+
+**Guards and limits:** The installation API is disabled by default, and only enabled on Windows via \`--enable-install-api\` **and** an explicit \`--trellis-cli\` executable path. Both POST endpoints require the in-memory pairing token, exact loopback Host, same-origin \`Origin\` header, JSON content type and an 8 KiB body limit. The gate rejects mixed-provider plans, unknown or duplicate IDs, arbitrary commands, and overlapping installation batches. A short-lived, opaque preview ID, the full approval hash and explicit acknowledgement are required before the single-use approval can start the subprocess. No shell is involved, and the bridge never elevates itself or accepts installer flags from the browser.
+
+**Remaining limitations:** This is not guaranteed silent installation, rollback, atomic batch execution, publisher signature verification, immutable package-version pinning, or proof of functional installation. A WinGet installer may request interactive action; the underlying CLI's \`--disable-interactivity\` may cause some installers to fail. Installer processes are still third-party software and should be reviewed before use. No physical Windows packages are installed in CI. Keep the bridge bound to \`127.0.0.1\`; do not run it elevated or publish/port-forward its listener. If you do not require browser-initiated installation, start the bridge **without** the installation flag and retain Rung 5's read-only posture.
+
+To test the approval controller without installing anything:
+
+    python3 -m unittest discover -s tests -p 'test_app_center*.py'
+    node --check app-center/app.js
+
+The Python security tests use a simulated Trellis command runner. They exercise preflight-only behavior, forged IDs, duplicate selections, token and Origin controls, approval re-entry, expiry, replay refusal, single-active-job behavior, and failure reporting on Ubuntu and Windows CI.
+
 ## Validation
 
     python3 scripts/check_app_center.py
