@@ -132,8 +132,10 @@ def build_server(app_root: Path, home: Path, token: str, port: int = 8765,
 
         def log_message(self, fmt: str, *args: object) -> None:
             # Omit query strings and request headers from logs, even on rejected requests.
-            sys.stderr.write("[trellis-bridge] " + self.command + " "
-                             + urlsplit(self.path).path + "\n")
+            method = str(getattr(self, "command", None) or "unknown")
+            path = str(getattr(self, "path", None) or "/")
+            sys.stderr.write("[trellis-bridge] " + method + " "
+                             + urlsplit(path).path + "\n")
 
         def headers_common(self) -> None:
             self.send_header("Cache-Control", "no-store, max-age=0")
