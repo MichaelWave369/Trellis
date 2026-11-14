@@ -528,6 +528,55 @@ mod tests {
     }
 
     #[test]
+    fn status_observation_exports_json_without_installation() {
+        let (d, p, c) = fixture(&[("Git.Git", "winget")]);
+        let path = d.path().join("status.json");
+        let mock = backend();
+        let report = run_status_with(&mock, &p, &c, Some(&path)).unwrap();
+        assert_eq!(report.items.len(), 1);
+        assert_eq!(report.items[0].observation, Observation::ObservedInWingetList);
+        assert_eq!(mock.installs.get(), 0);
+        assert_eq!(mock.shows.get(), 0);
+        assert_eq!(mock.lists.get(), 1);
+        let readback: serde_json::Value =
+            serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+        assert_eq!(readback["items"][0]["observation"], "observed_in_winget_list");
+        assert!(run_status_with(&mock, &p, &c, Some(&path)).is_err());
+    }
+
+    #[test]
+    fn list_failure_is_unknown_not_not_installed() {
+        let (d, p, c) = fixture(&[("Git.Git", "winget")]);
+        let mut mock = backend();
+        mock.list_ok = false;
+        let report = run_status_with(&mock, &p, &c, None).unwrap();
+        assert_eq!(report.items[0].observation, Observation::Unknown);
+        assert_eq!(mock.installs.get(), 0);
+        assert!(!d.path().join("external").exists());
+    }
+
+    #[test]
+    fn completed_install_reports_exit_and_observation_separately() {
+        let (d, p, c) = fixture(&[("Git.Git", "winget")]);
+        let mock = backend();
+        let approval = run_with(&mock, &p, &c, d.path(), false, None).unwrap();
+        run_with(&mock, &p, &c, d.path(), true, Some(&approval)).unwrap();
+        let dir = d.path().join("external/winget").join(&approval);
+        let receipt: serde_json::Value =
+            serde_json::from_slice(&fs::read(dir.join("001-Git.Git.json")).unwrap()).unwrap();
+        assert_eq!(receipt["status"], "winget_exit_zero_unverified");
+        assert_eq!(receipt["observation"], "observed_in_winget_list");
+        let journal = fs::read_to_string(dir.join("events.jsonl")).unwrap();
+        let events: Vec<serde_json::Value> = journal.lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        assert_eq!(events.len(), 2);
+        assert_eq!(events[0]["phase"], "started");
+        assert_eq!(events[1]["phase"], "finished");
+        assert_eq!(events[1]["exit_code"], 0);
+    }
+
+    #[test]
     fn preview_has_no_install_effects() {
         let (d, p, c) = fixture(&[("Git.Git", "winget")]);
         let b = backend();
