@@ -25,6 +25,9 @@
   let bridgeTimer = null;
   let bridgeBusy = false;
   let bridgeLastPayload = "";
+  let approvalEnabled = false;
+  let approvalPreview = null;
+  let approvalBusy = false;
 
   const setStatus = (message) => { ui.status.textContent = message; };
   const safeUrl = (value) => {
@@ -232,6 +235,10 @@
     const disabled = plan.items.length === 0;
     $("copy-plan").disabled = disabled;
     $("download-plan").disabled = disabled;
+    if (approvalPreview && approvalPreview.selectionKey !== selectionKey()) {
+      clearApprovalPreview("Selection changed. Run a new preflight.");
+    }
+    refreshApprovalControls();
   }
 
   function refreshUI() {
@@ -300,6 +307,9 @@
     $("bridge-connect").disabled = false;
     $("bridge-disconnect").disabled = true;
     $("bridge-progress").replaceChildren();
+    approvalEnabled = false;
+    $("approval-panel").hidden = true;
+    clearApprovalPreview("Disconnected. No installation authorized.");
     $("bridge-state").textContent = message || "Disconnected. No local progress is being read.";
   }
 
@@ -403,6 +413,7 @@
         renderBridgeProgress(report);
         bridgeLastPayload = serialized;
       }
+      await pollApprovalState(activeToken);
       $("bridge-state").textContent = "Paired to this local bridge. Checking journals every 3 seconds.";
     } catch (error) {
       if (activeToken === bridgeToken) disconnectBridge(
@@ -426,6 +437,163 @@
     $("bridge-state").textContent = "Checking local bridge pairing...";
     await pollBridge();
     if (bridgeToken) bridgeTimer = setInterval(pollBridge, 3000);
+  }
+
+  function selectionKey() {
+    return JSON.stringify([...selected].sort());
+  }
+
+  function selectedWingetIds() {
+    const chosen = apps.filter(app => selected.has(app.id));
+    if (!chosen.length || chosen.length > 20 || chosen.some(app => app.kind !== "winget")) {
+      return [];
+    }
+    return chosen.map(app => app.id).sort();
+  }
+
+  function refreshApprovalControls() {
+    const validSelection = selectedWingetIds().length > 0;
+    $("install-preview").disabled = !bridgeToken || !approvalEnabled ||
+      approvalBusy || !validSelection;
+    $("install-approve").disabled = !bridgeToken || !approvalEnabled || approvalBusy ||
+      !approvalPreview || approvalPreview.selectionKey !== selectionKey() ||
+      $("install-hash").value.trim() !== approvalPreview.approval_hash ||
+      !$("install-acknowledge").checked;
+  }
+
+  function clearApprovalPreview(message) {
+    approvalPreview = null;
+    $("install-review-panel").hidden = true;
+    $("install-hash").value = "";
+    $("install-acknowledge").checked = false;
+    $("install-review").textContent = "";
+    if (message) $("install-state").textContent = message;
+    refreshApprovalControls();
+  }
+
+  async function bridgePost(path, data) {
+    const response = await fetch(path, {
+      method: "POST", mode: "same-origin", credentials: "omit",
+      cache: "no-store", redirect: "error",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Trellis-Bridge-Token": bridgeToken
+      },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+      const text = (await response.text()).slice(0, 500);
+      throw new Error(text || "Local bridge HTTP " + response.status);
+    }
+    return response.json();
+  }
+
+  async function previewInstallation() {
+    const ids = selectedWingetIds();
+    if (!bridgeToken || !approvalEnabled || approvalBusy || !ids.length) {
+      $("install-state").textContent =
+        "Pair the opt-in bridge and select 1–20 WinGet-only applications.";
+      return;
+    }
+    clearApprovalPreview();
+    const key = selectionKey();
+    const token = bridgeToken;
+    approvalBusy = true;
+    refreshApprovalControls();
+    $("install-state").textContent = "Running local WinGet preflight; no installers are started...";
+    try {
+      const result = await bridgePost("/api/bridge/v1/preview", { ids });
+      if (token !== bridgeToken || key !== selectionKey()) {
+        $("install-state").textContent = "Selection or pairing changed. Preview discarded.";
+        return;
+      }
+      if (result.schema_version !== "trellis.approval-preview.v0.1" ||
+          !/^[a-f0-9]{64}$/.test(result.approval_hash) ||
+          typeof result.preview_id !== "string" || !Array.isArray(result.ids) ||
+          JSON.stringify(result.ids) !== JSON.stringify(ids)) {
+        throw new Error("Bridge returned unexpected approval details.");
+      }
+      approvalPreview = {...result, selectionKey: key};
+      $("install-review-panel").hidden = false;
+      $("install-review").textContent =
+        "Selected: " + ids.join(", ") + "\nApproval hash: " +
+        result.approval_hash + "\n\n" + String(result.preflight).slice(0, 32000);
+      $("install-state").textContent =
+        "Preview ready for review. Re-enter the full hash within two minutes.";
+    } catch (error) {
+      if (token === bridgeToken) $("install-state").textContent =
+        "Preflight held: " + error.message;
+    } finally {
+      approvalBusy = false;
+      refreshApprovalControls();
+    }
+  }
+
+  async function applyInstallation() {
+    if (!approvalPreview || !bridgeToken || !approvalEnabled ||
+        approvalBusy || approvalPreview.selectionKey !== selectionKey() ||
+        $("install-hash").value.trim() !== approvalPreview.approval_hash ||
+        !$("install-acknowledge").checked) {
+      $("install-state").textContent = "Approval requires exact hash, acknowledgement, and unchanged selection.";
+      return;
+    }
+    const preview = approvalPreview;
+    const token = bridgeToken;
+    approvalBusy = true;
+    refreshApprovalControls();
+    $("install-state").textContent = "Submitting explicit approval to local Trellis...";
+    try {
+      const result = await bridgePost("/api/bridge/v1/apply", {
+        preview_id: preview.preview_id,
+        approval_hash: $("install-hash").value.trim(),
+        acknowledge: true
+      });
+      if (token !== bridgeToken) return;
+      if (!result.accepted || result.schema_version !== "trellis.approval-job.v0.1") {
+        throw new Error("Local bridge refused to start installation.");
+      }
+      clearApprovalPreview();
+      $("install-state").textContent =
+        "Approved locally. WinGet process started; check progress and any Windows prompts.";
+      await pollBridge();
+    } catch (error) {
+      if (token === bridgeToken) $("install-state").textContent =
+        "Installation request held: " + error.message;
+    } finally {
+      approvalBusy = false;
+      refreshApprovalControls();
+    }
+  }
+
+  async function pollApprovalState(token) {
+    const response = await fetch("/api/bridge/v1/approval-state", {
+      mode: "same-origin", credentials: "omit", cache: "no-store", redirect: "error",
+      headers: { "X-Trellis-Bridge-Token": token }
+    });
+    if (!response.ok) throw new Error("Approval status endpoint unavailable.");
+    const state = await response.json();
+    if (token !== bridgeToken) return;
+    if (state.schema_version !== "trellis.approval-status.v0.1" ||
+        typeof state.enabled !== "boolean" || !state.job) {
+      throw new Error("Unexpected approval bridge state.");
+    }
+    approvalEnabled = state.enabled;
+    $("approval-panel").hidden = !state.enabled;
+    if (state.enabled) {
+      const job = state.job;
+      if (job.state === "running") {
+        $("install-state").textContent =
+          "Windows installation running: " + (Array.isArray(job.ids) ?
+            job.ids.join(", ") : "selected apps") +
+          ". Watch journal progress and Windows prompts.";
+      } else if (job.state === "finished" || job.state === "failed") {
+        $("install-state").textContent = String(job.message || job.state).slice(0, 220);
+      } else if (!approvalPreview) {
+        $("install-state").textContent =
+          "Local Windows approval enabled. Select WinGet-only apps, then preflight.";
+      }
+    }
+    refreshApprovalControls();
   }
 
   async function importStatusReport() {
@@ -504,6 +672,10 @@
   ui.refresh.addEventListener("click", refreshPublicRepos);
   $("status-file").addEventListener("change", importStatusReport);
   $("bridge-connect").addEventListener("click", connectBridge);
+  $("install-preview").addEventListener("click", previewInstallation);
+  $("install-approve").addEventListener("click", applyInstallation);
+  $("install-hash").addEventListener("input", refreshApprovalControls);
+  $("install-acknowledge").addEventListener("change", refreshApprovalControls);
   $("bridge-disconnect").addEventListener("click", () => disconnectBridge());
   $("bridge-token").addEventListener("keydown", event => {
     if (event.key === "Enter") {

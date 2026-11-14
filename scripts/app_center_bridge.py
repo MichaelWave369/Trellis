@@ -14,6 +14,7 @@ import os
 import re
 import secrets
 import sys
+from app_center_install_gate import ApprovalGate, GateError
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -120,7 +121,8 @@ def progress_snapshot(home: Path) -> dict:
     return {"schema_version": "trellis.bridge-progress.v0.1", "sessions": sessions}
 
 
-def build_server(app_root: Path, home: Path, token: str, port: int = 8765) -> ThreadingHTTPServer:
+def build_server(app_root: Path, home: Path, token: str, port: int = 8765,
+                 approval_gate: ApprovalGate | None = None) -> ThreadingHTTPServer:
     """Bind exclusively to 127.0.0.1. Token only lives in this process."""
     app_root = app_root.resolve()
     home = home.expanduser().resolve()
@@ -130,8 +132,10 @@ def build_server(app_root: Path, home: Path, token: str, port: int = 8765) -> Th
 
         def log_message(self, fmt: str, *args: object) -> None:
             # Omit query strings and request headers from logs, even on rejected requests.
-            sys.stderr.write("[trellis-bridge] " + self.command + " "
-                             + urlsplit(self.path).path + "\n")
+            method = str(getattr(self, "command", None) or "unknown")
+            path = str(getattr(self, "path", None) or "/")
+            sys.stderr.write("[trellis-bridge] " + method + " "
+                             + urlsplit(path).path + "\n")
 
         def headers_common(self) -> None:
             self.send_header("Cache-Control", "no-store, max-age=0")
@@ -190,6 +194,17 @@ def build_server(app_root: Path, home: Path, token: str, port: int = 8765) -> Th
                 payload = json.dumps(progress_snapshot(home), separators=(",", ":")).encode()
                 self.respond(200, payload, "application/json; charset=utf-8")
                 return
+            if target.path == "/api/bridge/v1/approval-state":
+                submitted = self.headers.get("X-Trellis-Bridge-Token", "")
+                if not hmac.compare_digest(submitted, token):
+                    self.respond(401, b"Bridge pairing token required\n")
+                    return
+                report = (approval_gate.status() if approval_gate is not None else {
+                    "schema_version": "trellis.approval-status.v0.1",
+                    "enabled": False, "job": {"state": "idle"},
+                })
+                self.respond(200, json.dumps(report).encode(), "application/json; charset=utf-8")
+                return
             resource = STATIC.get(target.path)
             if resource is None:
                 self.respond(404, b"Not found\n")
@@ -210,7 +225,65 @@ def build_server(app_root: Path, home: Path, token: str, port: int = 8765) -> Th
         def do_POST(self) -> None:
             if not self.allowed_request():
                 return
-            self.respond(405, b"Read-only bridge: no execution or uploads\n")
+            target = urlsplit(self.path)
+            if target.query or target.fragment:
+                self.respond(400, b"Query parameters not supported\n")
+                return
+            if target.path not in {"/api/bridge/v1/preview", "/api/bridge/v1/apply"}:
+                self.respond(405, b"Unknown or disabled bridge action\n")
+                return
+            if approval_gate is None:
+                self.respond(403, b"Install approval API is disabled by default\n")
+                return
+            expected_origin = f"http://127.0.0.1:{self.server.server_port}"
+            if self.headers.get("Origin") != expected_origin:
+                self.respond(403, b"Same-origin user action required\n")
+                return
+            submitted = self.headers.get("X-Trellis-Bridge-Token", "")
+            if not hmac.compare_digest(submitted, token):
+                self.respond(401, b"Bridge pairing token required\n")
+                return
+            if self.headers.get("Content-Type", "").split(";")[0].strip() != "application/json":
+                self.respond(415, b"JSON body required\n")
+                return
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+            except ValueError:
+                self.respond(400, b"Invalid body length\n")
+                return
+            if not 0 < length <= 8192:
+                self.respond(413, b"Body must be 1 to 8192 bytes\n")
+                return
+            try:
+                self.connection.settimeout(15)
+                body = self.rfile.read(length)
+                data = json.loads(body)
+            except (OSError, ValueError, TimeoutError):
+                self.respond(400, b"Invalid JSON request\n")
+                return
+            if not isinstance(data, dict):
+                self.respond(400, b"JSON object required\n")
+                return
+            try:
+                if target.path.endswith("/preview"):
+                    if set(data) != {"ids"}:
+                        raise GateError(400, "Only selected application IDs are accepted")
+                    result = approval_gate.preview(data["ids"])
+                    status = 200
+                else:
+                    if set(data) != {"preview_id", "approval_hash", "acknowledge"}:
+                        raise GateError(400, "Unexpected approval parameters")
+                    result = approval_gate.apply(
+                        data["preview_id"], data["approval_hash"], data["acknowledge"]
+                    )
+                    status = 202
+            except GateError as error:
+                self.respond(error.status, str(error).encode()[:4000])
+                return
+            except Exception:
+                self.respond(500, b"Local approval bridge encountered an internal error\n")
+                return
+            self.respond(status, json.dumps(result).encode(), "application/json; charset=utf-8")
 
         def do_OPTIONS(self) -> None:
             if not self.allowed_request():
@@ -230,15 +303,35 @@ def main() -> None:
     parser.add_argument("--home", type=Path, default=default_home(),
                         help="Trellis home containing external/winget progress journals")
     parser.add_argument("--port", type=int, default=8765, help="127.0.0.1-only HTTP port (default 8765)")
+    parser.add_argument("--enable-install-api", action="store_true",
+                        help="Explicitly opt in to token-gated local Windows WinGet installs")
+    parser.add_argument("--trellis-cli", type=Path,
+                        help="Reviewed local Trellis executable used ONLY with --enable-install-api")
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error("port must be between 1 and 65535")
     root = Path(__file__).resolve().parent.parent / "app-center"
     token = secrets.token_urlsafe(32)
-    server = build_server(root, args.home, token, args.port)
+    gate = None
+    if args.enable_install_api:
+        if os.name != "nt":
+            parser.error("opt-in installation actions are Windows-only")
+        if args.trellis_cli is None:
+            parser.error("--enable-install-api requires an explicit --trellis-cli PATH")
+        if args.trellis_cli.is_symlink() or not args.trellis_cli.is_file():
+            parser.error("--trellis-cli must be a real local Trellis executable, not a symlink")
+        gate = ApprovalGate(root / "catalog.json", args.trellis_cli.resolve(), args.home)
+    elif args.trellis_cli is not None:
+        parser.error("--trellis-cli requires --enable-install-api")
+    server = build_server(root, args.home, token, args.port, approval_gate=gate)
     print(f"Trellis App Center: http://127.0.0.1:{server.server_port}/app-center/", flush=True)
     print(f"Bridge pairing token (private, do not share): {token}", flush=True)
-    print("Read-only local progress bridge. Ctrl+C to stop. No install API.", flush=True)
+    if gate is None:
+        print("Read-only local progress bridge. Install API disabled.", flush=True)
+    else:
+        print("OPT-IN Windows install API active. Every batch still requires preview, "
+              "full-hash re-entry and explicit acknowledgement.", flush=True)
+    print("Ctrl+C to stop.", flush=True)
     try:
         server.serve_forever(poll_interval=0.3)
     except KeyboardInterrupt:

@@ -32,9 +32,9 @@
     <section class="bridge-panel" aria-labelledby="bridge-heading">
       <div class="section-head">
         <div>
-          <span class="eyebrow">OPTIONAL · RUNG 5</span>
-          <h2 id="bridge-heading">Local progress bridge</h2>
-          <p>Pair with the read-only Trellis service running on this computer. It watches local installation events but never starts installers.</p>
+          <span class="eyebrow">OPTIONAL · RUNGS 5–6</span>
+          <h2 id="bridge-heading">Local Trellis bridge</h2>
+          <p>Pair with the Trellis service running on this computer. It is read-only by default. Optional Windows install approval must be explicitly enabled at bridge startup.</p>
         </div>
       </div>
       <div class="bridge-pairing">
@@ -46,6 +46,24 @@
       <p id="bridge-state" class="footnote" role="status" aria-live="polite">Disconnected. Run the local bridge, open its App Center URL, then enter its token.</p>
       <div id="bridge-progress" class="bridge-progress" aria-label="Recent local WinGet batch events"></div>
       <p class="footnote">No token is saved in browser storage or sent to GitHub. Progress is observational only: WinGet exit codes and package listings do not establish functional installation.</p>
+      <section id="approval-panel" class="approval-panel" aria-labelledby="approval-heading" hidden>
+        <span class="eyebrow">OPT-IN · WINDOWS ONLY</span>
+        <h3 id="approval-heading">Review and approve a local batch</h3>
+        <p>Only WinGet apps from the reviewed local catalog qualify. First run the exact package preflight. Installation remains blocked until you manually re-enter its full approval hash and acknowledge the consequences.</p>
+        <button type="button" id="install-preview" class="button button-quiet" disabled>Preflight selected WinGet apps</button>
+        <div id="install-review-panel" hidden>
+          <p class="footnote">Review the displayed WinGet metadata, package IDs, publisher details, licenses, and source configuration. Approval expires after two minutes; applying runs preflight again.</p>
+          <pre id="install-review" class="plan-preview" tabindex="0"></pre>
+          <label for="install-hash">Re-enter the complete 64-character approval hash</label>
+          <input id="install-hash" type="text" autocomplete="off" spellcheck="false" maxlength="64" placeholder="Full SHA-256 approval hash">
+          <label class="approval-acknowledge" for="install-acknowledge">
+            <input id="install-acknowledge" type="checkbox">
+            I reviewed these exact Windows applications and authorize WinGet to install them on this computer, potentially triggering UAC or installer prompts.
+          </label>
+          <button type="button" id="install-approve" class="button button-primary" disabled>Authorize local installation</button>
+        </div>
+        <p id="install-state" class="footnote" role="status" aria-live="polite">No installation authorized.</p>
+      </section>
     </section>
     <section class="stats" aria-label="Catalog summary">
       <div><strong id="stat-total">...</strong><span>Catalog entries</span></div>
