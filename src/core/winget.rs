@@ -26,11 +26,17 @@ struct SystemWinget;
 
 impl SystemWinget {
     fn output(args: &[&str]) -> Result<String> {
-        let output = Command::new("winget.exe").args(args).output()
+        let output = Command::new("winget.exe")
+            .args(args)
+            .output()
             .context("could not start WinGet; confirm App Installer / winget is available")?;
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr);
-            bail!("WinGet preflight failed (exit {:?}): {}", output.status.code(), stderr.trim());
+            bail!(
+                "WinGet preflight failed (exit {:?}): {}",
+                output.status.code(),
+                stderr.trim()
+            );
         }
         if output.stdout.len() > MAX_WINGET_OUTPUT || output.stderr.len() > MAX_WINGET_OUTPUT {
             bail!("WinGet preflight response exceeds safety limit");
@@ -45,15 +51,31 @@ impl WingetBackend for SystemWinget {
     }
 
     fn show(&self, id: &str) -> Result<String> {
-        Self::output(&["show", "--id", id, "--exact", "--source", "winget", "--disable-interactivity"])
+        Self::output(&[
+            "show",
+            "--id",
+            id,
+            "--exact",
+            "--source",
+            "winget",
+            "--disable-interactivity",
+        ])
     }
 
     fn install(&self, id: &str) -> Result<i32> {
         // No shell, no installer override, no remote script, no automatic agreement acceptance.
         // --no-upgrade prevents silently upgrading an existing package.
         let status = Command::new("winget.exe")
-            .args(["install", "--id", id, "--exact", "--source", "winget",
-                "--no-upgrade", "--disable-interactivity"])
+            .args([
+                "install",
+                "--id",
+                id,
+                "--exact",
+                "--source",
+                "winget",
+                "--no-upgrade",
+                "--disable-interactivity",
+            ])
             .status()
             .with_context(|| format!("failed to start WinGet install for {}", id))?;
         Ok(status.code().unwrap_or(-1))
@@ -73,7 +95,13 @@ struct WingetReceipt {
     note: &'static str,
 }
 
-pub fn run(plan: &Path, catalog: &Path, home: &Path, apply: bool, confirm: Option<&str>) -> Result<()> {
+pub fn run(
+    plan: &Path,
+    catalog: &Path,
+    home: &Path,
+    apply: bool,
+    confirm: Option<&str>,
+) -> Result<()> {
     if !cfg!(target_os = "windows") {
         bail!("WinGet batch execution and preflight are supported on Windows only");
     }
@@ -81,14 +109,17 @@ pub fn run(plan: &Path, catalog: &Path, home: &Path, apply: bool, confirm: Optio
 }
 
 fn is_valid_id(id: &str) -> bool {
-    id.len() >= 3 && id.len() <= 100
+    id.len() >= 3
+        && id.len() <= 100
         && id.is_ascii()
-        && id.bytes().all(|b| b.is_ascii_alphanumeric() || matches!(b, b'.' | b'-' | b'_'))
+        && id
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'.' | b'-' | b'_'))
 }
 
 fn catalog_allowlist(path: &Path) -> Result<Vec<u8>> {
-    let metadata = fs::metadata(path)
-        .with_context(|| format!("cannot inspect catalog {}", path.display()))?;
+    let metadata =
+        fs::metadata(path).with_context(|| format!("cannot inspect catalog {}", path.display()))?;
     if !metadata.is_file() || metadata.len() > MAX_CATALOG_BYTES {
         bail!("catalog must be a regular JSON file no larger than 2 MiB");
     }
@@ -96,22 +127,36 @@ fn catalog_allowlist(path: &Path) -> Result<Vec<u8>> {
 }
 
 fn selected_ids(plan: &SelectionPlan, catalog_bytes: &[u8]) -> Result<Vec<String>> {
-    let catalog: serde_json::Value = serde_json::from_slice(catalog_bytes)
-        .context("invalid local App Center catalog JSON")?;
+    let catalog: serde_json::Value =
+        serde_json::from_slice(catalog_bytes).context("invalid local App Center catalog JSON")?;
     if catalog["schema_version"] != "trellis.app-center.v0.1" {
         bail!("unsupported App Center catalog schema");
     }
-    let apps = catalog["apps"].as_array().context("catalog apps must be an array")?;
+    let apps = catalog["apps"]
+        .as_array()
+        .context("catalog apps must be an array")?;
     let mut allowlist = BTreeMap::new();
     let mut catalog_duplicates = BTreeSet::new();
 
     for app in apps {
-        if app["kind"] != "winget" { continue; }
-        if app["status"] != "external_preflight" { continue; }
-        if !app["platforms"].as_array()
-            .is_some_and(|a| a.iter().any(|p| p == "windows")) { continue; }
-        let Some(id) = app["package_id"].as_str() else { continue; };
-        let Some(entry_id) = app["id"].as_str() else { continue; };
+        if app["kind"] != "winget" {
+            continue;
+        }
+        if app["status"] != "external_preflight" {
+            continue;
+        }
+        if !app["platforms"]
+            .as_array()
+            .is_some_and(|a| a.iter().any(|p| p == "windows"))
+        {
+            continue;
+        }
+        let Some(id) = app["package_id"].as_str() else {
+            continue;
+        };
+        let Some(entry_id) = app["id"].as_str() else {
+            continue;
+        };
         if !is_valid_id(id) || entry_id != format!("winget:{}", id) {
             bail!("catalog contains malformed WinGet entry");
         }
@@ -127,13 +172,22 @@ fn selected_ids(plan: &SelectionPlan, catalog_bytes: &[u8]) -> Result<Vec<String
     let mut ids = BTreeSet::new();
     for item in &plan.items {
         if item.kind != "winget" || item.status != "external_preflight" {
-            bail!("HELD {}: WinGet adapter accepts only a pure Windows WinGet plan", item.id);
+            bail!(
+                "HELD {}: WinGet adapter accepts only a pure Windows WinGet plan",
+                item.id
+            );
         }
-        let id = allowlist.get(&item.id)
-            .with_context(|| format!("HELD {}: ID not in the reviewed local WinGet catalog", item.id))?;
+        let id = allowlist.get(&item.id).with_context(|| {
+            format!(
+                "HELD {}: ID not in the reviewed local WinGet catalog",
+                item.id
+            )
+        })?;
         ids.insert(id.clone());
     }
-    if ids.is_empty() { bail!("no approved catalog candidates selected"); }
+    if ids.is_empty() {
+        bail!("no approved catalog candidates selected");
+    }
     Ok(ids.into_iter().collect())
 }
 
@@ -198,17 +252,28 @@ fn run_with(
 
     println!("Φ Trellis WinGet Batch · {} candidates", ids.len());
     println!("Source fixed to winget; version/publisher are NOT pinned by this adapter.");
-    println!("No automatic license acceptance; blocked source terms require separate operator action.");
+    println!(
+        "No automatic license acceptance; blocked source terms require separate operator action."
+    );
     let version = winget.version()?;
     println!("WinGet version: {}", version.trim());
 
     let mut observations = Vec::new();
     for (i, id) in ids.iter().enumerate() {
-        println!("Preflight [{}/{}]: winget show --id {} --exact --source winget",
-            i + 1, ids.len(), id);
-        let output = winget.show(id).with_context(|| format!("preflight for {} failed", id))?;
+        println!(
+            "Preflight [{}/{}]: winget show --id {} --exact --source winget",
+            i + 1,
+            ids.len(),
+            id
+        );
+        let output = winget
+            .show(id)
+            .with_context(|| format!("preflight for {} failed", id))?;
         if !show_contains_exact_id(&output, id) {
-            bail!("HELD {}: WinGet show did not display the exact expected package ID", id);
+            bail!(
+                "HELD {}: WinGet show did not display the exact expected package ID",
+                id
+            );
         }
         observations.push((id.clone(), output));
     }
@@ -218,21 +283,34 @@ fn run_with(
     if !apply {
         println!("DRY RUN: no installer was started and no Trellis receipt was written.");
         println!("Preflight may contact the configured WinGet source and modify its caches.");
-        println!("To install: trellis winget-batch --plan FILE --apply --confirm FULL_APPROVAL_HASH");
+        println!(
+            "To install: trellis winget-batch --plan FILE --apply --confirm FULL_APPROVAL_HASH"
+        );
         return Ok(approval);
     }
     if confirm != Some(approval.as_str()) {
         bail!("WinGet batch refused: exact approval hash does not match current preflight");
     }
 
-    println!("Approved {} WinGet candidates. Installing sequentially.", ids.len());
+    println!(
+        "Approved {} WinGet candidates. Installing sequentially.",
+        ids.len()
+    );
     for (i, id) in ids.iter().enumerate() {
         println!("Installing [{}/{}]: {}", i + 1, ids.len(), id);
         let code = winget.install(id)?;
         let receipt_path = write_receipt(home, &approval, i, id, code)?;
-        println!("WinGet exit code {} for {}; local record: {}", code, id, receipt_path.display());
+        println!(
+            "WinGet exit code {} for {}; local record: {}",
+            code,
+            id,
+            receipt_path.display()
+        );
         if code != 0 {
-            bail!("WinGet reported failure for {}; stopping remaining installations", id);
+            bail!(
+                "WinGet reported failure for {}; stopping remaining installations",
+                id
+            );
         }
     }
     println!("WinGet batch finished. Review applications in Windows and verify installed state separately.");
@@ -251,10 +329,15 @@ mod tests {
         failure_code: i32,
     }
     impl WingetBackend for FakeWinget {
-        fn version(&self) -> Result<String> { Ok("v1.12.0\n".to_string()) }
+        fn version(&self) -> Result<String> {
+            Ok("v1.12.0\n".to_string())
+        }
         fn show(&self, id: &str) -> Result<String> {
             self.shows.set(self.shows.get() + 1);
-            Ok(format!("Found Example [{}]\nVersion: 1.2.3\nPublisher: Test\n", id))
+            Ok(format!(
+                "Found Example [{}]\nVersion: 1.2.3\nPublisher: Test\n",
+                id
+            ))
         }
         fn install(&self, _id: &str) -> Result<i32> {
             self.installs.set(self.installs.get() + 1);
@@ -271,24 +354,38 @@ mod tests {
             "kind": kind,
             "status": if *kind == "winget" { "external_preflight" } else { "review_required" }
         })).collect();
-        fs::write(&plan, serde_json::to_vec(&serde_json::json!({
-            "schema_version": "trellis.selection-plan.v0.1",
-            "approval": "not_granted", "execution": "none", "items": items
-        })).unwrap()).unwrap();
-        fs::write(&catalog, serde_json::to_vec(&serde_json::json!({
-            "schema_version": "trellis.app-center.v0.1",
-            "apps": [
-                {"id":"winget:Git.Git", "kind":"winget", "status":"external_preflight",
-                  "package_id":"Git.Git","platforms":["windows"]},
-                {"id":"winget:VideoLAN.VLC", "kind":"winget", "status":"external_preflight",
-                  "package_id":"VideoLAN.VLC","platforms":["windows"]}
-            ]
-        })).unwrap()).unwrap();
+        fs::write(
+            &plan,
+            serde_json::to_vec(&serde_json::json!({
+                "schema_version": "trellis.selection-plan.v0.1",
+                "approval": "not_granted", "execution": "none", "items": items
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        fs::write(
+            &catalog,
+            serde_json::to_vec(&serde_json::json!({
+                "schema_version": "trellis.app-center.v0.1",
+                "apps": [
+                    {"id":"winget:Git.Git", "kind":"winget", "status":"external_preflight",
+                      "package_id":"Git.Git","platforms":["windows"]},
+                    {"id":"winget:VideoLAN.VLC", "kind":"winget", "status":"external_preflight",
+                      "package_id":"VideoLAN.VLC","platforms":["windows"]}
+                ]
+            }))
+            .unwrap(),
+        )
+        .unwrap();
         (dir, plan, catalog)
     }
 
     fn backend() -> FakeWinget {
-        FakeWinget { installs: Cell::new(0), shows: Cell::new(0), failure_code: 0 }
+        FakeWinget {
+            installs: Cell::new(0),
+            shows: Cell::new(0),
+            failure_code: 0,
+        }
     }
 
     #[test]
@@ -344,8 +441,18 @@ mod tests {
         let hash = run_with(&b, &p, &c, d.path(), false, None).unwrap();
         run_with(&b, &p, &c, d.path(), true, Some(&hash)).unwrap();
         assert_eq!(b.installs.get(), 2);
-        assert!(d.path().join("external/winget").join(&hash).join("001-Git.Git.json").exists());
-        assert!(d.path().join("external/winget").join(&hash).join("002-VideoLAN.VLC.json").exists());
+        assert!(d
+            .path()
+            .join("external/winget")
+            .join(&hash)
+            .join("001-Git.Git.json")
+            .exists());
+        assert!(d
+            .path()
+            .join("external/winget")
+            .join(&hash)
+            .join("002-VideoLAN.VLC.json")
+            .exists());
     }
 
     #[test]
@@ -356,7 +463,17 @@ mod tests {
         b.failure_code = 123;
         assert!(run_with(&b, &p, &c, d.path(), true, Some(&hash)).is_err());
         assert_eq!(b.installs.get(), 1);
-        assert!(d.path().join("external/winget").join(&hash).join("001-Git.Git.json").exists());
-        assert!(!d.path().join("external/winget").join(&hash).join("002-VideoLAN.VLC.json").exists());
+        assert!(d
+            .path()
+            .join("external/winget")
+            .join(&hash)
+            .join("001-Git.Git.json")
+            .exists());
+        assert!(!d
+            .path()
+            .join("external/winget")
+            .join(&hash)
+            .join("002-VideoLAN.VLC.json")
+            .exists());
     }
 }
