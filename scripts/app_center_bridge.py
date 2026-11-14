@@ -129,8 +129,9 @@ def build_server(app_root: Path, home: Path, token: str, port: int = 8765) -> Th
         protocol_version = "HTTP/1.1"
 
         def log_message(self, fmt: str, *args: object) -> None:
-            # Never print headers containing the session token.
-            sys.stderr.write("[trellis-bridge] " + fmt % args + "\n")
+            # Omit query strings and request headers from logs, even on rejected requests.
+            sys.stderr.write("[trellis-bridge] " + self.command + " "
+                             + urlsplit(self.path).path + "\n")
 
         def headers_common(self) -> None:
             self.send_header("Cache-Control", "no-store, max-age=0")
