@@ -398,15 +398,20 @@ fn run_with(
     for (i, id) in ids.iter().enumerate() {
         // A durable journal entry precedes the external installer process.
         // Interrupted processes retain a "started" event without a fake success.
-        let event_file = append_progress(
-            home, &approval, i, ids.len(), id, "started", None, None,
-        )?;
+        let event_file = append_progress(home, &approval, i, ids.len(), id, "started", None, None)?;
         println!("PROGRESS [{}/{}] started {}", i + 1, ids.len(), id);
         let code = match winget.install(id) {
             Ok(code) => code,
             Err(error) => {
                 append_progress(
-                    home, &approval, i, ids.len(), id, "launch_failed", None, None,
+                    home,
+                    &approval,
+                    i,
+                    ids.len(),
+                    id,
+                    "launch_failed",
+                    None,
+                    None,
                 )?;
                 return Err(error);
             }
@@ -419,7 +424,14 @@ fn run_with(
             .unwrap_or(Observation::Unknown);
         let receipt_path = write_receipt(home, &approval, i, id, code, observation)?;
         append_progress(
-            home, &approval, i, ids.len(), id, "finished", Some(code), Some(observation),
+            home,
+            &approval,
+            i,
+            ids.len(),
+            id,
+            "finished",
+            Some(code),
+            Some(observation),
         )?;
         println!(
             "PROGRESS [{}/{}] {} exit={} observation={} receipt={} journal={}",
@@ -534,13 +546,19 @@ mod tests {
         let mock = backend();
         let report = run_status_with(&mock, &p, &c, Some(&path)).unwrap();
         assert_eq!(report.items.len(), 1);
-        assert_eq!(report.items[0].observation, Observation::ObservedInWingetList);
+        assert_eq!(
+            report.items[0].observation,
+            Observation::ObservedInWingetList
+        );
         assert_eq!(mock.installs.get(), 0);
         assert_eq!(mock.shows.get(), 0);
         assert_eq!(mock.lists.get(), 1);
         let readback: serde_json::Value =
             serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
-        assert_eq!(readback["items"][0]["observation"], "observed_in_winget_list");
+        assert_eq!(
+            readback["items"][0]["observation"],
+            "observed_in_winget_list"
+        );
         assert!(run_status_with(&mock, &p, &c, Some(&path)).is_err());
     }
 
@@ -567,7 +585,8 @@ mod tests {
         assert_eq!(receipt["status"], "winget_exit_zero_unverified");
         assert_eq!(receipt["observation"], "observed_in_winget_list");
         let journal = fs::read_to_string(dir.join("events.jsonl")).unwrap();
-        let events: Vec<serde_json::Value> = journal.lines()
+        let events: Vec<serde_json::Value> = journal
+            .lines()
             .map(|line| serde_json::from_str(line).unwrap())
             .collect();
         assert_eq!(events.len(), 2);
