@@ -1,4 +1,5 @@
 pub mod batch;
+pub mod winget;
 pub mod install;
 pub mod lock;
 pub mod paths;
