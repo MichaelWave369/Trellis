@@ -48,8 +48,11 @@ pub fn classify_list(output: &str, id: &str) -> Observation {
     }
     if matched {
         Observation::ObservedInWingetList
-    } else {
+    } else if in_table {
         Observation::NotConfirmedInWingetList
+    } else {
+        // A localized no-results message or unparsable output is not absence evidence.
+        Observation::Unknown
     }
 }
 
@@ -122,6 +125,15 @@ mod tests {
     fn strings_in_errors_do_not_count_as_installed() {
         assert_eq!(
             classify_list("No installed package found matching Git.Git", "Git.Git"),
+            Observation::Unknown
+        );
+    }
+
+    #[test]
+    fn parsed_table_without_exact_id_is_not_confirmed() {
+        let listing = "Name  Id  Version  Source\n----  --  -------  ------\nVLC  VideoLAN.VLC  3.0  winget\n";
+        assert_eq!(
+            classify_list(listing, "Git.Git"),
             Observation::NotConfirmedInWingetList
         );
     }
