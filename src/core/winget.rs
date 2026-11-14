@@ -399,9 +399,15 @@ fn run_with(
         // A durable journal entry precedes the external installer process.
         // Interrupted processes retain a "started" event without a fake success.
         let event_file = append_progress(
-            home, &approval, ProgressUpdate {
-                index: i, total: ids.len(), package_id: id,
-                phase: "started", exit_code: None, observation: None,
+            home,
+            &approval,
+            ProgressUpdate {
+                index: i,
+                total: ids.len(),
+                package_id: id,
+                phase: "started",
+                exit_code: None,
+                observation: None,
             },
         )?;
         println!("PROGRESS [{}/{}] started {}", i + 1, ids.len(), id);
@@ -409,9 +415,15 @@ fn run_with(
             Ok(code) => code,
             Err(error) => {
                 append_progress(
-                    home, &approval, ProgressUpdate {
-                        index: i, total: ids.len(), package_id: id,
-                        phase: "launch_failed", exit_code: None, observation: None,
+                    home,
+                    &approval,
+                    ProgressUpdate {
+                        index: i,
+                        total: ids.len(),
+                        package_id: id,
+                        phase: "launch_failed",
+                        exit_code: None,
+                        observation: None,
                     },
                 )?;
                 return Err(error);
@@ -425,9 +437,14 @@ fn run_with(
             .unwrap_or(Observation::Unknown);
         let receipt_path = write_receipt(home, &approval, i, id, code, observation)?;
         append_progress(
-            home, &approval, ProgressUpdate {
-                index: i, total: ids.len(), package_id: id,
-                phase: "finished", exit_code: Some(code),
+            home,
+            &approval,
+            ProgressUpdate {
+                index: i,
+                total: ids.len(),
+                package_id: id,
+                phase: "finished",
+                exit_code: Some(code),
                 observation: Some(observation),
             },
         )?;
