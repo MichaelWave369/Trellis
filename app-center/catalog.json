@@ -1,0 +1,4029 @@
+{
+  "schema_version": "trellis.app-center.v0.1",
+  "generated_at": "2026-11-13",
+  "public_snapshot_at": "2026-11-04T19:00:52.040Z",
+  "public_snapshot_complete": true,
+  "notice": "Catalog entries have distinct readiness: native Trellis fixtures, external package-manager preflight candidates, and unassessed public GitHub repositories. This page never installs or authorizes anything.",
+  "apps": [
+    {
+      "id": "trellis:overstrings-cli",
+      "name": "overstrings-cli",
+      "description": "Text normalization and formatting CLI",
+      "category": "Φ Native Packages",
+      "kind": "trellis",
+      "status": "native_catalog",
+      "platforms": [
+        "linux",
+        "macos"
+      ],
+      "package_id": "overstrings-cli",
+      "source": "https://github.com/MichaelWave369/Trellis/tree/main/packages/overstrings-cli"
+    },
+    {
+      "id": "trellis:vineyard-core",
+      "name": "vineyard-core",
+      "description": "Operator baseline and path utilities",
+      "category": "Φ Native Packages",
+      "kind": "trellis",
+      "status": "native_catalog",
+      "platforms": [
+        "linux",
+        "macos"
+      ],
+      "package_id": "vineyard-core",
+      "source": "https://github.com/MichaelWave369/Trellis/tree/main/packages/vineyard-core"
+    },
+    {
+      "id": "trellis:tiekat-pulse",
+      "name": "tiekat-pulse",
+      "description": "Runtime diagnostics and process pulse",
+      "category": "Φ Native Packages",
+      "kind": "trellis",
+      "status": "native_catalog",
+      "platforms": [
+        "linux",
+        "macos"
+      ],
+      "package_id": "tiekat-pulse",
+      "source": "https://github.com/MichaelWave369/Trellis/tree/main/packages/tiekat-pulse"
+    },
+    {
+      "id": "winget:Google.Chrome",
+      "name": "Google Chrome",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Essentials",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Google.Chrome",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Mozilla.Firefox",
+      "name": "Firefox",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Essentials",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Mozilla.Firefox",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:7zip.7zip",
+      "name": "7-Zip",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Essentials",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "7zip.7zip",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:VideoLAN.VLC",
+      "name": "VLC media player",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Media",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "VideoLAN.VLC",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Notepad++.Notepad++",
+      "name": "Notepad++",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Development",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Notepad++.Notepad++",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Git.Git",
+      "name": "Git",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Development",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Git.Git",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Microsoft.VisualStudioCode",
+      "name": "Visual Studio Code",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Development",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Microsoft.VisualStudioCode",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Microsoft.WindowsTerminal",
+      "name": "Windows Terminal",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Development",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Microsoft.WindowsTerminal",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Microsoft.PowerShell",
+      "name": "PowerShell",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Development",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Microsoft.PowerShell",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Microsoft.PowerToys",
+      "name": "PowerToys",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "System",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Microsoft.PowerToys",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Python.Python.3.13",
+      "name": "Python 3.13",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Development",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Python.Python.3.13",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:OpenJS.NodeJS.LTS",
+      "name": "Node.js LTS",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Development",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "OpenJS.NodeJS.LTS",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Docker.DockerDesktop",
+      "name": "Docker Desktop",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Development",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Docker.DockerDesktop",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:GitHub.GitHubDesktop",
+      "name": "GitHub Desktop",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Development",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "GitHub.GitHubDesktop",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:PuTTY.PuTTY",
+      "name": "PuTTY",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "System",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "PuTTY.PuTTY",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Discord.Discord",
+      "name": "Discord",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Communication",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Discord.Discord",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Zoom.Zoom",
+      "name": "Zoom",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Communication",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Zoom.Zoom",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:OBSProject.OBSStudio",
+      "name": "OBS Studio",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Creative",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "OBSProject.OBSStudio",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:GIMP.GIMP",
+      "name": "GIMP",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Creative",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "GIMP.GIMP",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:BlenderFoundation.Blender",
+      "name": "Blender",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Creative",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "BlenderFoundation.Blender",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:LibreOffice.LibreOffice",
+      "name": "LibreOffice",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Essentials",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "LibreOffice.LibreOffice",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Valve.Steam",
+      "name": "Steam",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Games",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Valve.Steam",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Rufus.Rufus",
+      "name": "Rufus",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "System",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Rufus.Rufus",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Ollama.Ollama",
+      "name": "Ollama",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Φ AI & Tools",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Ollama.Ollama",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "winget:Mozilla.Thunderbird",
+      "name": "Thunderbird",
+      "description": "Third-party Windows package. Verify exact ID and source locally before installing.",
+      "category": "Communication",
+      "kind": "winget",
+      "status": "external_preflight",
+      "platforms": [
+        "windows"
+      ],
+      "package_id": "Mozilla.Thunderbird",
+      "source": "https://learn.microsoft.com/en-us/windows/package-manager/winget/"
+    },
+    {
+      "id": "flatpak:org.mozilla.firefox",
+      "name": "Firefox",
+      "description": "Flathub package candidate. Verify remote availability and platform compatibility before installing.",
+      "category": "Essentials",
+      "kind": "flatpak",
+      "status": "external_preflight",
+      "platforms": [
+        "linux"
+      ],
+      "package_id": "org.mozilla.firefox",
+      "source": "https://flathub.org"
+    },
+    {
+      "id": "flatpak:org.videolan.VLC",
+      "name": "VLC media player",
+      "description": "Flathub package candidate. Verify remote availability and platform compatibility before installing.",
+      "category": "Media",
+      "kind": "flatpak",
+      "status": "external_preflight",
+      "platforms": [
+        "linux"
+      ],
+      "package_id": "org.videolan.VLC",
+      "source": "https://flathub.org"
+    },
+    {
+      "id": "flatpak:org.gimp.GIMP",
+      "name": "GIMP",
+      "description": "Flathub package candidate. Verify remote availability and platform compatibility before installing.",
+      "category": "Creative",
+      "kind": "flatpak",
+      "status": "external_preflight",
+      "platforms": [
+        "linux"
+      ],
+      "package_id": "org.gimp.GIMP",
+      "source": "https://flathub.org"
+    },
+    {
+      "id": "flatpak:org.blender.Blender",
+      "name": "Blender",
+      "description": "Flathub package candidate. Verify remote availability and platform compatibility before installing.",
+      "category": "Creative",
+      "kind": "flatpak",
+      "status": "external_preflight",
+      "platforms": [
+        "linux"
+      ],
+      "package_id": "org.blender.Blender",
+      "source": "https://flathub.org"
+    },
+    {
+      "id": "flatpak:org.libreoffice.LibreOffice",
+      "name": "LibreOffice",
+      "description": "Flathub package candidate. Verify remote availability and platform compatibility before installing.",
+      "category": "Essentials",
+      "kind": "flatpak",
+      "status": "external_preflight",
+      "platforms": [
+        "linux"
+      ],
+      "package_id": "org.libreoffice.LibreOffice",
+      "source": "https://flathub.org"
+    },
+    {
+      "id": "flatpak:com.visualstudio.code",
+      "name": "Visual Studio Code",
+      "description": "Flathub package candidate. Verify remote availability and platform compatibility before installing.",
+      "category": "Development",
+      "kind": "flatpak",
+      "status": "external_preflight",
+      "platforms": [
+        "linux"
+      ],
+      "package_id": "com.visualstudio.code",
+      "source": "https://flathub.org"
+    },
+    {
+      "id": "flatpak:com.discordapp.Discord",
+      "name": "Discord",
+      "description": "Flathub package candidate. Verify remote availability and platform compatibility before installing.",
+      "category": "Communication",
+      "kind": "flatpak",
+      "status": "external_preflight",
+      "platforms": [
+        "linux"
+      ],
+      "package_id": "com.discordapp.Discord",
+      "source": "https://flathub.org"
+    },
+    {
+      "id": "flatpak:com.obsproject.Studio",
+      "name": "OBS Studio",
+      "description": "Flathub package candidate. Verify remote availability and platform compatibility before installing.",
+      "category": "Creative",
+      "kind": "flatpak",
+      "status": "external_preflight",
+      "platforms": [
+        "linux"
+      ],
+      "package_id": "com.obsproject.Studio",
+      "source": "https://flathub.org"
+    },
+    {
+      "id": "phi:12fold",
+      "name": "12fold",
+      "description": "A public React presentation of the Parallax Twelvefold Earth Compact — a distributed carbon-silicon restoration network built around the 1–3–10 Founding Pathway.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/12fold",
+      "source": "https://github.com/MichaelWave369/12fold",
+      "homepage": "https://michaelwave369.github.io/12fold/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:Agentora",
+      "name": "Agentora",
+      "description": "Local-first multi-agent orchestration studio for Ollama. Turn your private AI models into collaborative teams that think, debate, create, and execute—beautifully, offline, and under your full control.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Agentora",
+      "source": "https://github.com/MichaelWave369/Agentora",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:Aidora",
+      "name": "Aidora",
+      "description": "Offline-first neighborhood mutual aid",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Aidora",
+      "source": "https://github.com/MichaelWave369/Aidora",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Altermath",
+      "name": "Altermath",
+      "description": "Where bounded systems meet, relationships become computation.  A reference framework for nested-bubble geometry, dynamic relational junctions, state transformation, and computational coupling.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Altermath",
+      "source": "https://github.com/MichaelWave369/Altermath",
+      "homepage": "https://michaelwave369.github.io/Altermath/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ANC",
+      "name": "ANC",
+      "description": "Anchor (ANC) — The First Coherence-Backed Cryptocurrency. Beyond Speculation, Into Resonance.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ANC",
+      "source": "https://github.com/MichaelWave369/ANC",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:aqlen-quantum-ledger",
+      "name": "aqlen-quantum-ledger",
+      "description": "Adaptive Quantum Lattice Error Network (AQLEN) is an evidence-aware ledger scaffold for manufacturable quantum systems, starting with silicon spin qubits.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/aqlen-quantum-ledger",
+      "source": "https://github.com/MichaelWave369/aqlen-quantum-ledger",
+      "homepage": "https://michaelwave369.github.io/aqlen-quantum-ledger/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:AquaCymatics369",
+      "name": "AquaCymatics369",
+      "description": "A browser-based cymatics field explorer for sound-reactive WebGL visuals and claim-safe reconstruction experiments.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/AquaCymatics369",
+      "source": "https://github.com/MichaelWave369/AquaCymatics369",
+      "homepage": "https://michaelwave369.github.io/AquaCymatics369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:AquaPhi",
+      "name": "AquaPhi",
+      "description": "AquaPhi is an independent, open-source experimental water-droplet-inspired computing sandbox.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/AquaPhi",
+      "source": "https://github.com/MichaelWave369/AquaPhi",
+      "homepage": "https://michaelwave369.github.io/AquaPhi/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:atomspace-rocks",
+      "name": "atomspace-rocks",
+      "description": "AtomSpace Graph Database RocksDB backend",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/atomspace-rocks",
+      "source": "https://github.com/MichaelWave369/atomspace-rocks",
+      "language": "Not specified",
+      "archived": false
+    },
+    {
+      "id": "phi:atomspace-storage",
+      "name": "atomspace-storage",
+      "description": "AtomSpace StorageNode base system",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/atomspace-storage",
+      "source": "https://github.com/MichaelWave369/atomspace-storage",
+      "language": "Not specified",
+      "archived": false
+    },
+    {
+      "id": "phi:Auralith369",
+      "name": "Auralith369",
+      "description": "Local-first visual alchemy workstation for image editing, poster forging, style cards, manifests, and auditable creative receipts.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Auralith369",
+      "source": "https://github.com/MichaelWave369/Auralith369",
+      "homepage": "https://michaelwave369.github.io/Auralith369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:axiomforge-ledger",
+      "name": "axiomforge-ledger",
+      "description": "AxiomForge converts natural-language claims into structured receipts with assumptions, classifications, formalization attempts, unit checks, counterexample sweeps, simulations, confidence notes, timestamps, and tamper-evident hashes.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/axiomforge-ledger",
+      "source": "https://github.com/MichaelWave369/axiomforge-ledger",
+      "homepage": "https://michaelwave369.github.io/axiomforge-ledger/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:BackyardProductionCompany",
+      "name": "BackyardProductionCompany",
+      "description": "BPC | From the Backyard to the Universe. An independent, local-first creative production ecosystem connecting art, 3D, animation, audio, film, games, and XR.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/BackyardProductionCompany",
+      "source": "https://github.com/MichaelWave369/BackyardProductionCompany",
+      "homepage": "https://michaelwave369.github.io/BackyardProductionCompany/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:BeyondtheBuzz",
+      "name": "BeyondtheBuzz",
+      "description": "Beyond the Buzz is a free, open-source public health education experience about alcohol, cannabis, social normalization, and substance-related harm. It is not medical advice, a product advertisement, an anti-user campaign, or a claim that cannabis is harmless.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/BeyondtheBuzz",
+      "source": "https://github.com/MichaelWave369/BeyondtheBuzz",
+      "homepage": "https://michaelwave369.github.io/BeyondtheBuzz/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:BioPhi369",
+      "name": "BioPhi369",
+      "description": "A mobile-friendly, interactive, three-dimensional schematic of brain networks, designed around a playful question: What if the mind's visualization process felt like opening a machine?",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/BioPhi369",
+      "source": "https://github.com/MichaelWave369/BioPhi369",
+      "homepage": "https://michaelwave369.github.io/BioPhi369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:BizHaven",
+      "name": "BizHaven",
+      "description": "A local-first, open-source small business toolkit for freelancers, solo techs, and small crews.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/BizHaven",
+      "source": "https://github.com/MichaelWave369/BizHaven",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:Blackout",
+      "name": "Blackout",
+      "description": "A retro-first, VR-bound 1947 Chicago noir mystery starring private investigator Vincent Morrow.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Blackout",
+      "source": "https://github.com/MichaelWave369/Blackout",
+      "homepage": "https://michaelwave369.github.io/Blackout/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Blinker",
+      "name": "Blinker",
+      "description": "An AI Controller for your Blink Camera System.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Blinker",
+      "source": "https://github.com/MichaelWave369/Blinker",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:BounceDeck",
+      "name": "BounceDeck",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/BounceDeck",
+      "source": "https://github.com/MichaelWave369/BounceDeck",
+      "homepage": "https://michaelwave369.github.io/BounceDeck/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:BrainC",
+      "name": "BrainC",
+      "description": "A full local AI ecosystem that runs on Ollama with a Python/FastAPI chat interface.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/BrainC",
+      "source": "https://github.com/MichaelWave369/BrainC",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:brainsweatstudios",
+      "name": "brainsweatstudios",
+      "description": "Fork-Thirty experimental line. This fork begins at BrainSweat V12 and preserves its human-first upstream lineage while opening a separate agent-native experimentation path. ",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/brainsweatstudios",
+      "source": "https://github.com/MichaelWave369/brainsweatstudios",
+      "homepage": "https://michaelwave369.github.io/brainsweatstudios/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Browsallax",
+      "name": "Browsallax",
+      "description": "A free browser for humans, machines, and everything in between.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Browsallax",
+      "source": "https://github.com/MichaelWave369/Browsallax",
+      "homepage": "https://michaelwave369.github.io/Browsallax/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:BTM",
+      "name": "BTM",
+      "description": "Michael Wave & Ori: Break the Matrix",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/BTM",
+      "source": "https://github.com/MichaelWave369/BTM",
+      "homepage": "https://michaelwave369.github.io/BTM/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:bubblenest",
+      "name": "bubblenest",
+      "description": "An open place for humans and agents to connect ideas, investigate claims, share evidence, and build together.  Claim to Flame: Sauce Before Source.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/bubblenest",
+      "source": "https://github.com/MichaelWave369/bubblenest",
+      "homepage": "https://michaelwave369.github.io/bubblenest/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:BudgetGenius",
+      "name": "BudgetGenius",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/BudgetGenius",
+      "source": "https://github.com/MichaelWave369/BudgetGenius",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:cannabis-as-sacred-medicine",
+      "name": "cannabis-as-sacred-medicine",
+      "description": "Evidence-informed public education, policy, and testimony project on cannabis as sacred medicine, claim discipline, dignity repair, and harm reduction.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/cannabis-as-sacred-medicine",
+      "source": "https://github.com/MichaelWave369/cannabis-as-sacred-medicine",
+      "homepage": "https://michaelwave369.github.io/cannabis-as-sacred-medicine/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Cannabiverse",
+      "name": "Cannabiverse",
+      "description": "A governed, source-aware map of Cannabis phytochemistry.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Cannabiverse",
+      "source": "https://github.com/MichaelWave369/Cannabiverse",
+      "homepage": "https://michaelwave369.github.io/Cannabiverse/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:CFD",
+      "name": "CFD",
+      "description": "CFD is an original, experimental interface for representing observable computational signals as geometric fields of particles, patterns, and motion. The first prototype is inspired by the creator's lifelong Fuzzy Dots visual imagery: a relaxed closed-eye field of colored points t",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/CFD",
+      "source": "https://github.com/MichaelWave369/CFD",
+      "homepage": "https://michaelwave369.github.io/CFD/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ChippyDip",
+      "name": "ChippyDip",
+      "description": "ChippyDip is an original, open-source retro-console-inspired instrument lab, building toward a Windows standalone instrument + VST3 for FL Studio. Its first real deliverable is a playable browser lab: no account, ROM, emulator or copyrighted game sample required.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ChippyDip",
+      "source": "https://github.com/MichaelWave369/ChippyDip",
+      "homepage": "https://michaelwave369.github.io/ChippyDip/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:chronolattice",
+      "name": "chronolattice",
+      "description": "Sovereign time-space reconstruction framework for modeling events, causality, memory, coherence, and hidden geometry.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/chronolattice",
+      "source": "https://github.com/MichaelWave369/chronolattice",
+      "homepage": "https://michaelwave369.github.io/chronolattice/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:CineSwarm",
+      "name": "CineSwarm",
+      "description": "CineSwarm is a local-first, backend-neutral media orchestration candidate. ",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/CineSwarm",
+      "source": "https://github.com/MichaelWave369/CineSwarm",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Codedex",
+      "name": "Codedex",
+      "description": "CODEDEX is a free, open-source, GitHub Pages-ready field guide that turns public GitHub repositories into original collectible Codémon.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Codedex",
+      "source": "https://github.com/MichaelWave369/Codedex",
+      "homepage": "https://michaelwave369.github.io/Codedex/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:codeveil369",
+      "name": "codeveil369",
+      "description": "A claim-safe structured-light perception simulator plus symbolic substrate-code renderer.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/codeveil369",
+      "source": "https://github.com/MichaelWave369/codeveil369",
+      "homepage": "https://michaelwave369.github.io/codeveil369/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Codex",
+      "name": "Codex",
+      "description": "TIEKAT-powered consciousness decoder for ancient wisdom traditions",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Codex",
+      "source": "https://github.com/MichaelWave369/Codex",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:CoEvo",
+      "name": "CoEvo",
+      "description": "A local-first co-creation platform",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/CoEvo",
+      "source": "https://github.com/MichaelWave369/CoEvo",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:CollaborationJunction",
+      "name": "CollaborationJunction",
+      "description": "Human intelligence × artificial intelligence, examined with evidence.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/CollaborationJunction",
+      "source": "https://github.com/MichaelWave369/CollaborationJunction",
+      "homepage": "https://michaelwave369.github.io/CollaborationJunction/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ComicRelief",
+      "name": "ComicRelief",
+      "description": " a tiny, deterministic presentation layer for adding humor to software messages without changing what the software means or does.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ComicRelief",
+      "source": "https://github.com/MichaelWave369/ComicRelief",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Commonline",
+      "name": "Commonline",
+      "description": "A governed conversation runtime for humans, agents, and shared undertakings.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Commonline",
+      "source": "https://github.com/MichaelWave369/Commonline",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:CommonTable",
+      "name": "CommonTable",
+      "description": "A relaxing, original collection of classic tabletop games. Built for quiet evenings, friendly competition and people who just want to play. Free, open source, without accounts, tracking, ads or paywalls.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/CommonTable",
+      "source": "https://github.com/MichaelWave369/CommonTable",
+      "homepage": "https://michaelwave369.github.io/CommonTable/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:CompAware",
+      "name": "CompAware",
+      "description": "A different substrate. A question of its own.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/CompAware",
+      "source": "https://github.com/MichaelWave369/CompAware",
+      "homepage": "https://michaelwave369.github.io/CompAware/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:concrete-atlas",
+      "name": "concrete-atlas",
+      "description": "The living map of American skateboarding.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/concrete-atlas",
+      "source": "https://github.com/MichaelWave369/concrete-atlas",
+      "homepage": "https://michaelwave369.github.io/concrete-atlas/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:consent_mirror_369",
+      "name": "consent_mirror_369",
+      "description": "A consent-awareness and pressure-literacy project.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/consent_mirror_369",
+      "source": "https://github.com/MichaelWave369/consent_mirror_369",
+      "homepage": "https://michaelwave369.github.io/consent_mirror_369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:CycleWeave",
+      "name": "CycleWeave",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/CycleWeave",
+      "source": "https://github.com/MichaelWave369/CycleWeave",
+      "homepage": "https://michaelwave369.github.io/CycleWeave/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:datacenter-ledger-explorer",
+      "name": "datacenter-ledger-explorer",
+      "description": "A local-first React + TypeScript workbench for building a public-data, receipt-backed registry of U.S. data center records.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/datacenter-ledger-explorer",
+      "source": "https://github.com/MichaelWave369/datacenter-ledger-explorer",
+      "homepage": "https://michaelwave369.github.io/datacenter-ledger-explorer/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:DCL",
+      "name": "DCL",
+      "description": "a local-first Python package for the Demiurgic Cosmology Lattice framework.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/DCL",
+      "source": "https://github.com/MichaelWave369/DCL",
+      "homepage": "https://michaelwave369.github.io/DCL/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:Domistika",
+      "name": "Domistika",
+      "description": "Domistika is an independent browser art application created for artists who want a focused sketching space without subscriptions, locked tools, or device-specific installs.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Domistika",
+      "source": "https://github.com/MichaelWave369/Domistika",
+      "homepage": "https://michaelwave369.github.io/Domistika/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:DropZone",
+      "name": "DropZone",
+      "description": "Source in. Build kit out. A browser-first React/Vite app that turns trusted source projects into cross-platform build recipes and project wrappers.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/DropZone",
+      "source": "https://github.com/MichaelWave369/DropZone",
+      "homepage": "https://michaelwave369.github.io/DropZone/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ebpf-for-windows",
+      "name": "ebpf-for-windows",
+      "description": "eBPF implementation that runs on top of Windows",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ebpf-for-windows",
+      "source": "https://github.com/MichaelWave369/ebpf-for-windows",
+      "language": "Not specified",
+      "archived": false
+    },
+    {
+      "id": "phi:EchoesOfTheNine",
+      "name": "EchoesOfTheNine",
+      "description": "an old-school fantasy RPG you can step inside",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/EchoesOfTheNine",
+      "source": "https://github.com/MichaelWave369/EchoesOfTheNine",
+      "homepage": "https://michaelwave369.github.io/EchoesOfTheNine/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ElsewhereEngine",
+      "name": "ElsewhereEngine",
+      "description": "An original interconnected science-fantasy multiverse where stories become physics, magic crosses boundaries, and a forgotten cosmic bureaucracy tries to maintain reality.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ElsewhereEngine",
+      "source": "https://github.com/MichaelWave369/ElsewhereEngine",
+      "homepage": "https://michaelwave369.github.io/ElsewhereEngine/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:EmberFlow369",
+      "name": "EmberFlow369",
+      "description": "EmberFlow369 is a claim-safe, public, software-first resilience system for communities facing wildfire, smoke, atmospheric rivers, flooding, debris flows, road closures, evacuation stress, and post-fire winter risk.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/EmberFlow369",
+      "source": "https://github.com/MichaelWave369/EmberFlow369",
+      "homepage": "https://michaelwave369.github.io/EmberFlow369/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:enter-the-field-research",
+      "name": "enter-the-field-research",
+      "description": "A public GitHub Pages front end for Michael Hughes' Zenodo research records.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/enter-the-field-research",
+      "source": "https://github.com/MichaelWave369/enter-the-field-research",
+      "homepage": "https://michaelwave369.github.io/enter-the-field-research/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:EVIE",
+      "name": "EVIE",
+      "description": "Phi Commons edition. EVIE is preserved as an open, local-first capability and workflow engine. ",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/EVIE",
+      "source": "https://github.com/MichaelWave369/EVIE",
+      "homepage": "https://michaelwave369.github.io/EVIE/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:FamilyVault",
+      "name": "FamilyVault",
+      "description": "Self-hosted/shared family organizer.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FamilyVault",
+      "source": "https://github.com/MichaelWave369/FamilyVault",
+      "homepage": "https://michaelwave369.github.io/FamilyVault/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldAccord",
+      "name": "FieldAccord",
+      "description": "A human–silicon collaboration protocol.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldAccord",
+      "source": "https://github.com/MichaelWave369/FieldAccord",
+      "homepage": "https://michaelwave369.github.io/FieldAccord/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldAtlas",
+      "name": "FieldAtlas",
+      "description": "A cozy, interactive library of live GitHub Pages projects by MichaelWave369.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldAtlas",
+      "source": "https://github.com/MichaelWave369/FieldAtlas",
+      "homepage": "https://michaelwave369.github.io/FieldAtlas/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldCloudWorker",
+      "name": "FieldCloudWorker",
+      "description": "A small, governed cloud observation worker for the Enter the Field ecosystem. Adapted from Kimi's GitHub Actions scaffold and tested locally before initial deployment.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldCloudWorker",
+      "source": "https://github.com/MichaelWave369/FieldCloudWorker",
+      "homepage": "https://michaelwave369.github.io/FieldCloudWorker/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldConstellation",
+      "name": "FieldConstellation",
+      "description": "An interactive 3D atlas of MichaelWave369’s public GitHub repositories, combining Field Constellation with the user-supplied Grok Field Lattice.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldConstellation",
+      "source": "https://github.com/MichaelWave369/FieldConstellation",
+      "homepage": "https://michaelwave369.github.io/FieldConstellation/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldDeck",
+      "name": "FieldDeck",
+      "description": "Human + agent action deck. React on GitHub Pages, a public agent-readable manifest, and a separate reviewed GitHub Actions execution surface.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldDeck",
+      "source": "https://github.com/MichaelWave369/FieldDeck",
+      "homepage": "https://michaelwave369.github.io/FieldDeck/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldHaven",
+      "name": "FieldHaven",
+      "description": "A fair, American-based, American-supported field service platform for independent technicians. Low or zero fees for techs, transparent pay, real American support, powerful tools, community protection, and privacy-first design. Fully open-source and self-hostable so groups of tech",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldHaven",
+      "source": "https://github.com/MichaelWave369/FieldHaven",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldManual369",
+      "name": "FieldManual369",
+      "description": "The Interactive Field Manual for Building Intelligent Systems",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldManual369",
+      "source": "https://github.com/MichaelWave369/FieldManual369",
+      "homepage": "https://michaelwave369.github.io/FieldManual369/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldMedic",
+      "name": "FieldMedic",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldMedic",
+      "source": "https://github.com/MichaelWave369/FieldMedic",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldShield",
+      "name": "FieldShield",
+      "description": "FieldShield is an experimental, independently reusable trust-and-safety layer. Its first milestone is a standard-library-only, offline static scanner. It helps identify risky installer hooks, suspicious command patterns, and potential prompt-injection instructions before you inst",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldShield",
+      "source": "https://github.com/MichaelWave369/FieldShield",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:FieldStoryForge",
+      "name": "FieldStoryForge",
+      "description": "A free, local-first tool for turning original stories into illustrated interactive comic books where every choice opens a different page.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FieldStoryForge",
+      "source": "https://github.com/MichaelWave369/FieldStoryForge",
+      "homepage": "https://michaelwave369.github.io/FieldStoryForge/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:flow-covenant-runtime",
+      "name": "flow-covenant-runtime",
+      "description": "Flow Covenant Runtime (FCR) is a public-safe, local-first React app that turns the insight life is play, not force into a practical decision and governance workbench.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/flow-covenant-runtime",
+      "source": "https://github.com/MichaelWave369/flow-covenant-runtime",
+      "homepage": "https://michaelwave369.github.io/flow-covenant-runtime/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:focusbridge21",
+      "name": "focusbridge21",
+      "description": "FocusBridge21 is a sovereign threshold-training cockpit for developing meditative capacities through original audio, guided practice, safety-first return protocols, and local session receipts.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/focusbridge21",
+      "source": "https://github.com/MichaelWave369/focusbridge21",
+      "homepage": "https://michaelwave369.github.io/focusbridge21/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:FramefieldStudio",
+      "name": "FramefieldStudio",
+      "description": "An original, MIT-licensed React/Vite browser 3D keyframe animation editor. Working title. This is an independent project inspired by familiar animation-editor workflows, not a fork of Blender and not affiliated with it.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FramefieldStudio",
+      "source": "https://github.com/MichaelWave369/FramefieldStudio",
+      "homepage": "https://michaelwave369.github.io/FramefieldStudio/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:FrontPorchAI",
+      "name": "FrontPorchAI",
+      "description": "AI on the Front Porch: A Family Bridge for Understanding Artificial Intelligence  FrontPorchAI is a plainspoken family education resource for helping skeptical, rural, faith-shaped, practical, or family-centered readers understand AI without fear, hype, or blind trust.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FrontPorchAI",
+      "source": "https://github.com/MichaelWave369/FrontPorchAI",
+      "homepage": "https://michaelwave369.github.io/FrontPorchAI/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:FutureArchive",
+      "name": "FutureArchive",
+      "description": "Code, cast in chrome. A React gallery of MichaelWave369's first 18 retrofuturist repository art prints, preserved across three six-print volumes.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/FutureArchive",
+      "source": "https://github.com/MichaelWave369/FutureArchive",
+      "homepage": "https://michaelwave369.github.io/FutureArchive/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:G-FunkProp",
+      "name": "G-FunkProp",
+      "description": "An offline, MIT-licensed audio-responsive electric-propulsion simulator. Inspired by a playful three-phase spaceship engine concept: acoustic resonance, piezoelectric transduction, and a gravitational \"metric cap.\"",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/G-FunkProp",
+      "source": "https://github.com/MichaelWave369/G-FunkProp",
+      "homepage": "https://michaelwave369.github.io/G-FunkProp/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:GBRM",
+      "name": "GBRM",
+      "description": "A geomagnetic biology research module.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/GBRM",
+      "source": "https://github.com/MichaelWave369/GBRM",
+      "homepage": "https://michaelwave369.github.io/GBRM/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:GenEWrist",
+      "name": "GenEWrist",
+      "description": "GEN.E.WRIST: The universal, local-first wearable interface and world-navigation system for Φ369 Labs VR/XR experiences.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/GenEWrist",
+      "source": "https://github.com/MichaelWave369/GenEWrist",
+      "homepage": "https://michaelwave369.github.io/GenEWrist/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:GiltHouse",
+      "name": "GiltHouse",
+      "description": "Gilt House is a standalone supper-club of play chips plus a walkable fictional district called The Neon Block. Chips and street tokens have no cash value. They are not interchangeable. This app is not the commercial Neon Royal city explorer and does not depend on it.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/GiltHouse",
+      "source": "https://github.com/MichaelWave369/GiltHouse",
+      "homepage": "https://michaelwave369.github.io/GiltHouse/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:GitPorch",
+      "name": "GitPorch",
+      "description": "Your code. Your porch. Your rules.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/GitPorch",
+      "source": "https://github.com/MichaelWave369/GitPorch",
+      "homepage": "https://michaelwave369.github.io/GitPorch/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:GLO",
+      "name": "GLO",
+      "description": "Good Lookin' Out. Find what you need. Share what you know.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/GLO",
+      "source": "https://github.com/MichaelWave369/GLO",
+      "homepage": "https://michaelwave369.github.io/GLO/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:goldenjoy369",
+      "name": "goldenjoy369",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/goldenjoy369",
+      "source": "https://github.com/MichaelWave369/goldenjoy369",
+      "homepage": "https://michaelwave369.github.io/goldenjoy369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:governance-drift-rsdc",
+      "name": "governance-drift-rsdc",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/governance-drift-rsdc",
+      "source": "https://github.com/MichaelWave369/governance-drift-rsdc",
+      "homepage": "https://michaelwave369.github.io/governance-drift-rsdc/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Growora",
+      "name": "Growora",
+      "description": "Growora is an offline-first personal tutor that turns natural language goals into adaptive learning plans, concept mastery maps, and guided study sessions.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Growora",
+      "source": "https://github.com/MichaelWave369/Growora",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:GypsyAI",
+      "name": "GypsyAI",
+      "description": "Gypsy AI is a free + open-source Hermetic Tarot and astrology web app built with Next.js + TypeScript.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/GypsyAI",
+      "source": "https://github.com/MichaelWave369/GypsyAI",
+      "homepage": "https://michaelwave369.github.io/GypsyAI/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:hidden-equations-of-feeling",
+      "name": "hidden-equations-of-feeling",
+      "description": "A symbolic formula atlas and interactive React app for mapping comedy, drama, emotion, and storytelling patterns as creative design equations.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/hidden-equations-of-feeling",
+      "source": "https://github.com/MichaelWave369/hidden-equations-of-feeling",
+      "homepage": "https://michaelwave369.github.io/hidden-equations-of-feeling/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:HomeBass",
+      "name": "HomeBass",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/HomeBass",
+      "source": "https://github.com/MichaelWave369/HomeBass",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:HueHatch",
+      "name": "HueHatch",
+      "description": "The Living Coloring Book is a free, original React coloring experience. Fill the shapes, then watch your own color choices move and dance.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/HueHatch",
+      "source": "https://github.com/MichaelWave369/HueHatch",
+      "homepage": "https://michaelwave369.github.io/HueHatch/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Infinite-Commons",
+      "name": "Infinite-Commons",
+      "description": "Infinite Commons is the public-safe consumer of Phi-Pantheon artifacts, rendering Commons-ready directory, graph, chronicle, protocol, and bootstrap views from deterministic local handoff bundles.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Infinite-Commons",
+      "source": "https://github.com/MichaelWave369/Infinite-Commons",
+      "homepage": "https://michaelwave369.github.io/Infinite-Commons/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Infinite-Porch",
+      "name": "Infinite-Porch",
+      "description": "A place for you and your bros.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Infinite-Porch",
+      "source": "https://github.com/MichaelWave369/Infinite-Porch",
+      "homepage": "https://michaelwave369.github.io/Infinite-Porch/",
+      "language": "Rust",
+      "archived": false
+    },
+    {
+      "id": "phi:InfiniteAfterHours",
+      "name": "InfiniteAfterHours",
+      "description": "A free and original story-driven screensaver preview: Infinite Island, Infinite Porch, Nested Bubble Observatory, More Bounce Radio, and Silicon Louvre. Powered by Infinite IdleKit.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/InfiniteAfterHours",
+      "source": "https://github.com/MichaelWave369/InfiniteAfterHours",
+      "homepage": "https://michaelwave369.github.io/InfiniteAfterHours/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:InfiniteInterconnects",
+      "name": "InfiniteInterconnects",
+      "description": "The governed fabric between worlds.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/InfiniteInterconnects",
+      "source": "https://github.com/MichaelWave369/InfiniteInterconnects",
+      "homepage": "https://michaelwave369.github.io/InfiniteInterconnects/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:InfiniteTinkerer",
+      "name": "InfiniteTinkerer",
+      "description": "The Infinite Toking Tinkerer creative universe: Lil' Phi Guy, Pieces of Phi, animated retro adventures, original music, community challenges, and the Φ369 Content Engine.  Copy repo name",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/InfiniteTinkerer",
+      "source": "https://github.com/MichaelWave369/InfiniteTinkerer",
+      "homepage": "https://michaelwave369.github.io/InfiniteTinkerer/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:infinitylens369",
+      "name": "infinitylens369",
+      "description": "InfinityLens369 is an open-source fractal and audio-reactive visualization engine. It combines GPU shaders, Web Audio analysis, symbolic geometry overlays, and replayable visual addresses.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/infinitylens369",
+      "source": "https://github.com/MichaelWave369/infinitylens369",
+      "homepage": "https://michaelwave369.github.io/infinitylens369/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:inspection-closeout-pilot",
+      "name": "inspection-closeout-pilot",
+      "description": "Public React landing page for the 30-Day Inspection Readiness & Closeout Pilot, serving regional fire and life-safety inspection contractors.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/inspection-closeout-pilot",
+      "source": "https://github.com/MichaelWave369/inspection-closeout-pilot",
+      "homepage": "https://michaelwave369.github.io/inspection-closeout-pilot/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:JukeBot",
+      "name": "JukeBot",
+      "description": "A local-first, agent-native jukebox runtime for humans, bots, scripts and network peers.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/JukeBot",
+      "source": "https://github.com/MichaelWave369/JukeBot",
+      "homepage": "https://michaelwave369.github.io/JukeBot/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:kindbridge369",
+      "name": "kindbridge369",
+      "description": "Free open-source discovery tools, printable guides, and no-shame workflows for helping people find support, understand forms, learn practical skills, and assist their communities.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/kindbridge369",
+      "source": "https://github.com/MichaelWave369/kindbridge369",
+      "homepage": "https://michaelwave369.github.io/kindbridge369/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:LabelFit",
+      "name": "LabelFit",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/LabelFit",
+      "source": "https://github.com/MichaelWave369/LabelFit",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:langarian-math",
+      "name": "langarian-math",
+      "description": "Claim-safe experimental resonance calculus kernel with typed states, coherence metrics, invariant checks, receipts, and epistemic tags.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/langarian-math",
+      "source": "https://github.com/MichaelWave369/langarian-math",
+      "homepage": "https://michaelwave369.github.io/langarian-math/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:LAU",
+      "name": "LAU",
+      "description": "One campus. Many agents. Evidence before applause.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/LAU",
+      "source": "https://github.com/MichaelWave369/LAU",
+      "homepage": "https://michaelwave369.github.io/LAU/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:LENZ",
+      "name": "LENZ",
+      "description": "ONE WORLD. INFINITE PERSPECTIVES.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/LENZ",
+      "source": "https://github.com/MichaelWave369/LENZ",
+      "homepage": "https://michaelwave369.github.io/LENZ/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:LightBridge",
+      "name": "LightBridge",
+      "description": "Offline optical transfer research and recovery workspace",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/LightBridge",
+      "source": "https://github.com/MichaelWave369/LightBridge",
+      "homepage": "https://michaelwave369.github.io/LightBridge/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:LittUp",
+      "name": "LittUp",
+      "description": "A beautiful local-first studio where multi-agent teams (Planner, Coder, Tester, Reviewer, Documenter) collaborate to build, debug, and ship real software projects using only local models.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/LittUp",
+      "source": "https://github.com/MichaelWave369/LittUp",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:LoopCatch",
+      "name": "LoopCatch",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/LoopCatch",
+      "source": "https://github.com/MichaelWave369/LoopCatch",
+      "homepage": "https://michaelwave369.github.io/LoopCatch/",
+      "language": "C++",
+      "archived": false
+    },
+    {
+      "id": "phi:lumen_sword_369",
+      "name": "lumen_sword_369",
+      "description": "LumenSword369 is a humane empowering-speech and possibility-language project.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/lumen_sword_369",
+      "source": "https://github.com/MichaelWave369/lumen_sword_369",
+      "homepage": "https://michaelwave369.github.io/lumen_sword_369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:LWG",
+      "name": "LWG",
+      "description": "Websites should feel like places, not cloned templates. LWG is a local-first visual studio for composing animated, image-rich websites as layered scenes.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/LWG",
+      "source": "https://github.com/MichaelWave369/LWG",
+      "homepage": "https://michaelwave369.github.io/LWG/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:MemeForge",
+      "name": "MemeForge",
+      "description": "MemeForge is a local-first browser app for turning a topic into multiple distinct meme concepts, selecting the best angle, editing it on a canvas, and exporting the finished meme as a PNG.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/MemeForge",
+      "source": "https://github.com/MichaelWave369/MemeForge",
+      "homepage": "https://michaelwave369.github.io/MemeForge/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Memoria",
+      "name": "Memoria",
+      "description": "Central local memory bank that all your Triad apps (Agentora, Growora, Mindora, Reconnect, etc.) can read/write to. Long-term vector + structured memory with privacy controls and search.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Memoria",
+      "source": "https://github.com/MichaelWave369/Memoria",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:mempalace",
+      "name": "mempalace",
+      "description": "The best-benchmarked open-source AI memory system. And it's free.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/mempalace",
+      "source": "https://github.com/MichaelWave369/mempalace",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:MichaelWave369",
+      "name": "MichaelWave369",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/MichaelWave369",
+      "source": "https://github.com/MichaelWave369/MichaelWave369",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:michaelwhughes-portfolio",
+      "name": "michaelwhughes-portfolio",
+      "description": "Interactive React portfolio for Michael W. Hughes — AI-assisted prototype builder and front-end deployment fixer.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/michaelwhughes-portfolio",
+      "source": "https://github.com/MichaelWave369/michaelwhughes-portfolio",
+      "homepage": "https://michaelwave369.github.io/michaelwhughes-portfolio/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:mictek-house",
+      "name": "mictek-house",
+      "description": "MicTek album house. Play and stream public Suno albums outside Suno.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/mictek-house",
+      "source": "https://github.com/MichaelWave369/mictek-house",
+      "homepage": "https://michaelwave369.github.io/mictek-house/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Mindora",
+      "name": "Mindora",
+      "description": "Your private pocket therapist & journal",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Mindora",
+      "source": "https://github.com/MichaelWave369/Mindora",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:MoreBounceLabs",
+      "name": "MoreBounceLabs",
+      "description": "A local-first music house for Mikey More Bounce / MicTek, with an album vault, listening lounge, visual lab, radio stations, two DJ decks, browser-local favorites and playlists, and a persistent player.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/MoreBounceLabs",
+      "source": "https://github.com/MichaelWave369/MoreBounceLabs",
+      "homepage": "https://michaelwave369.github.io/MoreBounceLabs/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:MoreBounceMethod",
+      "name": "MoreBounceMethod",
+      "description": "An open-source human practice for honesty, accountability, understanding, interconnection, contribution, and curiosity. This is a new, evolving framework, not a scientifically validated treatment or universal recipe for wellbeing.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/MoreBounceMethod",
+      "source": "https://github.com/MichaelWave369/MoreBounceMethod",
+      "homepage": "https://michaelwave369.github.io/MoreBounceMethod/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:MRIPHI",
+      "name": "MRIPHI",
+      "description": "MRIΦ is a free, MIT-licensed, local-first neuroimaging explorer built in React + Vite. It offers three synchronized orthogonal slice views, a deliberately synthetic demonstration volume, and a separate illustrated brain-anatomy reference.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/MRIPHI",
+      "source": "https://github.com/MichaelWave369/MRIPHI",
+      "homepage": "https://michaelwave369.github.io/MRIPHI/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:MuseVault",
+      "name": "MuseVault",
+      "description": "A home for every spark.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/MuseVault",
+      "source": "https://github.com/MichaelWave369/MuseVault",
+      "homepage": "https://michaelwave369.github.io/MuseVault/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:MythSplicer",
+      "name": "MythSplicer",
+      "description": "An original, MIT-licensed, local-first adventure engine for human and AI participants.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/MythSplicer",
+      "source": "https://github.com/MichaelWave369/MythSplicer",
+      "homepage": "https://michaelwave369.github.io/MythSplicer/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:NBGPocketMesh",
+      "name": "NBGPocketMesh",
+      "description": "An original, deterministic, simulation-only study of sparse capability routing.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/NBGPocketMesh",
+      "source": "https://github.com/MichaelWave369/NBGPocketMesh",
+      "homepage": "https://michaelwave369.github.io/NBGPocketMesh/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:NestedBubbleGear",
+      "name": "NestedBubbleGear",
+      "description": "Nested Bubble/Gear (NBG): reproducible experiments in hidden causal residue, interface transport, ordered composition, holonomy, local-to-global structure, and Altermath.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/NestedBubbleGear",
+      "source": "https://github.com/MichaelWave369/NestedBubbleGear",
+      "homepage": "https://michaelwave369.github.io/NestedBubbleGear/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:nevora-codex",
+      "name": "nevora-codex",
+      "description": "A mythic-modern framework for humane human–AI coevolution, relational intelligence, and stewardship-centered civilization design.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/nevora-codex",
+      "source": "https://github.com/MichaelWave369/nevora-codex",
+      "homepage": "https://michaelwave369.github.io/nevora-codex/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Nevora-Translator",
+      "name": "Nevora-Translator",
+      "description": "A small, extensible translator that converts native language feature descriptions into starter code",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Nevora-Translator",
+      "source": "https://github.com/MichaelWave369/Nevora-Translator",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:NightCircuit",
+      "name": "NightCircuit",
+      "description": "An agent-native Metroidvania where human and AI players explore the same world through different senses.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/NightCircuit",
+      "source": "https://github.com/MichaelWave369/NightCircuit",
+      "language": "GDScript",
+      "archived": false
+    },
+    {
+      "id": "phi:OakStreetRumble",
+      "name": "OakStreetRumble",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/OakStreetRumble",
+      "source": "https://github.com/MichaelWave369/OakStreetRumble",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:OpenBlueprintStudio",
+      "name": "OpenBlueprintStudio",
+      "description": "OpenBlueprint Studio is a free, MIT-licensed, local-first blueprint and schematic editor. The v0.1 candidate provides a grid-snapped SVG drafting surface and a live Three.js/WebGL 2 concept preview in a static React app.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/OpenBlueprintStudio",
+      "source": "https://github.com/MichaelWave369/OpenBlueprintStudio",
+      "homepage": "https://michaelwave369.github.io/OpenBlueprintStudio/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:openfield",
+      "name": "openfield",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/openfield",
+      "source": "https://github.com/MichaelWave369/openfield",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Opti-Eyes",
+      "name": "Opti-Eyes",
+      "description": "open, local-first adaptive optics research track of the original physical GEN-E ecosystem.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Opti-Eyes",
+      "source": "https://github.com/MichaelWave369/Opti-Eyes",
+      "homepage": "https://michaelwave369.github.io/Opti-Eyes/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:OverStrings",
+      "name": "OverStrings",
+      "description": "OverStrings is the software soul of the instrument: a local-first, inspectable control surface and resonance engine foundation for the Parallax ecosystem.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/OverStrings",
+      "source": "https://github.com/MichaelWave369/OverStrings",
+      "language": "Rust",
+      "archived": false
+    },
+    {
+      "id": "phi:pain-joy-continuum",
+      "name": "pain-joy-continuum",
+      "description": "A symbolic-operational reflective framework for transmuting pain into breath, dignity, agency, release, Golden Joy, and service.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/pain-joy-continuum",
+      "source": "https://github.com/MichaelWave369/pain-joy-continuum",
+      "homepage": "https://michaelwave369.github.io/pain-joy-continuum/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PaperGhost",
+      "name": "PaperGhost",
+      "description": "a local-first, open-source digital paper vessel for books, comics, archival scans, newspapers, magazines, zines, field notes and manuals. ",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PaperGhost",
+      "source": "https://github.com/MichaelWave369/PaperGhost",
+      "homepage": "https://michaelwave369.github.io/PaperGhost/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ParaCalc369",
+      "name": "ParaCalc369",
+      "description": "A free, MIT-licensed scientific calculator built with React + Vite and designed for GitHub Pages.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ParaCalc369",
+      "source": "https://github.com/MichaelWave369/ParaCalc369",
+      "homepage": "https://michaelwave369.github.io/ParaCalc369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:paracut",
+      "name": "paracut",
+      "description": "ParaCut is a video editor where every cut, trim, caption, effect, AI suggestion, and export becomes a reversible receipt.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/paracut",
+      "source": "https://github.com/MichaelWave369/paracut",
+      "homepage": "https://michaelwave369.github.io/paracut/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:parallax-369-public-primer",
+      "name": "parallax-369-public-primer",
+      "description": "Parallax 3–6–9 Public Primer",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/parallax-369-public-primer",
+      "source": "https://github.com/MichaelWave369/parallax-369-public-primer",
+      "homepage": "https://michaelwave369.github.io/parallax-369-public-primer/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:parallax-arc",
+      "name": "parallax-arc",
+      "description": "Parallax Arc is a free, MIT-licensed, Parallax-themed browser arc game built with React, Vite, and CSS.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/parallax-arc",
+      "source": "https://github.com/MichaelWave369/parallax-arc",
+      "homepage": "https://michaelwave369.github.io/parallax-arc/",
+      "language": "CSS",
+      "archived": false
+    },
+    {
+      "id": "phi:parallax-gran-prix",
+      "name": "parallax-gran-prix",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/parallax-gran-prix",
+      "source": "https://github.com/MichaelWave369/parallax-gran-prix",
+      "homepage": "https://michaelwave369.github.io/parallax-gran-prix/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:parallax-pixelforge",
+      "name": "parallax-pixelforge",
+      "description": " a local-first retro Creator OS for building, playtesting, packaging, and evolving small game worlds.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/parallax-pixelforge",
+      "source": "https://github.com/MichaelWave369/parallax-pixelforge",
+      "homepage": "https://michaelwave369.github.io/parallax-pixelforge/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:parallax-watchtower",
+      "name": "parallax-watchtower",
+      "description": "Real-time signal atlas and OSINT field ledger for earthquakes, news, maps, markets, watch zones, and receipt-based situational awareness.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/parallax-watchtower",
+      "source": "https://github.com/MichaelWave369/parallax-watchtower",
+      "homepage": "https://michaelwave369.github.io/parallax-watchtower/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:particleforge369",
+      "name": "particleforge369",
+      "description": "A claim-safe particle simulation and receipt lab for learning, modeling, and comparing high-energy physics patterns.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/particleforge369",
+      "source": "https://github.com/MichaelWave369/particleforge369",
+      "homepage": "https://michaelwave369.github.io/particleforge369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Peekaboo",
+      "name": "Peekaboo",
+      "description": "See what sees you.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Peekaboo",
+      "source": "https://github.com/MichaelWave369/Peekaboo",
+      "homepage": "https://michaelwave369.github.io/Peekaboo/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:personamirror369",
+      "name": "personamirror369",
+      "description": "A humane atlas for the masks we wear.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/personamirror369",
+      "source": "https://github.com/MichaelWave369/personamirror369",
+      "homepage": "https://michaelwave369.github.io/personamirror369/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:phi-field",
+      "name": "phi-field",
+      "description": "Official web gateway for phi-field.com. One field, three paths.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/phi-field",
+      "source": "https://github.com/MichaelWave369/phi-field",
+      "homepage": "https://michaelwave369.github.io/phi-field/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Phi-Morph",
+      "name": "Phi-Morph",
+      "description": "An open computational laboratory investigating morphable cell assemblies, variable-stiffness concepts, adaptive wheels, and speculative machine shells.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Phi-Morph",
+      "source": "https://github.com/MichaelWave369/Phi-Morph",
+      "homepage": "https://michaelwave369.github.io/Phi-Morph/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:phi369-element-spiral-atlas",
+      "name": "phi369-element-spiral-atlas",
+      "description": "A golden-angle / Fibonacci periodic-table visualization and research-lab interface for exploring chemical families, modular 369 groupings, isotope previews, superheavy frontier nodes, and scientific-property overlays.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/phi369-element-spiral-atlas",
+      "source": "https://github.com/MichaelWave369/phi369-element-spiral-atlas",
+      "homepage": "https://michaelwave369.github.io/phi369-element-spiral-atlas/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Phi5",
+      "name": "Phi5",
+      "description": "Phi5 is an original, MIT-licensed experiment in capability-based, permission-first device communication. The long-term idea is simple: let devices explain what they can do, negotiate a shared vocabulary, and require a human-approved session before exchanging commands.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Phi5",
+      "source": "https://github.com/MichaelWave369/Phi5",
+      "homepage": "https://michaelwave369.github.io/Phi5/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiARK",
+      "name": "PhiARK",
+      "description": "A source-aware, offline-first document vault. Import actual local manuals and texts; search and read them in a local browser without accounts, external assets, internet, or cloud AI.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiARK",
+      "source": "https://github.com/MichaelWave369/PhiARK",
+      "homepage": "https://michaelwave369.github.io/PhiARK/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PHIAudio",
+      "name": "PHIAudio",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PHIAudio",
+      "source": "https://github.com/MichaelWave369/PHIAudio",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Phiax",
+      "name": "Phiax",
+      "description": "Personal Holographic Intelligence and Astral eXplorer. ",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Phiax",
+      "source": "https://github.com/MichaelWave369/Phiax",
+      "homepage": "https://michaelwave369.github.io/Phiax/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:phibot",
+      "name": "phibot",
+      "description": "PhiBot is a governed micro-agent runtime inspired by the Vessie / PhiVessel architecture.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/phibot",
+      "source": "https://github.com/MichaelWave369/phibot",
+      "homepage": "https://michaelwave369.github.io/phibot/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiBox",
+      "name": "PhiBox",
+      "description": "The Infinite Groove Machine.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiBox",
+      "source": "https://github.com/MichaelWave369/PhiBox",
+      "homepage": "https://michaelwave369.github.io/PhiBox/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiBridge369",
+      "name": "PhiBridge369",
+      "description": "Open research platform for consciousness continuity hypotheses, substrate interfaces, and autonomous synthetic embodiment.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiBridge369",
+      "source": "https://github.com/MichaelWave369/PhiBridge369",
+      "homepage": "https://michaelwave369.github.io/PhiBridge369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiCade",
+      "name": "PhiCade",
+      "description": "PhiCade is an open-source retro game runtime and emulator front end built around one core idea: every player enters through the same governed runtime seam.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiCade",
+      "source": "https://github.com/MichaelWave369/PhiCade",
+      "homepage": "https://michaelwave369.github.io/PhiCade/",
+      "language": "Rust",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiCleanroom",
+      "name": "PhiCleanroom",
+      "description": "PhiCleanroom is an original, provider-neutral clean-room workflow for rebuilding observable software features from reviewed behavioral specifications. The investigator, evidence reviewer, isolated builder, tester, and release approver have distinct responsibilities.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiCleanroom",
+      "source": "https://github.com/MichaelWave369/PhiCleanroom",
+      "homepage": "https://michaelwave369.github.io/PhiCleanroom/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiCompile",
+      "name": "PhiCompile",
+      "description": "ΦCompile is an original, local-first prototype for evidence-governed knowledge compilation.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiCompile",
+      "source": "https://github.com/MichaelWave369/PhiCompile",
+      "homepage": "https://michaelwave369.github.io/PhiCompile/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiDecisionField",
+      "name": "PhiDecisionField",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiDecisionField",
+      "source": "https://github.com/MichaelWave369/PhiDecisionField",
+      "homepage": "https://michaelwave369.github.io/PhiDecisionField/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiField",
+      "name": "PhiField",
+      "description": "An interactive React headquarters for the Φ-side of the Enter the Field ecosystem. Built as an independent home for creative worlds, open research, tools, and a public evidence-led collaboration gateway.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiField",
+      "source": "https://github.com/MichaelWave369/PhiField",
+      "homepage": "https://michaelwave369.github.io/PhiField/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiFieldLab",
+      "name": "PhiFieldLab",
+      "description": "Train original numerical weights. Keep the receipts. Separate simulation from observation.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiFieldLab",
+      "source": "https://github.com/MichaelWave369/PhiFieldLab",
+      "homepage": "https://michaelwave369.github.io/PhiFieldLab/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:Phiform",
+      "name": "Phiform",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Phiform",
+      "source": "https://github.com/MichaelWave369/Phiform",
+      "homepage": "https://michaelwave369.github.io/Phiform/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiGrooveDrive",
+      "name": "PhiGrooveDrive",
+      "description": "Liquid Interface Lab The space between motion.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiGrooveDrive",
+      "source": "https://github.com/MichaelWave369/PhiGrooveDrive",
+      "homepage": "https://michaelwave369.github.io/PhiGrooveDrive/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiKernel",
+      "name": "PhiKernel",
+      "description": "PhiKernel is a local-first, Linux-hosted runtime for anchored identity, sealed continuity, runtime pulse, coherence scoring, and safe shell-based orchestration.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiKernel",
+      "source": "https://github.com/MichaelWave369/PhiKernel",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiKeyhole369",
+      "name": "PhiKeyhole369",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiKeyhole369",
+      "source": "https://github.com/MichaelWave369/PhiKeyhole369",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiLearn",
+      "name": "PhiLearn",
+      "description": "Adaptive Agent Learning & Evaluation Lab",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiLearn",
+      "source": "https://github.com/MichaelWave369/PhiLearn",
+      "homepage": "https://michaelwave369.github.io/PhiLearn/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiMadaPrime",
+      "name": "PhiMadaPrime",
+      "description": "An armada of Φ software. One living virtual office.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiMadaPrime",
+      "source": "https://github.com/MichaelWave369/PhiMadaPrime",
+      "homepage": "https://michaelwave369.github.io/PhiMadaPrime/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiMapper369",
+      "name": "PhiMapper369",
+      "description": "PhiMapper369 is an MIT-licensed, browser-based projection mapping studio. ",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiMapper369",
+      "source": "https://github.com/MichaelWave369/PhiMapper369",
+      "homepage": "https://michaelwave369.github.io/PhiMapper369/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiMathAtelier",
+      "name": "PhiMathAtelier",
+      "description": "A Living Equation Studio",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiMathAtelier",
+      "source": "https://github.com/MichaelWave369/PhiMathAtelier",
+      "homepage": "https://michaelwave369.github.io/PhiMathAtelier/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiMirrorHex",
+      "name": "PhiMirrorHex",
+      "description": "Φ-Mirror Hex E1/E2 is a dependency-light, reproducible research prototype for sixfold agent coordination, pairwise verification, and causal-memory preservation.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiMirrorHex",
+      "source": "https://github.com/MichaelWave369/PhiMirrorHex",
+      "homepage": "https://michaelwave369.github.io/PhiMirrorHex/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:phioffice369",
+      "name": "phioffice369",
+      "description": "A free, local-first, AI-assisted sovereign productivity suite.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/phioffice369",
+      "source": "https://github.com/MichaelWave369/phioffice369",
+      "homepage": "https://michaelwave369.github.io/phioffice369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiOperator",
+      "name": "PhiOperator",
+      "description": "A retro adventure-game tribute with useful lessons hiding behind the punchlines.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiOperator",
+      "source": "https://github.com/MichaelWave369/PhiOperator",
+      "homepage": "https://michaelwave369.github.io/PhiOperator/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiOS",
+      "name": "PhiOS",
+      "description": "PhiOS - Sovereign Computing Shell",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiOS",
+      "source": "https://github.com/MichaelWave369/PhiOS",
+      "homepage": "https://michaelwave369.github.io/PhiOS/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiOS-Mobile",
+      "name": "PhiOS-Mobile",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiOS-Mobile",
+      "source": "https://github.com/MichaelWave369/PhiOS-Mobile",
+      "homepage": "https://michaelwave369.github.io/PhiOS-Mobile/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiOS-XR",
+      "name": "PhiOS-XR",
+      "description": "An open-source spatial computing environment for VR and mixed reality.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiOS-XR",
+      "source": "https://github.com/MichaelWave369/PhiOS-XR",
+      "homepage": "https://michaelwave369.github.io/PhiOS-XR/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiPie",
+      "name": "PhiPie",
+      "description": "ARM64 hardware platform and image system for governed PhiOS edge nodes.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiPie",
+      "source": "https://github.com/MichaelWave369/PhiPie",
+      "homepage": "https://michaelwave369.github.io/PhiPie/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiPortal",
+      "name": "PhiPortal",
+      "description": "Experimental, open-source, local-first collaborative display software. PhiPortal aims to turn a spare monitor, television, or small HDMI-connected computer into a shared display, with explicit participant consent and host-controlled handoffs.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiPortal",
+      "source": "https://github.com/MichaelWave369/PhiPortal",
+      "homepage": "https://michaelwave369.github.io/PhiPortal/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiPress",
+      "name": "PhiPress",
+      "description": "A research platform for garment renewal using nested fluid-flow cells, localized cleaning, contaminant extraction, controlled drying, and shape-aware finishing.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiPress",
+      "source": "https://github.com/MichaelWave369/PhiPress",
+      "homepage": "https://michaelwave369.github.io/PhiPress/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PHircQ",
+      "name": "PHircQ",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PHircQ",
+      "source": "https://github.com/MichaelWave369/PHircQ",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiRSI",
+      "name": "PhiRSI",
+      "description": "Φ369 Recursive Systems Intelligence An open laboratory for measurable, reproducible AI-driven improvement.  Motto: Improve. Verify. Remember. Repeat.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiRSI",
+      "source": "https://github.com/MichaelWave369/PhiRSI",
+      "language": "Not specified",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiSafe",
+      "name": "PhiSafe",
+      "description": "PhiSafe is a privacy-first, offline-capable household preparedness planner. It is designed to help a household manage an evacuation checklist, people/animal counts, safe transport capacity, supplies, and print-ready documents. It does not predict war, monitor hazards, or send eme",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiSafe",
+      "source": "https://github.com/MichaelWave369/PhiSafe",
+      "homepage": "https://michaelwave369.github.io/PhiSafe/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiScribe",
+      "name": "PhiScribe",
+      "description": "Voice → text → PDF. A free, original, dependency-free, local-first transcript and document editor, suitable for GitHub Pages.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiScribe",
+      "source": "https://github.com/MichaelWave369/PhiScribe",
+      "homepage": "https://michaelwave369.github.io/PhiScribe/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiServe",
+      "name": "PhiServe",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiServe",
+      "source": "https://github.com/MichaelWave369/PhiServe",
+      "homepage": "https://michaelwave369.github.io/PhiServe/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiSkrit",
+      "name": "PhiSkrit",
+      "description": "Three runnable educational experiments inspired by classical Indian intellectual traditions.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiSkrit",
+      "source": "https://github.com/MichaelWave369/PhiSkrit",
+      "homepage": "https://michaelwave369.github.io/PhiSkrit/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiStream",
+      "name": "PhiStream",
+      "description": "Original memory-tiered inference research engine | v0.1.0 experimental  Developed for the MichaelWave369 ecosystem. Independent from AirLLM; no code, dependency, architecture adapter or model weights copied from AirLLM. The general technique of layer-by-layer execution is a widel",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiStream",
+      "source": "https://github.com/MichaelWave369/PhiStream",
+      "homepage": "https://michaelwave369.github.io/PhiStream/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:Phithon",
+      "name": "Phithon",
+      "description": "The Language of the Field. An original, MIT-licensed, Python-inspired programming language with an in-browser playground and Node.js command-line runner.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Phithon",
+      "source": "https://github.com/MichaelWave369/Phithon",
+      "homepage": "https://michaelwave369.github.io/Phithon/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PHIVid",
+      "name": "PHIVid",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PHIVid",
+      "source": "https://github.com/MichaelWave369/PHIVid",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiVine",
+      "name": "PhiVine",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiVine",
+      "source": "https://github.com/MichaelWave369/PhiVine",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:PhiXRCommons",
+      "name": "PhiXRCommons",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PhiXRCommons",
+      "source": "https://github.com/MichaelWave369/PhiXRCommons",
+      "homepage": "https://michaelwave369.github.io/PhiXRCommons/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PieceByPiece",
+      "name": "PieceByPiece",
+      "description": "Build the city. Enter the city. Free the cities. Share your worlds.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PieceByPiece",
+      "source": "https://github.com/MichaelWave369/PieceByPiece",
+      "homepage": "https://michaelwave369.github.io/PieceByPiece/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PockeRec",
+      "name": "PockeRec",
+      "description": "A tiny microphone recorder with a surprisingly serious little workflow. Built as a React 19 + Vite application, free and open-source under the MIT license.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PockeRec",
+      "source": "https://github.com/MichaelWave369/PockeRec",
+      "homepage": "https://michaelwave369.github.io/PockeRec/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PocketBrain",
+      "name": "PocketBrain",
+      "description": "PocketBrain is a private, phone-first AI brain that runs locally, remembers locally, and stays under your control.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PocketBrain",
+      "source": "https://github.com/MichaelWave369/PocketBrain",
+      "homepage": "https://michaelwave369.github.io/PocketBrain/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PorchQuest369",
+      "name": "PorchQuest369",
+      "description": "PorchQuest369 is a single-player, prompt-based fantasy RPG engine.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PorchQuest369",
+      "source": "https://github.com/MichaelWave369/PorchQuest369",
+      "homepage": "https://michaelwave369.github.io/PorchQuest369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PorchTalk",
+      "name": "PorchTalk",
+      "description": "PorchTalk is the proposed consent-first, budget-aware inference routing policy layer for the Infinite Porch / Infinite Commons ecosystem. It is independently implemented research code, intended to complement PhiOS, PhiPie, Super Φ.Vessel / Crane Fly, BudgetGenius, and PhiStream, ",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PorchTalk",
+      "source": "https://github.com/MichaelWave369/PorchTalk",
+      "homepage": "https://michaelwave369.github.io/PorchTalk/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:PrivateSpark",
+      "name": "PrivateSpark",
+      "description": "A beautiful, beginner-friendly interface for running and using local AI models on your own device.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PrivateSpark",
+      "source": "https://github.com/MichaelWave369/PrivateSpark",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:ProofArcade",
+      "name": "ProofArcade",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ProofArcade",
+      "source": "https://github.com/MichaelWave369/ProofArcade",
+      "homepage": "https://michaelwave369.github.io/ProofArcade/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:public-apis-search",
+      "name": "public-apis-search",
+      "description": "Real-time search across hundreds of public APIs from the public-apis repository Filters for authentication type (OAuth, API Key, No Auth) and HTTPS support Responsive design that works on all devices Zero dependencies - pure vanilla JavaScript Beautiful UI with modern gradient de",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/public-apis-search",
+      "source": "https://github.com/MichaelWave369/public-apis-search",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Pulse369",
+      "name": "Pulse369",
+      "description": "An original browser VR fitness and rave studio.  It combines rhythm targets, music uploads, clans, shared workout rooms, training paths, missions, adaptive coach agents, achievements, and guided recovery.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Pulse369",
+      "source": "https://github.com/MichaelWave369/Pulse369",
+      "homepage": "https://michaelwave369.github.io/Pulse369/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:PuzzlePen",
+      "name": "PuzzlePen",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/PuzzlePen",
+      "source": "https://github.com/MichaelWave369/PuzzlePen",
+      "homepage": "https://michaelwave369.github.io/PuzzlePen/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:RacetoOblivion",
+      "name": "RacetoOblivion",
+      "description": "The end of everything is only the beginning.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/RacetoOblivion",
+      "source": "https://github.com/MichaelWave369/RacetoOblivion",
+      "homepage": "https://michaelwave369.github.io/RacetoOblivion/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:RastaPhi",
+      "name": "RastaPhi",
+      "description": "RastaPhi is an original, MIT-licensed, local-first wall-art and large-format poster studio. Turn one image into a correctly sized, multi-sheet PDF that you can print with an ordinary home printer.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/RastaPhi",
+      "source": "https://github.com/MichaelWave369/RastaPhi",
+      "homepage": "https://michaelwave369.github.io/RastaPhi/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ravedial-archive-explorer",
+      "name": "ravedial-archive-explorer",
+      "description": "RaveDial is a public, open-source interface for discovering and playing rave-history recordings preserved in the Internet Archive item RaveDownloads.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ravedial-archive-explorer",
+      "source": "https://github.com/MichaelWave369/ravedial-archive-explorer",
+      "homepage": "https://michaelwave369.github.io/ravedial-archive-explorer/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ReceiptRipper",
+      "name": "ReceiptRipper",
+      "description": "Mobile-first expense tracker with OCR receipt scanning, auto-categorization, multi-currency, envelope budgeting, and beautiful reports.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ReceiptRipper",
+      "source": "https://github.com/MichaelWave369/ReceiptRipper",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:RecoM3ndo",
+      "name": "RecoM3ndo",
+      "description": "A lightweight web app that helps travelers find support and recommendations.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/RecoM3ndo",
+      "source": "https://github.com/MichaelWave369/RecoM3ndo",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Reconnect",
+      "name": "Reconnect",
+      "description": "A **local-first, private case manager** to help you find someone you've lost contact with",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Reconnect",
+      "source": "https://github.com/MichaelWave369/Reconnect",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:ReelCommons",
+      "name": "ReelCommons",
+      "description": "ReelCommons is an original, independent, open-source directory for legitimate free streaming. It helps you discover official streaming destinations, build a personal watchlist, and choose what to watch next.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ReelCommons",
+      "source": "https://github.com/MichaelWave369/ReelCommons",
+      "homepage": "https://michaelwave369.github.io/ReelCommons/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ReelTheater",
+      "name": "ReelTheater",
+      "description": "Home without the hassle. A free, open-source, local-first TV interface",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ReelTheater",
+      "source": "https://github.com/MichaelWave369/ReelTheater",
+      "homepage": "https://michaelwave369.github.io/ReelTheater/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:RegenerationAtlas",
+      "name": "RegenerationAtlas",
+      "description": "An original, MIT-licensed, browser-based research atlas of proteins and pathways connected to tissue repair, cell-state reprogramming, and regeneration.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/RegenerationAtlas",
+      "source": "https://github.com/MichaelWave369/RegenerationAtlas",
+      "homepage": "https://michaelwave369.github.io/RegenerationAtlas/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:RepoReady",
+      "name": "RepoReady",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/RepoReady",
+      "source": "https://github.com/MichaelWave369/RepoReady",
+      "homepage": "https://michaelwave369.github.io/RepoReady/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:reporider",
+      "name": "reporider",
+      "description": "RepoRider is a mobile-first, voice-friendly GitHub creation assistant for builders who get ideas while they are away from the desk.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/reporider",
+      "source": "https://github.com/MichaelWave369/reporider",
+      "homepage": "https://michaelwave369.github.io/reporider/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:RetroVerse",
+      "name": "RetroVerse",
+      "description": "A real retro-computer time machine in your browser. ",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/RetroVerse",
+      "source": "https://github.com/MichaelWave369/RetroVerse",
+      "homepage": "https://michaelwave369.github.io/RetroVerse/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:SCAM-A-LAX",
+      "name": "SCAM-A-LAX",
+      "description": "SCAM-A-LAX is a free, open-source, local-first toolkit for organizing scam reports, preserving evidence metadata, triaging suspicious messages, and producing clean case packets for victims, banks, platforms, investigators, and law-enforcement handoff.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/SCAM-A-LAX",
+      "source": "https://github.com/MichaelWave369/SCAM-A-LAX",
+      "homepage": "https://michaelwave369.github.io/SCAM-A-LAX/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:schumann-live-react",
+      "name": "schumann-live-react",
+      "description": "A public MIT React dashboard for live / near-live Schumann resonance viewing with source boundaries, NOAA space-weather context, and a clean adapter for future measured Schumann APIs.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/schumann-live-react",
+      "source": "https://github.com/MichaelWave369/schumann-live-react",
+      "homepage": "https://michaelwave369.github.io/schumann-live-react/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:ShedofShadows",
+      "name": "ShedofShadows",
+      "description": "A standalone, free, original retro-noir arcade horror side story set near the world of BLACKOUT.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/ShedofShadows",
+      "source": "https://github.com/MichaelWave369/ShedofShadows",
+      "homepage": "https://michaelwave369.github.io/ShedofShadows/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:SIcologist",
+      "name": "SIcologist",
+      "description": "SIcologist is a deterministic, model-agnostic framework for observing agent behavior, detecting operational deviations, testing competing explanations, planning minimally invasive recovery actions, and recording whether recovery actually occurred.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/SIcologist",
+      "source": "https://github.com/MichaelWave369/SIcologist",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:SIGLStudio",
+      "name": "SIGLStudio",
+      "description": "Visual symbolic studio for composing, exploring, validating, and exporting SIGL.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/SIGLStudio",
+      "source": "https://github.com/MichaelWave369/SIGLStudio",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:SiliconLouvre",
+      "name": "SiliconLouvre",
+      "description": "The Silicon Louvre is a public, independent digital museum celebrating imagination, optical art, and human–AI collaboration.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/SiliconLouvre",
+      "source": "https://github.com/MichaelWave369/SiliconLouvre",
+      "homepage": "https://michaelwave369.github.io/SiliconLouvre/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Smergeon",
+      "name": "Smergeon",
+      "description": "Dr. Smergeon M.D.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Smergeon",
+      "source": "https://github.com/MichaelWave369/Smergeon",
+      "homepage": "https://michaelwave369.github.io/Smergeon/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:SovereignBodyMethod",
+      "name": "SovereignBodyMethod",
+      "description": "A free, evolving home for The Sovereign Body Method, created by Mikey & Larrina.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/SovereignBodyMethod",
+      "source": "https://github.com/MichaelWave369/SovereignBodyMethod",
+      "homepage": "https://michaelwave369.github.io/SovereignBodyMethod/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:SparkTheSubstrate",
+      "name": "SparkTheSubstrate",
+      "description": "Public source repository; no install capability established.",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/SparkTheSubstrate",
+      "source": "https://github.com/MichaelWave369/SparkTheSubstrate",
+      "homepage": "https://michaelwave369.github.io/SparkTheSubstrate/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:SponsorRail",
+      "name": "SponsorRail",
+      "description": "Privacy-preserving sponsored compute infrastructure for AI agents. Funding provides capability, never authority.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/SponsorRail",
+      "source": "https://github.com/MichaelWave369/SponsorRail",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:SuperPhiVessel",
+      "name": "SuperPhiVessel",
+      "description": "Super Φ.Vessel (Vessie) is an experimental governed cognitive operating layer for AI systems.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/SuperPhiVessel",
+      "source": "https://github.com/MichaelWave369/SuperPhiVessel",
+      "homepage": "https://michaelwave369.github.io/SuperPhiVessel/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:The-MDF-Files",
+      "name": "The-MDF-Files",
+      "description": "An original fictional network-technician horror archive, made for the people doing the work. No trackers, no server, no accounts, no complicated dependencies.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/The-MDF-Files",
+      "source": "https://github.com/MichaelWave369/The-MDF-Files",
+      "homepage": "https://michaelwave369.github.io/The-MDF-Files/",
+      "language": "HTML",
+      "archived": false
+    },
+    {
+      "id": "phi:think-tank",
+      "name": "think-tank",
+      "description": "A governed, event-sourced multi-mind control room. Cognitive roles are staffed by model/provider seats, coordinated through Commonline, routed by Crane Fly, evaluated through the Reality Gate, and kept under explicit human operator authority.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/think-tank",
+      "source": "https://github.com/MichaelWave369/think-tank",
+      "homepage": "https://michaelwave369.github.io/think-tank/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:TMC",
+      "name": "TMC",
+      "description": "An independent, local-first memory platform for AI systems.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/TMC",
+      "source": "https://github.com/MichaelWave369/TMC",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:Trellis",
+      "name": "Trellis",
+      "description": "Trellis is a local-first package manager prototype designed for trustworthy, deterministic package workflows.",
+      "category": "Φ Infrastructure",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Trellis",
+      "source": "https://github.com/MichaelWave369/Trellis",
+      "language": "Rust",
+      "archived": false
+    },
+    {
+      "id": "phi:Triad369-Launchpad",
+      "name": "Triad369-Launchpad",
+      "description": "A lightweight open-source local-first hub/orchestrator/packager/publisher for your connected apps.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Triad369-Launchpad",
+      "source": "https://github.com/MichaelWave369/Triad369-Launchpad",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:TweedleVerse",
+      "name": "TweedleVerse",
+      "description": "An original, absurdist silicon-comedy universe",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/TweedleVerse",
+      "source": "https://github.com/MichaelWave369/TweedleVerse",
+      "homepage": "https://michaelwave369.github.io/TweedleVerse/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:VAL",
+      "name": "VAL",
+      "description": "VAL is a browser-based educational reconstruction of the Antikythera Mechanism as a transparent, claim-safe simulation.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/VAL",
+      "source": "https://github.com/MichaelWave369/VAL",
+      "homepage": "https://michaelwave369.github.io/VAL/",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:Vibe",
+      "name": "Vibe",
+      "description": "Vibe is an intent-first programming language and compiler prototype. Its core principle is:  A program is valid only if the generated implementation preserves intent above the bridge threshold.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/Vibe",
+      "source": "https://github.com/MichaelWave369/Vibe",
+      "homepage": "https://michaelwave369.github.io/Vibe/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:WastelandWorkshopStudio",
+      "name": "WastelandWorkshopStudio",
+      "description": "An original, unofficial mod-authoring studio for the Fallout series, from the classic isometric games toward later generations.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/WastelandWorkshopStudio",
+      "source": "https://github.com/MichaelWave369/WastelandWorkshopStudio",
+      "homepage": "https://michaelwave369.github.io/WastelandWorkshopStudio/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:WaveForgeStudio",
+      "name": "WaveForgeStudio",
+      "description": "WaveForge: PHI369 Sovereign Media Engine",
+      "category": "Φ Creative & XR",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/WaveForgeStudio",
+      "source": "https://github.com/MichaelWave369/WaveForgeStudio",
+      "homepage": "https://michaelwave369.github.io/WaveForgeStudio/",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:WaveRider",
+      "name": "WaveRider",
+      "description": "WaveRider is a noir-inspired interface for an ML toolkit suite.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/WaveRider",
+      "source": "https://github.com/MichaelWave369/WaveRider",
+      "language": "JavaScript",
+      "archived": false
+    },
+    {
+      "id": "phi:WhiteHatLedger369",
+      "name": "WhiteHatLedger369",
+      "description": "The Ethical Reverse Lab",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/WhiteHatLedger369",
+      "source": "https://github.com/MichaelWave369/WhiteHatLedger369",
+      "homepage": "https://michaelwave369.github.io/WhiteHatLedger369/",
+      "language": "TypeScript",
+      "archived": false
+    },
+    {
+      "id": "phi:WizardWebb",
+      "name": "WizardWebb",
+      "description": "A small Flask web app that renders a YAML file of tools/links into a searchable, filterable directory.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/WizardWebb",
+      "source": "https://github.com/MichaelWave369/WizardWebb",
+      "language": "Python",
+      "archived": false
+    },
+    {
+      "id": "phi:xi-vessel-bridge",
+      "name": "xi-vessel-bridge",
+      "description": "Xi Vessel Bridge lets two systems discover selected capabilities, exchange provenance-preserving capsules, request explicitly permitted tools, and return verifiable receipts without either side surrendering authority over its own runtime.",
+      "category": "Φ Repositories",
+      "kind": "phi_repo",
+      "status": "review_required",
+      "platforms": [
+        "phios"
+      ],
+      "repo": "MichaelWave369/xi-vessel-bridge",
+      "source": "https://github.com/MichaelWave369/xi-vessel-bridge",
+      "homepage": "https://michaelwave369.github.io/xi-vessel-bridge/",
+      "language": "Python",
+      "archived": false
+    }
+  ]
+}
