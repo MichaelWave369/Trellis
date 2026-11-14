@@ -50,3 +50,9 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Test WinGet adapter with a mock (no actual installs)
         run: cargo test winget
+      - name: Set up Python for read-only bridge tests
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test loopback bridge security (no installs)
+        run: python -m unittest discover -s tests -p test_app_center_bridge.py
