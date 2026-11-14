@@ -39,3 +39,13 @@ jobs:
 
       - name: Test
         run: cargo test
+
+  winget-mock-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Test WinGet adapter with a mock (no actual installs)
+        run: cargo test core::winget::tests
